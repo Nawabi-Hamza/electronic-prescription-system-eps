@@ -1,0 +1,84 @@
+/* Keep your Afghan month fixes */
+.rmdp__months .rmdp__month,
+.rmdp__months .rmdp__month button,
+.rmdp-months .rmdp-month,
+.rmdp-months .rmdp-month button {
+  min-width: 78px !important;   /* widen month cells */
+  padding: 8px 12px !important;
+  white-space: nowrap !important; /* prevent abbreviation/wrap */
+  font-size: 18px !important;    
+  line-height: 1 !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  border-radius: 8px; /* rounded month buttons */
+  transition: all 0.25s ease;
+}
+
+.rmdp__months .rmdp__month button:hover,
+.rmdp-months .rmdp-month button:hover {
+  background: rgba(75, 156, 226, 0.2);
+  transform: scale(1.05);
+}
+
+/* Month container layout */
+.rmdp__months,
+.rmdp-months {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  justify-content: center !important;
+}
+
+/* RTL calendar */
+.rmdp__calendar { 
+  direction: rtl;
+}
+
+
+.rmdp-input{
+  width: 100%;
+  border: none !important;
+  outline: none !important;
+  shadow: none !important;
+  /* padding: 20px !important; */
+}
+
+
+/* Calendar popup */
+.rmdp-calendar {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Calendar header */
+.rmdp-header {
+  background: #4b9ce2;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.3); 
+}
+
+/* Weekdays */
+.rmdp-weekDays {
+  color: #4b9ce2;
+  font-weight: 500;
+}
+
+/* Selected day */
+.rmdp-day.rmdp-selected {
+  /* background: #4b9ce2 !important; */
+  color: #fff !important;
+  border-radius: 50%;
+  
+}
+
+.rmdp-day:hover {
+  /* background: rgba(75,156,226,0.2); */
+  border-radius: 50%;
+  transition: 0.2s;
+}

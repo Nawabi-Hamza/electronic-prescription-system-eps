@@ -1,0 +1,13 @@
+/* When screen width is small, add collapsed styles */
+@media (max-width: 768px) {
+  .sidebar-wrapper {
+    width: 60px; /* or whatever width for collapsed */
+  }
+  .sidebar-wrapper .linkText {
+    display: none;
+  }
+  .sidebar-wrapper .header > div {
+    display: none;
+  }
+
+}
