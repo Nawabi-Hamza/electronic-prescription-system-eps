@@ -1,6 +1,6 @@
 import React from 'react'
 import Sidebar from "../../../componenets/Sidebar";
-import { LayoutDashboard, BookCopy, HatGlasses, Grid3X3, BrainCog, Grid2X2Check, UserRound, SquareActivity, Activity } from "lucide-react";
+import { LayoutDashboard, BookCopy, HatGlasses, Grid3X3, BrainCog, Grid2X2Check, UserRound, SquareActivity, Activity, Coins } from "lucide-react";
 
 const sidebarLinks = [
   {
@@ -17,21 +17,27 @@ const sidebarLinks = [
   },
   {
     type: "link",
+    path: "/owner/payments",
+    label: "Payments",
+    icon: Coins,
+  },
+  {
+    type: "link",
     path: "/owner/usages",
     label: "Usages",
     icon: Activity,
   },
-  {
-    type: "dropdown",
-    label: "Timetables",
-    icon: Grid2X2Check,
-    children: [
-      { label: "Subjects", path: "/admin/subjects", icon: BookCopy },
-      { label: "Teacher/Subject", path: "/admin/teacher-class-subject", icon: HatGlasses },
-      { label: "Classes", path: "/admin/timetable", icon: Grid3X3 },
-      { label: "Teachers", path: "/admin/teacher-timetable", icon: Grid3X3 },
-    ],
-  },
+  // {
+  //   type: "dropdown",
+  //   label: "Timetables",
+  //   icon: Grid2X2Check,
+  //   children: [
+  //     { label: "Subjects", path: "/admin/subjects", icon: BookCopy },
+  //     { label: "Teacher/Subject", path: "/admin/teacher-class-subject", icon: HatGlasses },
+  //     { label: "Classes", path: "/admin/timetable", icon: Grid3X3 },
+  //     { label: "Teachers", path: "/admin/teacher-timetable", icon: Grid3X3 },
+  //   ],
+  // },
   {
     type: "link",
     path: "/owner/profile",

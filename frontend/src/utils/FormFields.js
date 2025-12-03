@@ -1,3 +1,4 @@
+
 export const afghanistanProvinces = [
   "Badakhshan", "Badghis", "Baghlan", "Bamyan", "Daykundi", "Farah", "Faryab",
   "Ghazni", "Ghor", "Helmand", "Herat", "Jowzjan", "Kabul", "Kandahar",
@@ -429,12 +430,6 @@ export const userFieldsaksldjfla = [
   },
 
 ];
-
-
-
-
-
-
 
 export const userFieldsGroup = [
   {
@@ -898,4 +893,14 @@ export const medicineFields = [
   },
 ];
 
+
+
+
+
+
+
+// let doctorList = [] 
+// function f
+// const doctorsList = fetchUsersList();
+// console.log(doctorsList)
 

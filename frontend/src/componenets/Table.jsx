@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import { dropdownStyle, tableStyles } from "../styles/componentsStyle";
-// import { school } from "../utils/school";
-  
-function  Table({
-  columns,          // array of column definitions { key, label, render? }
-  records,          // array of row objects
-  actions = [],     // optional array of actions [{ label, onClick?, className?, renderText?(record) }]
+
+// Helper to generate stable unique keys
+const getKey = (record, index) => {
+  try {
+    return "row-" + btoa(JSON.stringify(record)).substring(0, 12);
+  } catch {
+    return "row-" + index;
+  }
+};
+
+function Table({
+  columns,
+  records,
+  actions = [],
   recordsPerPage = 10,
 }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [RPP, setRPP] = useState(recordsPerPage)
-  // Pagination
-  // const totalPages = Math.ceil(records.length / recordsPerPage);
-  // const startIndex = (currentPage - 1) * recordsPerPage;
-  // const currentRecords = records.slice(startIndex, startIndex + recordsPerPage);
+  const [RPP, setRPP] = useState(recordsPerPage);
 
   const totalPages = Math.ceil(records.length / RPP);
   const startIndex = (currentPage - 1) * RPP;
@@ -26,64 +30,73 @@ function  Table({
           <thead className={tableStyles.thead}>
             <tr>
               {columns.map((col, i) => (
-                <th key={i} className={tableStyles.th}>
+                <th key={col.key || i} className={tableStyles.th}>
                   {col.label}
                 </th>
               ))}
               {actions.length > 0 && <th className={tableStyles.th}>Actions</th>}
             </tr>
           </thead>
+
           <tbody className={tableStyles.tbody}>
-            {currentRecords.map((record, rowIndex) => (
-              <tr key={rowIndex} className={tableStyles.bodyRow}>
-                {columns.map((col, i) => (
-                  // <td key={i} className={tableStyles.td}>
-                    col.render ? (
-                        // Check if col.render returned a <td> with colSpan
-                        React.isValidElement(col.render(record[col.key], record)) &&
-                        col.render(record[col.key], record).type === "td" ? (
-                          col.render(record[col.key], record)
-                        ) : (
-                          <td key={i} className={tableStyles.td}>
-                            {col.render(record[col.key], record)}
-                          </td>
+            {currentRecords.map((record, rowIndex) => {
+              const rowKey = getKey(record, rowIndex);
+
+              return (
+                <tr key={rowKey} className={tableStyles.bodyRow}>
+                  {columns.map((col, i) => {
+                    const cellKey = `${rowKey}-col-${col.key || i}`;
+
+                    return col.render ? (
+                      React.isValidElement(col.render(record[col.key], record)) &&
+                      col.render(record[col.key], record).type === "td" ? (
+                        React.cloneElement(
+                          col.render(record[col.key], record),
+                          { key: cellKey }
                         )
                       ) : (
-                        <td key={i} className={tableStyles.td}>
-                          {record[col.key]}
+                        <td key={cellKey} className={tableStyles.td}>
+                          {col.render(record[col.key], record)}
                         </td>
                       )
-                  // </td>
-                ))}
+                    ) : (
+                      <td key={cellKey} className={tableStyles.td}>
+                        {record[col.key]}
+                      </td>
+                    );
+                  })}
 
-                {actions?.length > 0 && (
-                  <td className="px-4 py-2 space-x-2 text-center">
-                    {(typeof actions === "function" ? actions(record) : actions).map((action, ai) => {
-                      if (action?.renderText && action?.renderText(record)) {
+                  {actions?.length > 0 && (
+                    <td className="px-4 py-2 space-x-2 text-center">
+                      {(typeof actions === "function" ? actions(record) : actions).map((action, ai) => {
+                        const actionKey = `${rowKey}-action-${ai}`;
+
+                        if (action?.renderText && action?.renderText(record)) {
+                          return (
+                            <span
+                              key={actionKey}
+                              className="text-gray-500 font-medium italic"
+                            >
+                              {action?.renderText(record)}
+                            </span>
+                          );
+                        }
+
                         return (
-                          <span
-                            key={ai}
-                            className="text-gray-500 font-medium italic"
+                          <button
+                            key={actionKey}
+                            className={action?.className}
+                            onClick={() => action.onClick(record)}
                           >
-                            {action?.renderText(record)}
-                          </span>
+                            {action?.label}
+                          </button>
                         );
-                      }
-
-                      return (
-                        <button
-                          key={ai}
-                          className={action?.className}
-                          onClick={() => action.onClick(record)}
-                        >
-                          {action?.label}
-                        </button>
-                      );
-                    })}
-                  </td>
-                )}
-              </tr>
-            ))}
+                      })}
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
 
             {records.length === 0 && (
               <tr>
@@ -106,12 +119,19 @@ function  Table({
             <span className="text-nowrap">
               Page {currentPage} of {totalPages}
             </span>
-            <select name="" id="" onChange={(e) => setRPP(e.target.value)} className={dropdownStyle.base+" max-w-[60px]"} style={{ padding: 5}}>
-              {[10,20,30,40,60,80,100].map( item => (
-                <option value={item}>{item}</option>
+            <select
+              onChange={(e) => setRPP(Number(e.target.value))}
+              className={dropdownStyle.base + " max-w-[60px]"}
+              style={{ padding: 5 }}
+            >
+              {[10, 20, 30, 40, 60, 80, 100].map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
               ))}
             </select>
           </div>
+
           <div className="space-x-2 ms-auto">
             <button
               className={tableStyles.prevBtn}
@@ -120,6 +140,7 @@ function  Table({
             >
               Prev
             </button>
+
             <button
               className={tableStyles.nextBtn}
               onClick={() => setCurrentPage((prev) => prev + 1)}

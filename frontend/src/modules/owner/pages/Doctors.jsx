@@ -164,7 +164,7 @@ function HeaderSection({ searchTerm, setSearchTerm, setIsModalOpen, setSelectedS
 
 
 function AddUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStudent, setSelectedStudent }) {
-  const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
+const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
 
   useEffect(() => {
     if (selectedStudent) {

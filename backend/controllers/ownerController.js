@@ -147,8 +147,163 @@ const addNewDoctor = async(req, res) => {
   }
 }
 
+
+// PAYMENTS FOR DOCTOR
+// GET /owner/payments/filter?year=2025&month=2
+const getDoctorPaymentsByYearMonth = async (req, res) => {
+  try {
+    let { year, month } = req.query;
+
+    // ⏳ Auto-fill current year and month if not provided
+    const now = new Date();
+    if (!year) year = now.getFullYear();
+    if (!month) month = now.getMonth() + 1; // JS months are 0–11
+
+    const sql = `
+      SELECT 
+        dp.id,
+        dp.doctor_id,
+        dp.amount,
+        dp.year_pay,
+        dp.month_number,
+        dp.created_at,
+        d.generated_id,
+        CONCAT(d.doctor_name," ",d.lastname) as full_name        
+      FROM doctor_payments dp
+      INNER JOIN doctors d ON d.id = dp.doctor_id
+      WHERE dp.year_pay = ? AND dp.month_number = ?
+      ORDER BY dp.created_at DESC
+    `;
+
+    const rows = await query(sql, [year, month]);
+
+    return res.status(200).json({
+      status: true,
+      year,
+      month,
+      count: rows.length,
+      data: rows,
+    });
+
+  } catch (err) {
+    console.error("Filter Error:", err);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+    });
+  }
+};
+
+const getDoctorsWithoutPayment = async (req, res) => {
+  try {
+    let { year, month } = req.query;
+
+    // ⏳ Auto-fill current year & month
+    const now = new Date();
+    if (!year) year = now.getFullYear();
+    if (!month) month = now.getMonth() + 1;
+
+    const sql = `
+      SELECT 
+        d.id,
+        d.generated_id,
+        CONCAT(d.doctor_name, " ", d.lastname) AS full_name,
+        d.phone,
+        d.photo
+      FROM doctors d
+      WHERE d.id NOT IN (
+        SELECT doctor_id 
+        FROM doctor_payments 
+        WHERE year_pay = ? AND month_number = ?
+      )
+      ORDER BY d.doctor_name ASC
+    `;
+
+    const rows = await query(sql, [year, month]);
+
+    return res.status(200).json({
+      status: true,
+      year,
+      month,
+      count: rows.length,
+      data: rows,
+    });
+
+  } catch (err) {
+    console.error("Filter Unpaid Error:", err);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+    });
+  }
+};
+
+
+const addPaymentForDoctor = async (req, res) => {
+  try {
+    const ownerId = req.user.id
+    if(ownerId != 1){
+      return res.json({
+        status: false,
+        message: "Just owner can do payments"
+      })
+    }
+    const { doctor_id, month_number, amount } = req.body;
+
+    if (!doctor_id || !month_number || !amount)
+      return res.status(400).json({
+        status: false,
+        message: "doctor_id, month_number and amount are required",
+      });
+
+    const year_pay = new Date().getFullYear();
+
+    // Check if payment already exists
+    const [existing] = await query(`SELECT id FROM doctor_payments WHERE doctor_id=? AND month_number=? AND year_pay=?`, [doctor_id, month_number, year_pay]);
+
+    if (existing) {
+      return res.status(400).json({
+        status: false,
+        message: "Payment already exists for this month and year",
+      });
+    }
+
+    // Insert payment
+    const paid_at = new Date();
+
+    await query(
+      `INSERT INTO doctor_payments 
+       (doctor_id, amount, year_pay, month_number, is_paid, paid_at) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [doctor_id, amount, year_pay, month_number, 1, paid_at]
+    );
+
+    return res.status(201).json({
+      status: true,
+      message: "Payment added successfully",
+      data: {
+        doctor_id,
+        month_number,
+        year_pay,
+        amount,
+        paid_at,
+      },
+    });
+  } catch (error) {
+    console.log("ADD_PAYMENT_ERROR:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+    });
+  }
+};
+
+
 module.exports = {
     showAllDoctors,
     showSingleDoctors,
-    addNewDoctor
+    addNewDoctor,
+    addPaymentForDoctor,
+    getDoctorPaymentsByYearMonth,
+    getDoctorsWithoutPayment
 }

@@ -449,6 +449,173 @@ const deleteMedicine = async (req, res) => {
 };
 // END MEDICINE CONTROLLER
 
+// START PAYMENT CONTROLLER
+const getAllPaymentsOfDoctor = async (req, res) => {
+  try {
+    const doctor_id = req.user.id;
+
+    if (!doctor_id) {
+      return res.status(400).json({
+        status: false,
+        message: "Doctor ID is required"
+      });
+    }
+
+    // 1️⃣ Get all years the doctor has payment records
+    const yearSql = `SELECT DISTINCT year_pay FROM doctor_payments WHERE doctor_id = ? ORDER BY year_pay ASC;`;
+    const years = await query(yearSql, [doctor_id]);
+
+    if (years.length === 0) {
+      return res.json({
+        status: true,
+        doctor_id,
+        payments: {},
+        message: "No payments found for this doctor."
+      });
+    }
+
+    const monthsList = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+
+    const result = {};
+
+    // 2️⃣ Loop through each year and get monthly payments
+    for (const y of years) {
+      const sql = `
+        SELECT 
+          month_number,
+          SUM(amount) AS total_amount,
+          MAX(is_paid) AS is_paid,
+          MAX(paid_at) AS paid_at
+        FROM doctor_payments
+        WHERE doctor_id = ?
+          AND year_pay = ?
+        GROUP BY month_number
+        ORDER BY month_number ASC;
+      `;
+
+      const rows = await query(sql, [doctor_id, y.year_pay]);
+
+      // Build 12-month structure per year
+      result[y.year_pay] = monthsList.map((name, i) => {
+        const found = rows.find(r => r.month_number === i + 1);
+
+        return {
+          month_number: i + 1,
+          month_name: name,
+          total_amount: found ? Number(found.total_amount) : 0,
+          is_paid: found ? Boolean(found.is_paid) : false,
+          paid_at: found?.paid_at || null
+        };
+      });
+    }
+
+    return res.json({
+      status: true,
+      doctor_id,
+      payments: result
+    });
+
+  } catch (error) {
+    console.error("GET PAYMENTS ERROR:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Failed to fetch doctor payments"
+    });
+  }
+};
+// END PAYMENT CONTROLLER
+
+// START PRESCRIPTION HEADER
+const logoUploadMethod = async(req ,res)=>{
+      try {
+        console.log(req.file)
+        if(req.file){
+          photoname = req?.file?.filename
+          return res.status(201).json({ message: 'Logo uploaded successfully', logo_name: req.file.filename  });
+        }
+        return res.status(200).json({ message: "Please check your image"})
+      } catch (error) {
+        console.error('Logo upload error:', error);
+        res.status(500).json({ message: 'Server error' });
+      }
+
+}
+const savePrescriptionHeader = async (req, res) => {
+  try {
+    const doctorId = req.user.id;   
+    const { name_prefex, address_id, registration_number, description, template_design } = req.body;
+      await query(
+        `INSERT INTO prescription_header
+          (doctors_id, name_prefex, address_id, registration_number, template_design, description)
+          VALUES (?, ?, ?, ?, ?, ?)
+          ON DUPLICATE KEY UPDATE
+            name_prefex = VALUES(name_prefex),
+            address_id = VALUES(address_id),
+            registration_number = VALUES(registration_number),
+            template_design = VALUES(template_design),
+            description = VALUES(description)`,
+        [ doctorId, name_prefex, address_id, registration_number, template_design, description ]
+      );
+
+    return res.json({
+      status: true,
+      message: "Prescription header saved successfully"
+    });
+
+  } catch (error) {
+    console.error("HEADER ERROR:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+};
+
+const getPrescriptionHeader = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+
+    // --- Get header + doctor basic info ---
+    const [header] = await query(
+      `
+      SELECT       
+        d.doctor_name, d.lastname, d.phone,
+        d.clinic_name ,
+        ph.id AS ph_id, ph.name_prefex, clinic_logo, signature_logo, address_id, registration_number, description, template_design
+      FROM doctors d
+      LEFT JOIN prescription_header ph ON d.id = ph.doctors_id
+      WHERE d.id = ?
+      `,
+      [doctorId]
+    );
+
+    // --- Get doctor addresses ---
+    const addresses = await query(`SELECT * FROM addresses WHERE doctors_id = ?`, [ doctorId ]);
+
+    return res.json({
+      status: true,
+      data: {
+        ...header,
+        addresses: addresses || []
+      }
+    });
+
+  } catch (error) {
+    console.error("GET HEADER ERROR:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: error.message
+    });
+  }
+};
+
+
+// END PRESCRIPTION HEADER
 module.exports = {
     getAllDetailsOfDoctor,
     updateTiming,
@@ -459,5 +626,9 @@ module.exports = {
     paymentDone,
     addMedicine,
     getAllMedicine,
-    deleteMedicine
+    deleteMedicine,
+    getAllPaymentsOfDoctor,
+    savePrescriptionHeader,
+    getPrescriptionHeader,
+    logoUploadMethod
 }

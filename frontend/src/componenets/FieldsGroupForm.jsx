@@ -4,6 +4,8 @@ import { JalaliDateField } from "./ShamsiDatePicker";
 import ImageUpload from "./ImageUpload";
 import { btnStyle, dropdownStyle, inputStyle, labelStyle } from "../styles/componentsStyle";
 import SectionContainer from "./SectionContainer";
+// import { Select } from "react-select"
+import Select from "react-select";
 
 
 /**
@@ -215,6 +217,41 @@ export default function FieldsGroupForm({
             })}
           </div>
           {getNestedError(fieldKey) && <p className="text-red-600 text-xs mt-1">⭕ {getNestedError(fieldKey)}</p>}
+        </div>
+      );
+    }
+
+    // Searchable Select (React-Select)
+    if (field.type === "searchable-select") {
+      return (
+        <div key={fieldKey} className="flex flex-col">
+          <label className={labelStyle.primary}>{field.label}</label>
+
+          <Controller
+            name={fieldKey}
+            control={control}
+            rules={field.validation}
+            render={({ field: ctrl }) => (
+              <Select
+                {...ctrl}
+                options={field.options}
+                placeholder={field.placeholder || `Select ${field.label}`}
+                isSearchable={true}
+                onChange={(val) => ctrl.onChange(val?.value)}
+                value={
+                  field.options.find(o => o.value === ctrl.value) || null
+                }
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
+            )}
+          />
+
+          {getNestedError(fieldKey) && (
+            <p className="text-red-600 text-xs mt-1">
+              ⭕ {getNestedError(fieldKey)}
+            </p>
+          )}
         </div>
       );
     }

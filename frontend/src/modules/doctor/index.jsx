@@ -8,6 +8,10 @@ import DoctorLayout from '../../layouts/DoctorLayout';
 import Medicine from './pages/Medicine';
 import { useEffect, useState } from 'react';
 import { getPaymentsDetails } from '../../api/me';
+import Payments from './pages/Payments';
+import PrescriptionPage from './pages/PrescriptionPage';
+import Appoinment from './pages/Appoinment';
+import PrescriptionSettings from './pages/PrescriptionSettings';
 
 
 const DoctorModule = () => {
@@ -26,6 +30,10 @@ const DoctorModule = () => {
         <Route path="dashboard" element={<DoctorDashboard />} />
 
         <Route path="medicine" element={<Medicine payments={payments} />} />
+        <Route path="payments" element={<Payments payments={payments} />} />
+        <Route path="prescription" element={<PrescriptionPage payments={payments} />} />
+        <Route path="prescription/settings" element={<PrescriptionSettings payments={payments} />} />
+        <Route path="appoinment" element={<Appoinment payments={payments} />} />
        
 
         <Route path="profile" element={<Profile title="Doctor Profile" />} />

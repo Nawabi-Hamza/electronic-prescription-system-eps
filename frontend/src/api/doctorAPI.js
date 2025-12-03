@@ -29,3 +29,24 @@ export async function deleteMedicine(id) {
     throw error;
   }
 }
+
+export async function getAllPayments({ seter }){
+  try{
+      const res = await api.get("/doctor/payments")
+      seter(res.data.payments)
+  }catch(err){
+      console.error('Doctor Details:',err)
+  }
+}
+
+
+export  const fetchPrescriptionHeader = async ({ seter }) => {
+    try {
+      const res = await api.get("/doctor/prescription/header");
+      if (res.data.status && res.data.data) {
+        seter(res.data.data);
+      }
+    } catch (err) {
+      console.error("Fetch header error:", err);
+    }
+  };

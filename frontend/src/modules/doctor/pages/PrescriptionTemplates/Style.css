@@ -1,0 +1,29 @@
+
+
+@media print {
+  th:nth-child(1) { width: 26%; }
+  th:nth-child(2) { width: 20%; }
+  th:nth-child(3) { width: 14%; }
+  th:nth-child(4) { width: 20%; }
+  th:nth-child(5) { width: 20%; }
+
+  input {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+   #content-sidebar {
+    white-space: normal !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .ql-editor {
+    white-space: normal !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+  }
+
+
+}

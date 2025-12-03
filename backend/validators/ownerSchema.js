@@ -46,4 +46,37 @@ const addDoctorSchema = Joi.object({
         }),
 });
 
-module.exports = { addDoctorSchema };
+
+const addDoctorPaymentSchema = Joi.object({
+    doctor_id: Joi.number()
+        .integer()
+        .required()
+        .messages({
+            "any.required": "Doctor ID is required",
+            "number.base": "Doctor ID must be a number",
+        }),
+
+    month_number: Joi.number()
+        .integer()
+        .min(1)
+        .max(12)
+        .required()
+        .messages({
+            "any.required": "Month number is required",
+            "number.min": "Month must be between 1 and 12",
+            "number.max": "Month must be between 1 and 12",
+        }),
+
+    amount: Joi.number()
+        .min(0)          // ✅ cannot be less than 0
+        .max(100000)     // ✅ cannot be more than 100000
+        .required()
+        .messages({
+            "any.required": "Amount is required",
+            "number.min": "Amount cannot be less than 0",
+            "number.max": "Amount cannot be more than 100000",
+        })
+});
+
+
+module.exports = { addDoctorSchema, addDoctorPaymentSchema };

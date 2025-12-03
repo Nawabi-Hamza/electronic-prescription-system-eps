@@ -47,11 +47,20 @@ const clientUploadFileLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const clientUpdateHeaderLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hour
+  max: 5,
+  message: { message: '⏳ Your limit reach 5 time upload files, your can upload file tomorrow after 24 Hour.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 module.exports = {
     limitAPR,
     loginLimiter,
     ownerLoginLimiter,
     clientLoginLimiter,
-    clientUploadFileLimiter
+    clientUploadFileLimiter,
+    clientUpdateHeaderLimiter
 
 }

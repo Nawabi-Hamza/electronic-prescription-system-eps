@@ -6,6 +6,7 @@ import OwnerLayout from '../../layouts/OwnerLayout';
 import OwnerDashboard from './pages/Dashboard';
 import Doctors from './pages/Doctors';
 import ProtectedRoute from '../../routes/ProtectedRoute';
+import Payments from './pages/Payments';
 
 
 const OwnerModule = () => {
@@ -22,12 +23,13 @@ const OwnerModule = () => {
         <Route path="/" element={<OwnerDashboard />} />
         <Route path="dashboard" element={<OwnerDashboard />} />
         <Route path="doctors" element={<Doctors />} />
+        <Route path="payments" element={<Payments />} />
 
         <Route path="profile" element={<Profile title="Owner Profile" />} />
         <Route path="ai-mode" element={<AiMode />} />
-        <Route path="*" element={<NotFoundPage />} />
       </Route>
 
+        <Route path="*" element={<NotFoundPage />} />
       {/* <Route path="*" element={<Navigate to="dashboard" replace />} /> */}
     </Routes>
   );

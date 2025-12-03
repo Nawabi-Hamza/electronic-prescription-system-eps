@@ -11,6 +11,30 @@ export const fetchUsers = async ({ seter }) => {
   }
 };
 
+export const loadDoctorsPayments = async ({ seter, year, month }) => { 
+  try {
+    const res = await api.get("/owner/payments/filter", {
+      params: { year, month }   // <-- send to backend
+    });
+
+    return seter(res.data.data || []);
+  } catch (err) {
+    console.log("Error loading payments:", err);
+  }
+};
+
+export const loadDoctorsDidNotPayments = async ({ seter, year, month }) => { 
+  try {
+    const res = await api.get("/owner/payments/unpaid/filter", {
+      params: { year, month }   // <-- send to backend
+    });
+
+    return seter(res.data.data || []);
+  } catch (err) {
+    console.log("Error loading payments:", err);
+  }
+};
+
 // fetchUsersDetails
 
 export async function fetchUsersDetails({ user_id, seter }) {
@@ -42,3 +66,5 @@ export async function createUser(data) {
     throw err;
   }
 }
+
+

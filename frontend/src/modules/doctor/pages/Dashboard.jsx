@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import SectionContainer from "../../../componenets/SectionContainer";
 import { useAuth } from "../../../hooks/useAuth";
 import { badge, btnStyle, gridStyle } from "../../../styles/componentsStyle";
@@ -54,7 +54,7 @@ const DoctorDashboard = ({ payments }) => {
       {user && (
         <div className={gridStyle.item2atRow}>
           <SectionContainer title="Prescription">
-              <Link to="">
+              <Link to="./prescription">
                 <div className={`${cardStyle.container} from-lime-500/10 to-lime-500/5`}>
                   <span className={cardStyle.content}>
                     <NotepadTextDashed className="h-20 w-20 text-lime-500" />
@@ -66,7 +66,7 @@ const DoctorDashboard = ({ payments }) => {
               </Link>
           </SectionContainer>
           <SectionContainer title="Appoinment">
-              <Link to="">
+              <Link to="./appoinment">
                 <div className={`${cardStyle.container} from-indigo-500/10 to-indigo-500/5`}>
                   <span className={cardStyle.content}>
                     <Accessibility className="h-20 w-20 text-indigo-500"/>
@@ -90,7 +90,7 @@ const DoctorDashboard = ({ payments }) => {
               </Link>
           </SectionContainer>
           <SectionContainer title="Payments">
-              <Link to={"./profile"}>
+              <Link to={"./payments"}>
                 <div className={`${cardStyle.container} from-pink-500/10 to-pink-500/5`}>
                   <span className={cardStyle.content}>
                     <HandCoins className={` h-20 w-20 text-pink-500`}/>

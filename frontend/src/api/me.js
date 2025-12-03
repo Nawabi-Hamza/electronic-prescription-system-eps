@@ -22,6 +22,10 @@ export async function getDetails({ seter }){
 
 // logged in user details
 export const fetchMyProfile = async () => {
+  if(localStorage.getItem("id") === "owner"){
+    const response = await api.get('/auth/owner/identify'); 
+    return response.data.data;  
+  }
   const response = await api.get('/auth/doctor/identify'); 
   return response.data.data;
 };

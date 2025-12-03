@@ -14,7 +14,7 @@ const AuthModule = () => {
       <Route element={<AuthLayout />}>
         <Route path="/" element={<Login />} />
         <Route path="login" element={<Login />} />
-        <Route path="owner/login" element={<OwnerLogin />} />
+        <Route path="login/owner" element={<OwnerLogin />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<NotFoundPage />} />

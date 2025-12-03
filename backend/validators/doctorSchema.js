@@ -34,6 +34,17 @@ const addMedicineSchema = Joi.object({
 });
 
 
+const prescriptionHeaderSchema = Joi.object({
+  name_prefex: Joi.string().max(20).allow(null, ""),
+  registration_number: Joi.string().max(50).allow(null, ""),
+  address_id: Joi.string().max(10).allow(null, ""),
+  description: Joi.string().max(100).allow(null, ""),
+  template_design: Joi.string().allow(null, '')
+});
+
+
+
 module.exports = {
-    addMedicineSchema
+    addMedicineSchema,
+    prescriptionHeaderSchema
 };

@@ -36,7 +36,9 @@
     "react-markdown": "^10.1.0",
     "react-multi-date-picker": "^4.5.2",
     "react-ndate-checker": "^8.0.2",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^7.8.0",
+    "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.2"
   },
