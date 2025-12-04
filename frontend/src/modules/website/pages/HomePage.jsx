@@ -147,7 +147,7 @@ function HomePage() {
               Fast, secure, and doctor-friendly EPS platform designed to make healthcare simpler, safer, and paper-free.
             </p>
 
-            <div className="mt-6 flex gap-4">
+            <div className="mt-6 grid lg:grid-cols-2 gap-4">
               <Link
                 to="/appointment"
                 className="px-6 py-3 bg-sky-600 text-white rounded-xl hover:bg-sky-700 shadow"
