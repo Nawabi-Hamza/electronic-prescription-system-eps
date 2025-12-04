@@ -5,12 +5,13 @@ import AuthModule from '../modules/auth';
 import Unauthorized from '../modules/common/Unauthorized'; 
 import OwnerModule from '../modules/owner';
 import DoctorModule from '../modules/doctor';
+import WebModule from '../modules/website';
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Auth routes */}
-      <Route path="/" element={<AuthModule />} />
+      <Route path="/" element={<WebModule />} />
       <Route path="auth/*" element={<AuthModule />} />
       
       {/* Owner routes */}
@@ -23,7 +24,7 @@ const AppRoutes = () => {
       <Route path="unauthorized" element={<Unauthorized />} />
 
       {/* Default redirect to auth login */}
-      <Route path="*" element={<Navigate to="/auth" replace />} />
+      {/* <Route path="*" element={<Navigate to="/auth" replace />} /> */}
     </Routes>
   );
 };

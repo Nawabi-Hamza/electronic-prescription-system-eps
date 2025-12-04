@@ -138,219 +138,180 @@ function DoctorDetails({ header }) {
 }
 
 
-function PrescriptionForm({ header }) {
-  const [clinicLogo, setClinicLogo] = useState(null);
-  const [signatureLogo, setSignatureLogo] = useState(null);
+function ClientDoctument({ header }) {
+  const [profile, setProfile] = useState(header?.clinic_logo);
+  const [signature, setSignature] = useState(header?.signature_logo);
 
-  const headerFields = [{
-      name: "media",
-      label: "Logos & Signature",
-      fields: [
-        {
-          name: "clinic_logo",
-          label: "Clinic Logo",
-          type: "file",
-          required: false,
-          accept: "image/*",
-        },
-        {
-          name: "signature_logo",
-          label: "Signature Image",
-          type: "file",
-          required: false,
-          accept: "image/*",
-        },
-      ],
-    }];
-
-  const { register, handleSubmit, control, setValue, trigger, formState: { errors, isSubmitting } } = useForm({
-    defaultValues: {
-      template_design: header?.template_design || ""
-    }
+  const [uploadModal, setUploadModal] = useState({
+    open: false,
+    type: null, // "clinic" or "signature"
   });
 
- 
-
-  // -------------------- SUBMIT HANDLER --------------------
-  const onSubmit = async (formValues) => {
-
-    try {
-
-      const fd = new FormData();
-
-      // Add text values
-      Object.entries(formValues).forEach(([k, v]) => fd.append(k, v));
-
-      // Add files (MUST NOT be undefined)
-      if (clinicLogo instanceof File) {
-        fd.append("clinic_logo", clinicLogo);
-      }
-
-      if (signatureLogo instanceof File) {
-        fd.append("signature_logo", signatureLogo);
-      }
-
-      const res = await api.post("/doctor/prescription/header", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      toast.success("Saved Successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Upload failed!");
-    } 
-  };
-
-  // ---------------------------------------------------------
-  //          FINAL RETURN (CLEAN + FIXED PROPS)
-  // ---------------------------------------------------------
   return (
-
-      <FieldsGroupForm
-        fields={headerFields}
-        register={register}
-        control={control}
-        errors={errors}
-        trigger={trigger}
-        setValue={setValue}
-        isSubmitting={isSubmitting}
-        onSubmit={handleSubmit(onSubmit)}
-        // required when editing
-        defaultValues={header}
-      />
-
-  );
-}
-
-
-function ClientDoctument({ header }){
-    const [profile, setProfile] = useState(header?.clinic_logo)
-    const [signature, setSignature] = useState(header?.signature_logo)
-
-    const [clinicLogoModal,setClinicLogoModal] = useState(false)
-
-    return(
-     <SectionContainer title='Doctor Profile' className=' md:p-4 bg-white rounded-md'>
+    <SectionContainer title="Doctor Profile" className="md:p-4 bg-white rounded-md">
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="md:flex gap-2 items-center p-4 shadow-md shadow-slate-200 rounded mb-6 relative">
-            {profile && (
-              <ImageViewer
-                imagePath={`/uploads/clinic_logo/${profile}`}
-                altText={`doctor`}
-                className="w-auto h-24 rounded-md object-cover "
-                showPreview={false}
-              />
-              )}
-    
-            <div className='mt-4 md:mt-0'>
-              <h2 className="text-xl font-semibold capitalize">
-                Clinic Logo
-              </h2>
-            </div>
 
-            <div className=' ml-auto'>
-              <SquarePen className={icon.primary} onClick={() => setClinicLogoModal(true)} />
-            </div>
+        {/* CLINIC LOGO */}
+        <div className="md:flex gap-2 items-center p-4 shadow-md shadow-slate-200 rounded mb-6 relative">
+          {profile && (
+            <ImageViewer
+              imagePath={`/uploads/clinic_logo/${profile}`}
+              altText="clinic"
+              className="w-auto h-24 rounded-md object-cover"
+              showPreview={false}
+            />
+          )}
+
+          <div className="mt-4 md:mt-0">
+            <h2 className="text-xl font-semibold capitalize">Clinic Logo</h2>
+          </div>
+
+          <div className="ml-auto">
+            <SquarePen
+              className={icon.primary}
+              onClick={() => setUploadModal({ open: true, type: "clinic" })}
+            />
+          </div>
         </div>
 
+        {/* SIGNATURE */}
         <div className="md:flex gap-2 items-center p-4 shadow-md shadow-slate-200 rounded mb-6 relative">
-            {signature && (
-              <ImageViewer
-                imagePath={`/uploads/doctor_signatures/${signature}`}
-                altText={`doctor`}
-                className="w-auto h-24 rounded-md object-cover "
-                showPreview={false}
-              />
-              )}
-    
-            <div className='mt-4 md:mt-0'>
-              <h2 className="text-xl font-semibold capitalize">
-                Your Signature
-              </h2>
-            </div>
+          {signature && (
+            <ImageViewer
+              imagePath={`/uploads/doctor_signatures/${signature}`}
+              altText="signature"
+              className="w-auto h-24 rounded-md object-cover"
+              showPreview={false}
+            />
+          )}
 
-            <div className=' ml-auto'>
-              <SquarePen className={icon.primary} onClick={() => setClinicLogoModal(true)} />
-            </div>
+          <div className="mt-4 md:mt-0">
+            <h2 className="text-xl font-semibold capitalize">Your Signature</h2>
+          </div>
+
+          <div className="ml-auto">
+            <SquarePen
+              className={icon.primary}
+              onClick={() => setUploadModal({ open: true, type: "signature" })}
+            />
+          </div>
         </div>
 
       </div>
 
-        <UpdateProfilePicture profile={profile} setProfile={setProfile} isModalOpen={clinicLogoModal} closeModal={()=> setClinicLogoModal(false)} setIsProfileModal={setClinicLogoModal} />
-      </SectionContainer>
-    )
-
+      <UpdatePrescriptionFile
+        isModalOpen={uploadModal.open}
+        type={uploadModal.type}
+        closeModal={() => setUploadModal({ open: false, type: null })}
+        setProfile={uploadModal.type === "clinic" ? setProfile : setSignature}
+        currentImage={uploadModal.type === "clinic" ? profile : signature}
+      />
+    </SectionContainer>
+  );
 }
 
 
-function UpdateProfilePicture({ isModalOpen, closeModal, setIsProfileModal, setProfile, profile }) {
+
+
+function UpdatePrescriptionFile({ isModalOpen, closeModal, type, setProfile, currentImage }) {
   const { handleSubmit, reset, formState: { isSubmitting } } = useForm();
-  const [progress,setProgress] = useState(0)
-  const [isProgressOpen,setIsProgressOpen] = useState(false)
-  const [profilePic, setProfilePic] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [isProgressOpen, setIsProgressOpen] = useState(false);
+  const [file, setFile] = useState(null);
 
-  const handleProfileSelect = (file) => {
-    setProfilePic(file[0]); // single file
-  };
-  
+  const handleSelect = (f) => setFile(f[0]);
+
   const onSubmit = async () => {
-    if(!profilePic) throw toast.error("Please select your new profile!")      
+    if (!file) return toast.error("Please select an image");
+
     try {
+      setIsProgressOpen(true);
 
-      return console.log(profilePic)
-      setIsProgressOpen(true)
+      const fd = new FormData();
+      const fieldName = type === "clinic" ? "clinic_logo" : "signature_logo";
+      fd.append(fieldName, file);
 
-      const res = await confirm.updateUserProfile(profilePic, (precent) =>{
-        setProgress(precent)
+      // Debug
+      for (let [k, v] of fd.entries()) console.log("FD =", k, v);
+
+      const endpoint =
+        type === "clinic"
+          ? "/doctor/prescription/header/clinic-logo"
+          : "/doctor/prescription/header/signature";
+
+      const res = await api.post(endpoint, fd, {
+        headers: { "Content-Type": undefined },
+        onUploadProgress: (e) =>
+          setProgress(Math.round((e.loaded * 100) / e.total)),
       });
-      setIsProgressOpen(false)
-      toast.success(res.message);
-      setProfile(res.photo)
+
+       console.log(res)
+
+      toast.success("Updated successfully");
+      setProfile(res.data.filename);
       reset();
-      setIsProfileModal(false);
+      closeModal();
     } catch (err) {
-      if (err?.response?.status === 400) toast.error(err?.response?.data?.message);
-      else toast.error(err?.response?.data?.message);
-    }finally{
-      setIsProgressOpen(false)
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Upload failed");
+    } finally {
+      setIsProgressOpen(false);
     }
   };
 
+
   return (
-    <Modal isOpen={isModalOpen} containerStyle="xsm" onClose={closeModal} title="Upload New Profile">
-      <ProgressContainer progress={progress} isOpen={isProgressOpen}/>
-      <form onSubmit={handleSubmit(onSubmit)} className={gridStyle.item2atRow}>
-        
-        {profile && (
-              <ImageViewer
-                imagePath={`/uploads/clinic_logo/${profile}`}
-                altText={'doctor'}
-                className="w-auto h-auto rounded-md object-cover mr-6"
-                showPreview={false}
-              />
-              )
-        }
-        <div >
-          <label className={labelStyle.primary}>New Profile Picture</label>
+    <Modal
+      isOpen={isModalOpen}
+      containerStyle="xsm"
+      onClose={closeModal}
+      title={`Upload ${type === "clinic" ? "Clinic Logo" : "Signature"}`}
+    >
+      <ProgressContainer progress={progress} isOpen={isProgressOpen} />
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={gridStyle.item2atRow}
+        encType="multipart/form-data"
+      >
+        {currentImage && (
+          <ImageViewer
+            imagePath={
+              type === "clinic"
+                ? `/uploads/clinic_logo/${currentImage}`
+                : `/uploads/doctor_signatures/${currentImage}`
+            }
+            className="w-auto h-auto rounded-md object-cover mr-6"
+            showPreview={false}
+          />
+        )}
+
+        <div>
+          <label className={labelStyle.primary}>
+            Upload New {type === "clinic" ? "Clinic Logo" : "Signature"}
+          </label>
+
           <ImageUpload
-            onImageSelect={handleProfileSelect}
+            onImageSelect={handleSelect}
             maxImages={1}
-            columns={1}
-            rows={1}
             accept="image/*"
-            aspectRatio="1/1"
-            label="Upload Profile Picture"
-            description="Click to upload a profile picture"
+            label="Upload Image"
             className="w-full"
+            aspectRatio="1/1"
           />
         </div>
 
-        {/* Submit */}
         <div className="col-span-full flex justify-end mt-4">
           <button type="submit" disabled={isSubmitting} className={btnStyle.filled}>
             {isSubmitting ? "Saving..." : "Update"}
           </button>
-          <button type="button" onClick={closeModal} className={`${btnStyle.secondary} ml-2`} disabled={isSubmitting}>
+
+          <button
+            type="button"
+            onClick={closeModal}
+            className={`${btnStyle.secondary} ml-2`}
+            disabled={isSubmitting}
+          >
             Cancel
           </button>
         </div>
@@ -358,3 +319,5 @@ function UpdateProfilePicture({ isModalOpen, closeModal, setIsProfileModal, setP
     </Modal>
   );
 }
+
+

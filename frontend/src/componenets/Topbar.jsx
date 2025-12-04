@@ -16,7 +16,7 @@ export default function Topbar({ children }) {
           {appConfig.name}
         </h1>
         <span className={topbarStyles.welcome}>
-          👋🏻 {user?.full_name}
+          👋🏻 {user?.full_name ? user.full_name:"Take care of your health"}
         </span>
       </div>
       {children}

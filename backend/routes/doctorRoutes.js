@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { getAllDetailsOfDoctor, updateTiming, addSpecialization, addAddress, deleteSpecialization, deleteAddress, paymentDone,
          addMedicine, getAllMedicine, deleteMedicine, getAllPaymentsOfDoctor, savePrescriptionHeader, 
-         getPrescriptionHeader,
-         logoUploadMethod} = require('../controllers/doctorController');
+         getPrescriptionHeader, updateClinicLogo,
+         logoUploadMethod,
+         updateSignature} = require('../controllers/doctorController');
 
 // Middlewares
 const authMiddleware = require('../middlewares/auth');
@@ -12,7 +13,9 @@ const { sanitizeInput } = require('../middlewares/sanitizeHtml');
 const { checkDoctorPayment } = require('../middlewares/checkDoctorPayment');
 const validateSchema = require('../validators/validateSchema');
 const { addMedicineSchema, prescriptionHeaderSchema } = require('../validators/doctorSchema');
-const { clientUpdateHeaderLimiter } = require('../middlewares/rateLimit');
+const { clientUpdateHeaderLimiter, clientUploadFileLimiter } = require('../middlewares/rateLimit');
+const { uploadFile } = require('../middlewares/multer');
+const { cleanupFileOnError } = require('../middlewares/cleanUpFileOnError');
 
 // Auth & role middleware
 router.use(authMiddleware);
@@ -20,26 +23,28 @@ router.use(roleCheck(['doctor']))
 router.use(sanitizeInput)
 
 
-const uploadClinicLogo =   {
-    fieldName: "clinic_logo",
-    uploadDir: "clinic_logos",
-    maxFileSizeMB: 5,
-    maxFiles: 1,
-    multiple: false,
-    allowedTypes: ["image/"],
-    allowedExt: [".jpg", ".jpeg", ".png"],
-    required: false
-}
-const uploadSignatureLogo =   {
-    fieldName: "signature_logo",
-    uploadDir: "doctor_signatures",
-    maxFileSizeMB: 5,
-    maxFiles: 1,
-    multiple: false,
-    allowedTypes: ["image/"],
-    allowedExt: [".jpg", ".jpeg", ".png"],
-    required: false
-}
+const uploadClinicLogo = {
+  fieldName: "clinic_logo",
+  uploadDir: "clinic_logo",
+  maxFileSizeMB: 5,
+  maxFiles: 1,
+  multiple: false,
+  allowedTypes: ["image/"],
+  allowedExt: [".jpg", ".jpeg", ".png"],
+  required: true
+};
+
+const uploadDoctorSignature = {
+  fieldName: "signature_logo",
+  uploadDir: "doctor_signatures",
+  maxFileSizeMB: 5,
+  maxFiles: 1,
+  multiple: false,
+  allowedTypes: ["image/"],
+  allowedExt: [".jpg", ".jpeg", ".png"],
+  required: true
+};
+
 
 
 
@@ -65,6 +70,18 @@ router.delete("/medicine/:id", checkDoctorPayment, deleteMedicine)
 // Prescription Header
 router.get("/prescription/header", getPrescriptionHeader)
 router.post("/prescription/header", clientUpdateHeaderLimiter, validateSchema(prescriptionHeaderSchema), checkDoctorPayment, savePrescriptionHeader);
+
+
+router.post("/prescription/header/clinic-logo", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadClinicLogo), updateClinicLogo);
+router.post("/prescription/header/signature", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadDoctorSignature), updateSignature);
+
+
+// router.post(
+//   "/prescription/header-file/signature",
+//   checkDoctorPayment,
+//   uploadFile(uploadDoctorSignature),
+//   updateSignature
+// );
 
   
 

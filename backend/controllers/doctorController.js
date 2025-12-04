@@ -2,6 +2,8 @@ const { query } = require("../config/query")
 const redis = require("../config/redis");
 const { getOrSetCache, invalidateKey } = require("../middlewares/cache");
 const bcrypt = require("bcryptjs");
+const fs = require("fs")
+const path = require("path")
 
 
 const getAllDetailsOfDoctor = async (req, res) => {
@@ -543,6 +545,7 @@ const logoUploadMethod = async(req ,res)=>{
       }
 
 }
+
 const savePrescriptionHeader = async (req, res) => {
   try {
     const doctorId = req.user.id;   
@@ -614,6 +617,102 @@ const getPrescriptionHeader = async (req, res) => {
   }
 };
 
+const updateClinicLogo = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+    const filename = req.file?.filename;
+
+    if (!filename) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Check if doctor already has a prescription header row
+    const [existing] = await query(
+      `SELECT id FROM prescription_header WHERE doctors_id = ?`,
+      [doctorId]
+    );
+
+    if (existing) {
+      // Update existing record
+      await query(`UPDATE prescription_header SET clinic_logo = ? WHERE doctors_id = ?`,[filename, doctorId]);
+    } else {
+      // Insert new record
+      await query(`INSERT INTO prescription_header (doctors_id, name_prefex, clinic_logo, template_design) VALUES (?, ?, ? ,?)`,[doctorId, 'Dr.', filename, 'simple']);
+    }
+
+    res.json({
+      message: "Clinic logo updated successfully!",
+      filename: filename,
+    });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating clinic logo" });
+  }
+};
+
+
+const deleteFileIfExists = (filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log("Deleted old file:", filePath);
+    }
+  } catch (err) {
+    console.error("Error deleting old file:", err);
+  }
+};
+
+const updateSignature = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+    const filename = req.file?.filename;
+
+    if (!filename) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // Get old signature of doctor
+    const [existing] = await query(
+      `SELECT id, signature_logo FROM prescription_header WHERE doctors_id = ?`,
+      [doctorId]
+    );
+    console.log(existing)
+    if (existing) {
+      // DELETE OLD FILE (if exists)
+      if (existing.signature_logo) {
+        const oldFilePath = path.join(
+          "uploads/doctor_signatures/",
+          existing.signature_logo
+        );
+        deleteFileIfExists(oldFilePath);
+      }
+
+      // UPDATE NEW FILE
+      await query(
+        `UPDATE prescription_header SET signature_logo = ? WHERE doctors_id = ?`,
+        [filename, doctorId]
+      );
+    } else {
+      // INSERT NEW
+      await query(
+        `INSERT INTO prescription_header (doctors_id, name_prefex, signature_logo, template_design)
+         VALUES (?, ?, ?, ?)`,
+        [doctorId, "Dr.", filename, "simple"]
+      );
+    }
+
+    res.json({
+      message: "Signature updated successfully!",
+      filename: filename,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating signature" });
+  }
+};
+
+
 
 // END PRESCRIPTION HEADER
 module.exports = {
@@ -630,5 +729,7 @@ module.exports = {
     getAllPaymentsOfDoctor,
     savePrescriptionHeader,
     getPrescriptionHeader,
-    logoUploadMethod
+    logoUploadMethod,
+    updateClinicLogo,
+    updateSignature
 }

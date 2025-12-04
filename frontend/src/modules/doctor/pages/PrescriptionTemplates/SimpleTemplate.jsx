@@ -26,18 +26,7 @@ const formatMonthDay = (iso) =>
 
 /* ---------- Main Component ---------- */
 export default function SimpleTemplate({ doctor, medicines }) {
-  const {
-    doctor_name,
-    lastname,
-    clinic_name,
-    name_prefex,
-    clinic_logo,
-    signature_logo,
-    registration_number,
-    description,
-    addresses,
-    phone,
-  } = doctor || {};
+  const { doctor_name, lastname, clinic_name, name_prefex, clinic_logo, signature_logo, registration_number, description, addresses, phone, } = doctor || {};
 
   const logoUrl = clinic_logo ? `/uploads/clinic_logo/${clinic_logo}` : null;
   const signatureUrl = signature_logo ? `/uploads/doctor_signatures/${signature_logo}` : null;
@@ -214,9 +203,9 @@ function Header({ logoUrl, name_prefex, doctor_name, lastname, clinic_name, regi
 
       <div className="border-y p-2 px-4 mt-2" id="patient_info">
         <div className="grid grid-cols-5 text-sm justify-between">
-          <span className="col-span-2"><strong>Name:</strong> {patientName || "__________"}</span>
-          <span><strong>Age:</strong> {patientAge || "__________"}</span>
-          <span><strong>Gender:</strong> {patientGender || "__________"}</span>
+          <span className="col-span-2"><strong>Name:</strong> {patientName || "___________________________"}</span>
+          <span><strong>Age:</strong> {patientAge || "____________"}</span>
+          <span><strong>Gender:</strong> {patientGender || "_________"}</span>
           <span><strong>Next Visit:</strong> {formatMonthDay(nextVisit)}</span>
         </div>
       </div>
