@@ -1,6 +1,6 @@
 {
-  "name": "Your App",
-  "short_name": "App",
+  "name": "Paikar Electronic Prescription System",
+  "short_name": "Paikar (EPS)",
   "start_url": "/",
   "display": "standalone",
   "icons": [
