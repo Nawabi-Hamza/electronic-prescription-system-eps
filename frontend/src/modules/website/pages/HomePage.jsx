@@ -237,46 +237,46 @@ export default HomePage;
 
 
 
-function InstallPWA() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showButton, setShowButton] = useState(false);
+// function InstallPWA() {
+//   const [deferredPrompt, setDeferredPrompt] = useState(null);
+//   const [showButton, setShowButton] = useState(false);
 
-  useEffect(() => {
-    const handler = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setShowButton(true);
-    };
+//   useEffect(() => {
+//     const handler = (e) => {
+//       e.preventDefault();
+//       setDeferredPrompt(e);
+//       setShowButton(true);
+//     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+//     window.addEventListener("beforeinstallprompt", handler);
 
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
-    };
-  }, []);
+//     return () => {
+//       window.removeEventListener("beforeinstallprompt", handler);
+//     };
+//   }, []);
 
-  const handleInstall = () => {
-    if (!deferredPrompt) return;
+//   const handleInstall = () => {
+//     if (!deferredPrompt) return;
 
-    deferredPrompt.prompt();
+//     deferredPrompt.prompt();
 
-    deferredPrompt.userChoice.then(() => {
-      setDeferredPrompt(null);
-      setShowButton(false);
-    });
-  };
+//     deferredPrompt.userChoice.then(() => {
+//       setDeferredPrompt(null);
+//       setShowButton(false);
+//     });
+//   };
 
-  if (!showButton) return null;
+//   if (!showButton) return null;
 
-  return (
-    <button
-      onClick={handleInstall}
-      className="fixed bottom-5 right-5 bg-sky-600 text-white px-4 py-2 rounded-lg shadow-lg"
-    >
-      Install App
-    </button>
-  );
-}
+//   return (
+//     <button
+//       onClick={handleInstall}
+//       className="fixed bottom-5 right-5 bg-sky-600 text-white px-4 py-2 rounded-lg shadow-lg"
+//     >
+//       Install App
+//     </button>
+//   );
+// }
 
 
 function PWASection() {
@@ -352,12 +352,12 @@ function PWASection() {
           </div>
         </div>
         {/* <InstallPWA /> */}
-        {/* <button
+        <button
           id="pwa-install-main"
           className=" mt-10 px-8 py-4 bg-sky-600 text-white text-lg rounded-xl shadow hover:bg-sky-700 transition"
         >
           Install App
-        </button> */}
+        </button>
       </div>
     </section>
   );
