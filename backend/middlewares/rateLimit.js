@@ -55,6 +55,16 @@ const clientUpdateHeaderLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const visitorTakeAppointmentLimit = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours
+  max: 5, // user can submit 5 appointments per day
+  message: {
+    status: false,
+    message: "⏳ You have reached the daily limit of 5 appointments. Try again after 24 hours."
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 
 module.exports = {
@@ -63,6 +73,7 @@ module.exports = {
     ownerLoginLimiter,
     clientLoginLimiter,
     clientUploadFileLimiter,
-    clientUpdateHeaderLimiter
+    clientUpdateHeaderLimiter,
+    visitorTakeAppointmentLimit
 
 }

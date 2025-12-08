@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import ImageViewer from "../../../../componenets/ImageViewer";
 import "react-quill/dist/quill.snow.css";
 import "./Style.css";
-import { btnStyle, dropdownStyle, inputStyle, labelStyle } from "../../../../styles/componentsStyle";
+import { btnStyle, dropdownStyle, inputStyle, labelStyle, tableStyles } from "../../../../styles/componentsStyle";
 import SectionContainer from "../../../../componenets/SectionContainer";
 import ReactQuill from "react-quill";
 import CreatableSelect from "react-select/creatable";
+import { Printer } from "lucide-react";
 
 /* ---------- Quill config ---------- */
 const modules = {
@@ -94,8 +95,8 @@ export default function SimpleTemplate({ doctor, medicines }) {
   return (
     <div className="text-black">
       <div className="flex justify-end mb-4 print:hidden">
-        <button onClick={printPage} className={`${btnStyle.filled} fixed bottom-10 z-10`}>
-          🖨️ Print
+        <button onClick={printPage} className={`${btnStyle.filled} fixed bottom-10 flex gap-1 items-center z-10`}>
+          <Printer size={18} /> Print
         </button>
       </div>
 
@@ -144,13 +145,13 @@ export default function SimpleTemplate({ doctor, medicines }) {
 
         <div id="main-section" className="grid overflow-hidden md:grid-cols-3 gap-2 mt-2 bg-white p-2 rounded">
           <div className="md:col-span-1 w-full bg-sky-50 p-2 rounded">
-            <ReactQuill theme="snow" value={content} onChange={setContent} modules={modules} formats={formats} className="print:hidden h-64" />
+            <ReactQuill theme="snow" value={content} onChange={setContent} modules={modules} formats={formats} className="print:hidden h-auto" />
             <div id="content-sidebar" className="hidden print:block p-2 rounded">
               <div dangerouslySetInnerHTML={{ __html: content }} />
             </div>
           </div>
 
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 overflow-auto">
             <Body
               medicineSearch={medicineSearch}
               setMedicineSearch={setMedicineSearch}
@@ -246,7 +247,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
   const remove = (i) => setItems((p) => p.filter((_, idx) => idx !== i));
 
   return (
-    <SectionContainer title="RX:" className="min-h-[60vh] shadow-none border-l rounded-none">
+    <SectionContainer title="RX:" className="min-h-[60vh] shadow-none border-l border-slate-400 rounded-none">
       <div className="mb-4 relative print:hidden">
         <input value={medicineSearch} onChange={(e) => setMedicineSearch(e.target.value)} placeholder="Type medicine name..." className={inputStyle.primary} />
         {(suggestions.length > 0 || medicineSearch.length >= 2) && (
@@ -265,7 +266,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
         )}
       </div>
 
-      <table className="w-full border text-sm">
+      <table className="w-full border border-slate-200 text-sm">
         <thead className="bg-gray-100">
           <tr>
             {["Medicine", "Form", "Dosage", "Number",  "Time", ""].map((t, i) => (
@@ -277,10 +278,10 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
           {items.map((it, idx) => (
             <tr key={idx}>
               {/* MEDICINE — Wide column */}
-              <td className="border p-1 w-[30%]">{it.name}</td>
+              <td className={tableStyles.td+" w-[30%]"}>{it.name}</td>
 
               {/* FORM small */}
-              <td className="border p-1 w-[20%]">
+              <td className={tableStyles.td+" w-[20%]"}>
                 {/* SCREEN VIEW */}
                 <div className="print:hidden">
                   <CreatableSelect
@@ -306,7 +307,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
               </td>
 
               {/* DOSAGE small */}
-              <td className="border p-1 w-[10%]">
+              <td className={tableStyles.td+" w-[10%]"}>
                 <input
                   className={`${inputStyle.primary} sm:p-1`}
                   value={it.dosage}
@@ -316,7 +317,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
 
 
               {/* NUMBER small */}
-              <td className="border p-1 w-[10%]">
+              <td className={tableStyles.td+" w-[10%]"}>
                 <input
                   className={`${inputStyle.primary} sm:p-1`}
                   type="number"
@@ -328,7 +329,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
 
 
               {/* TIME — CREATIVE SELECT with custom write option */}
-              <td className="border p-1 w-[30%]">
+              <td className={tableStyles.td+" w-[30%]"}>
                 <div className="print:hidden">
                   <CreatableSelect
                     className="text-xs"
@@ -358,10 +359,10 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
               </td>
 
               {/* REMOVE BUTTON — FIXED STRUCTURE */}
-              <td className="border text-center print:hidden w-[5%]">
+              <td className={tableStyles.td+"  print:hidden "}>
                 <button
                   onClick={() => remove(idx)}
-                  className="text-red-600 font-bold text-lg cursor-pointer border border-red-400 rounded-full w-6 h-6 flex items-center justify-center"
+                  className="text-red-600 font-bold text-sm cursor-pointer border border-red-400 rounded-full w-4 h-4 flex items-center justify-center"
                 >
                   −
                 </button>

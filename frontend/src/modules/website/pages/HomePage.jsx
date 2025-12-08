@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, ShieldCheck, FileText, Smartphone, CheckCircle2, Star, } from "lucide-react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 function HomePage() {
 
@@ -11,7 +9,28 @@ function HomePage() {
 
 
       {/* HERO (with SVG decorations) */}
-      <section className="relative px-6 md:px-16 py-20 bg-gradient-to-b from-sky-50 to-white overflow-hidden">
+      <HeroSection />
+
+      {/* FEATURES */}
+      <FeaturesSection />
+
+      {/* HOW IT WORKS */}
+      <HowItWork />
+
+      {/* PWA INSTALL SECTION */}
+      <PWASection />
+
+      {/* CTA */}
+      <CTA />
+
+
+    </>
+  );
+}
+
+function HeroSection(){
+  return(<>
+          <section className="relative px-6 md:px-16 py-20 bg-gradient-to-b from-sky-50 to-white overflow-hidden">
         {/* Decorative SVG blobs & shapes (mix) */}
         <svg className="absolute -top-10 -left-10 opacity-30" width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -96,8 +115,32 @@ function HomePage() {
           </div>
         </div>
       </section>
+  </>)
+}
 
-      {/* FEATURES */}
+function MiniFeature({ icon, title }) {
+  return (
+    <div className="flex items-center gap-3 bg-white/60 rounded-lg p-2">
+      <div className="p-2 rounded bg-sky-50">{icon}</div>
+      <div className="text-sm text-gray-700">{title}</div>
+    </div>
+  );
+}
+
+function FeatureCard({ Icon, title, text }) {
+  return (
+    <div className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
+      <div className="flex items-center gap-3">
+        <Icon className="h-8 w-8 text-sky-600" />
+        <h4 className="text-xl font-semibold text-sky-700">{title}</h4>
+      </div>
+      <p className="text-gray-600 mt-3">{text}</p>
+    </div>
+  );
+}
+
+function FeaturesSection(){
+  return(<>
       <section id="features" className="px-6 md:px-16 py-16 bg-white relative">
         {/* decorative wave */}
         <svg className="absolute left-0 -top-10 opacity-10" width="420" height="140" viewBox="0 0 420 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -145,8 +188,25 @@ function HomePage() {
           />
         </div>
       </section>
+  </>)
+}
 
-      {/* HOW IT WORKS */}
+
+
+function StepCard({ number, title, text }) {
+  return (
+    <div className="p-8 bg-white rounded-xl shadow text-center">
+      <div className="w-16 h-16 mx-auto flex items-center justify-center bg-sky-600 text-white text-3xl font-bold rounded-full">
+        {number}
+      </div>
+      <h4 className="text-2xl font-semibold text-sky-700 mt-4">{title}</h4>
+      <p className="text-gray-600 mt-2">{text}</p>
+    </div>
+  );
+}
+
+function HowItWork(){
+  return(<>
       <section className="px-6 md:px-16 py-16 bg-sky-50 relative overflow-hidden">
         {/* abstract shapes */}
         <svg className="absolute right-4 top-8 opacity-20" width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -163,8 +223,8 @@ function HomePage() {
           />
           <StepCard
             number="2"
-            title="Pick Date & Time"
-            text="View available slots in real-time."
+            title="Fill Form"
+            text="Tell about your self to submit your appointment."
           />
           <StepCard
             number="3"
@@ -173,12 +233,12 @@ function HomePage() {
           />
         </div>
       </section>
+  </>)
+}
 
-      {/* PWA INSTALL SECTION */}
-      <PWASection />
-
-      {/* CTA */}
-      <section className="py-20 px-6 md:px-16 bg-gradient-to-r from-sky-500 to-sky-600 text-white text-center relative">
+function CTA(){
+  return(<>
+      <section className="py-20 px-6 md:px-16 bg-gradient-to-r bg-[#0084d1] text-white text-center relative">
         <svg className="absolute -top-20 left-0 opacity-10" width="420" height="420" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="210" cy="210" r="200" fill="#ffffff" />
         </svg>
@@ -193,91 +253,8 @@ function HomePage() {
           Book Now
         </Link>
       </section>
-
-    </>
-  );
+  </>)
 }
-
-
-
-function MiniFeature({ icon, title }) {
-  return (
-    <div className="flex items-center gap-3 bg-white/60 rounded-lg p-2">
-      <div className="p-2 rounded bg-sky-50">{icon}</div>
-      <div className="text-sm text-gray-700">{title}</div>
-    </div>
-  );
-}
-
-function FeatureCard({ Icon, title, text }) {
-  return (
-    <div className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition">
-      <div className="flex items-center gap-3">
-        <Icon className="h-8 w-8 text-sky-600" />
-        <h4 className="text-xl font-semibold text-sky-700">{title}</h4>
-      </div>
-      <p className="text-gray-600 mt-3">{text}</p>
-    </div>
-  );
-}
-
-function StepCard({ number, title, text }) {
-  return (
-    <div className="p-8 bg-white rounded-xl shadow text-center">
-      <div className="w-16 h-16 mx-auto flex items-center justify-center bg-sky-600 text-white text-3xl font-bold rounded-full">
-        {number}
-      </div>
-      <h4 className="text-2xl font-semibold text-sky-700 mt-4">{title}</h4>
-      <p className="text-gray-600 mt-2">{text}</p>
-    </div>
-  );
-}
-
-export default HomePage;
-
-
-
-// function InstallPWA() {
-//   const [deferredPrompt, setDeferredPrompt] = useState(null);
-//   const [showButton, setShowButton] = useState(false);
-
-//   useEffect(() => {
-//     const handler = (e) => {
-//       e.preventDefault();
-//       setDeferredPrompt(e);
-//       setShowButton(true);
-//     };
-
-//     window.addEventListener("beforeinstallprompt", handler);
-
-//     return () => {
-//       window.removeEventListener("beforeinstallprompt", handler);
-//     };
-//   }, []);
-
-//   const handleInstall = () => {
-//     if (!deferredPrompt) return;
-
-//     deferredPrompt.prompt();
-
-//     deferredPrompt.userChoice.then(() => {
-//       setDeferredPrompt(null);
-//       setShowButton(false);
-//     });
-//   };
-
-//   if (!showButton) return null;
-
-//   return (
-//     <button
-//       onClick={handleInstall}
-//       className="fixed bottom-5 right-5 bg-sky-600 text-white px-4 py-2 rounded-lg shadow-lg"
-//     >
-//       Install App
-//     </button>
-//   );
-// }
-
 
 function PWASection() {
   const deferredPromptRef = useRef(null);
@@ -351,7 +328,6 @@ function PWASection() {
             </div>
           </div>
         </div>
-        {/* <InstallPWA /> */}
         <button
           id="pwa-install-main"
           className=" mt-10 px-8 py-4 bg-sky-600 text-white text-lg rounded-xl shadow hover:bg-sky-700 transition"
@@ -362,5 +338,5 @@ function PWASection() {
     </section>
   );
 }
+export default HomePage;
 
-// export default HomePage;

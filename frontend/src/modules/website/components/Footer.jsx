@@ -1,3 +1,4 @@
+import { ArrowBigDown, ArrowBigRight, Mail, MailCheck, PhoneCall } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -14,19 +15,19 @@ function Footer() {
           <div>
             <h4 className="text-xl font-semibold mb-3">Quick Links</h4>
             <ul className="space-y-2 text-sky-200">
-              <li><Link to="/" className="hover:text-white">Home</Link></li>
-              <li><Link to="/appointment" className="hover:text-white">Appointment</Link></li>
-              <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
-              <li><Link to="/auth" className="hover:text-white">I am doctor ?</Link></li>
+              <li><Link to="/" className="hover:text-white flex gap-2"><ArrowBigRight /> Home</Link></li>
+              <li><Link to="/appointment" className="hover:text-white flex gap-2"><ArrowBigRight /> Appointment</Link></li>
+              <li><Link to="/contact" className="hover:text-white flex gap-2"><ArrowBigRight /> Contact</Link></li>
+              <li><Link to="/auth/login" className="hover:text-white flex gap-2"><ArrowBigRight /> I am doctor ?</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xl font-semibold mb-3">Contact</h4>
-            <p className="text-sky-200">Email: PaikarSoftware@gmail.com</p>
-            <p className="text-sky-200">Email: PaikarICT@gmail.com</p>
-            <p className="text-sky-200">Phone: +93 783 23 11 88</p>
-            <p className="text-sky-200">Phone: +93 771 84 47 70</p>
+            <p className="text-sky-200 flex gap-2 mb-2"><MailCheck /> PaikarSoftware@gmail.com</p>
+            <p className="text-sky-200 flex gap-2 mb-2"><Mail /> PaikarICT@gmail.com</p>
+            <p className="text-sky-200 flex gap-2 mb-2"><PhoneCall /> +93 783 23 11 88</p>
+            <p className="text-sky-200 flex gap-2"><PhoneCall /> +93 771 84 47 70</p>
           </div>
         </div>
 

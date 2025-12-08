@@ -1,34 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Search, User, Calendar, Clock } from "lucide-react";
-import { inputStyle, labelStyle } from "../../../styles/componentsStyle";
+import { badge, inputStyle, labelStyle } from "../../../styles/componentsStyle";
+import { getAllDoctors } from "../../../api/visitorAPI";
+import ImageViewer from "../../../componenets/ImageViewer";
 
-// Fake Doctors for Demo
-const doctorsList = [
-  { id: 1, name: "Dr. Ahmad Rahimi", specialty: "Cardiologist" },
-  { id: 2, name: "Dr. Laila Mohammadi", specialty: "Dermatologist" },
-  { id: 3, name: "Dr. Omar Safi", specialty: "Neurologist" },
-];
 
 // Fake timing for demo
 const timings = ["9:00 AM", "10:00 AM", "1:00 PM", "3:00 PM", "5:00 PM"];
 
 export default function Appoinment() {
-  const [step, setStep] = useState(1);
-  const [search, setSearch] = useState("");
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+    const [step, setStep] = useState(1);
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(null);
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset, } = useForm();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm();
 
-  const filteredDoctors = doctorsList.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
-  );
+
+
 
   const onSubmit = async (data) => {
     const payload = {
@@ -99,36 +88,7 @@ export default function Appoinment() {
 
         {/* STEP 1 – FIND DOCTOR */}
         {step === 1 && (
-          <div className="animate-[fadeIn_0.3s_ease]">
-            <h2 className="text-xl font-bold mb-4">Find a Doctor</h2>
-
-            <div className="relative items-center ">
-              <Search className="text-gray-500 absolute top-2 right-2" />
-              <input
-                type="text"
-                className={inputStyle.primary+""}
-                placeholder="Search doctor..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {filteredDoctors.map((doc) => (
-                <div
-                  key={doc.id}
-                  onClick={() => {
-                    setSelectedDoctor(doc);
-                    setStep(2);
-                  }}
-                  className="p-4 shadow-sm rounded cursor-pointer bg-white hover:bg-blue-50 transition"
-                >
-                  <p className="font-semibold">{doc.name}</p>
-                  <p className="text-sm text-gray-600">{doc.specialty}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+            <StepOneDoctorList  setSelectedDoctor={setSelectedDoctor} setStep={setStep} />
         )}
 
         {/* STEP 2 – PATIENT INFORMATION */}
@@ -242,4 +202,77 @@ export default function Appoinment() {
       </div>
     </div>
   );
+}
+
+
+function StepOneDoctorList({ setSelectedDoctor, setStep }){
+    const [doctorsList, setDoctorsList] = useState([])
+    const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
+    const pageSize = 5; // show 10 doctors per page
+
+    useEffect(() => { getAllDoctors({ seter: setDoctorsList}) }, [])
+
+    const filteredDoctors = useMemo(() => {
+        const term = search.toLowerCase();
+        return doctorsList?.filter((s) => 
+            (s.name +" "+ s.lastname)?.toLowerCase().includes(term) ||
+            s.clinic_name?.toLowerCase().includes(term) 
+        )
+    }, [doctorsList, search]);
+
+    const totalPages = Math.ceil(filteredDoctors.length / pageSize);
+    const currentPageDoctors = filteredDoctors.slice((page - 1) * pageSize, page * pageSize);
+
+    return(<>
+        <div className="animate-[fadeIn_0.3s_ease]">
+            <h2 className="text-xl font-bold mb-4">Find Your Doctor</h2>
+            {/* Search Doctor */}
+            <div className="relative items-center ">
+              <Search className="text-gray-500 absolute top-2 right-2" />
+              <input
+                type="text"
+                className={inputStyle.primary+""}
+                placeholder="Search doctor..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            {/* Doctors List */}
+            <div className="mt-5 space-y-3">
+              {currentPageDoctors.map((doc) => (
+                <div
+                  key={doc.id}
+                  onClick={() => {
+                    setSelectedDoctor(doc);
+                    setStep(2);
+                  }}
+                  className="p-4 relative flex gap-2 items-center shadow-sm rounded cursor-pointer bg-white hover:bg-blue-50 transition"
+                >
+                <div>
+                    <ImageViewer 
+                        imagePath={`/uploads/profiles/${doc.photo}`}
+                        altText={doc.name}
+                        showPreview={false}
+                        className="h-10 w-10 object-cover rounded"
+                    />
+                </div>
+                 <div>
+                  <p className="font-semibold">Dr. {doc.name} {doc.lastname}</p>
+                  <p className="text-sm text-gray-600">{doc.clinic}</p>
+                 </div>
+                 <span className={badge.primarySm+" absolute right-2"}>Fees: {doc.fee}AF</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex justify-center gap-2 mt-4"> 
+                <button disabled={page <= 1} onClick={() => setPage(page - 1)} className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50" > Prev </button>
+                <span className="px-3 py-1 bg-gray-100 rounded">{page} / {totalPages}</span> 
+                <button disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50" > Next </button> 
+            </div>
+        </div>
+    </>)
 }
