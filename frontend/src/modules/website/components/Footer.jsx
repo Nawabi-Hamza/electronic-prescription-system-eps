@@ -7,8 +7,8 @@ function Footer() {
         <div className="grid md:grid-cols-3 gap-10">
           <div>
             <h1 className="text-2xl font-bold text-white">EPS System</h1>
-            <p className="text-sky-200 mt-2">Secure, fast, and modern electronic prescription system.</p>
-            <p className="text-sky-200 mt-2">Paikar ICT:Smart Technology For Tomorrow</p>
+            <p className="text-sky-200 mt-2">Paikar ICT: Smart Technology For Tomorrow</p>
+            <p className="text-sky-200 mt-2">EPS: Secure, Fast, Easy, and modern electronic prescription system.</p>
           </div>
 
           <div>
