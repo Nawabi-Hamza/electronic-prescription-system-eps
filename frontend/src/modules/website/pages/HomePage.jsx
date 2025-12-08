@@ -351,7 +351,7 @@ function PWASection() {
             </div>
           </div>
         </div>
-        <InstallPWA />
+        {/* <InstallPWA /> */}
         <button
           id="pwa-install-main"
           className=" mt-10 px-8 py-4 bg-sky-600 text-white text-lg rounded-xl shadow hover:bg-sky-700 transition"
