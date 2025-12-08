@@ -24,7 +24,9 @@ function Footer() {
           <div>
             <h4 className="text-xl font-semibold mb-3">Contact</h4>
             <p className="text-sky-200">Email: PaikarSoftware@gmail.com</p>
+            <p className="text-sky-200">Email: PaikarICT@gmail.com</p>
             <p className="text-sky-200">Phone: +93 783 23 11 88</p>
+            <p className="text-sky-200">Phone: +93 771 84 47 70</p>
           </div>
         </div>
 
