@@ -1,112 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Menu,
-  X,
-  Calendar,
-  ShieldCheck,
-  FileText,
-  Smartphone,
-  CheckCircle2,
-  Star,
-} from "lucide-react";
+import { Calendar, ShieldCheck, FileText, Smartphone, CheckCircle2, Star, } from "lucide-react";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function HomePage() {
-  const [open, setOpen] = useState(false);
 
   return (
-    <div className="w-full overflow-x-hidden relative antialiased">
-      {/* Mobile Sidebar Backdrop (blurred) */}
-      <div
-        className={`fixed inset-0 z-30 transition-opacity duration-300 ${
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        aria-hidden={!open}
-      >
-        <div
-          className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
-            open ? "opacity-100" : "opacity-0"
-          }`}
-          onClick={() => setOpen(false)}
-        />
-      </div>
+    <>
+      {/* <Navbar /> */}
 
-      {/* Sidebar (mobile) */}
-      <aside
-        className={`md:hidden fixed top-0 left-0 z-40 h-full w-72 max-w-[80vw] bg-white shadow-2xl transform transition-transform duration-350 ease-in-out ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
-        aria-hidden={!open}
-      >
-        <div className="flex items-center justify-between px-4 py-4 border-b">
-          <h2 className="text-lg font-bold text-sky-600">Paikar (EPS)</h2>
-          <button
-            onClick={() => setOpen(false)}
-            aria-label="Close menu"
-            className="p-2 rounded-md hover:bg-sky-50"
-          >
-            <X className="h-5 w-5 text-sky-700" />
-          </button>
-        </div>
 
-        <nav className="px-4 py-6 space-y-3">
-          <MobileLink to="/" onClick={() => setOpen(false)}>Home</MobileLink>
-          <MobileLink to="/#features" onClick={() => setOpen(false)}>Features</MobileLink>
-          <MobileLink to="/appointment" onClick={() => setOpen(false)}>Appointment</MobileLink>
-          <MobileLink to="/contact" onClick={() => setOpen(false)}>Contact</MobileLink>
-
-          <div className="mt-6">
-            <Link
-              to="/appointment"
-              onClick={() => setOpen(false)}
-              className="block text-center px-4 py-2 bg-sky-600 text-white rounded-lg shadow"
-            >
-              Book Appointment
-            </Link>
-          </div>
-        </nav>
-      </aside>
-
-    {/* Floating PWA Install FAB */}
-    <button 
-      id="pwa-floating-btn"
-      className="fixed bottom-6 right-6 bg-sky-600 text-white p-4 rounded-full shadow-xl hover:bg-sky-700 z-40 hidden"
-    >
-      <Smartphone className="h-6 w-6" />
-    </button>
 
       {/* HEADER */}
-      <header className="flex items-center justify-between px-6 md:px-16 py-4 bg-white z-20 relative">
-        <div className="flex items-center gap-4">
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 rounded-md hover:bg-sky-50"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="h-6 w-6 text-sky-600" />
-          </button>
 
-          <h1 className="text-2xl font-bold text-sky-600">Paikar (EPS)</h1>
-        </div>
-
-        {/* Desktop nav */}
-        <nav className="hidden md:flex gap-8 text-gray-600 font-medium">
-          <Link to="/" className="hover:text-sky-600">Home</Link>
-          <Link to="#features" className="hover:text-sky-600">Features</Link>
-          <Link to="/appointment" className="hover:text-sky-600">Appointment</Link>
-          <Link to="/contact" className="hover:text-sky-600">Contact</Link>
-        </nav>
-
-        <div className="hidden md:block">
-          <Link
-            to="/appointment"
-            className="px-4 py-2 bg-sky-600 text-white rounded-lg shadow hover:bg-sky-700"
-          >
-            Book Appointment
-          </Link>
-        </div>
-      </header>
 
       {/* HERO (with SVG decorations) */}
       <section className="relative px-6 md:px-16 py-20 bg-gradient-to-b from-sky-50 to-white overflow-hidden">
@@ -293,50 +200,14 @@ function HomePage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-sky-900 text-sky-100 px-6 md:px-16 py-10">
-        <div className="grid md:grid-cols-3 gap-10">
-          <div>
-            <h1 className="text-2xl font-bold text-white">EPS System</h1>
-            <p className="text-sky-200 mt-2">Secure, fast, and modern electronic prescription system.</p>
-          </div>
-
-          <div>
-            <h4 className="text-xl font-semibold mb-3">Quick Links</h4>
-            <ul className="space-y-2 text-sky-200">
-              <li><Link to="/" className="hover:text-white">Home</Link></li>
-              <li><Link to="/appointment" className="hover:text-white">Appointment</Link></li>
-              <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xl font-semibold mb-3">Contact</h4>
-            <p className="text-sky-200">Email: PaikarSoftware@gmail.com</p>
-            <p className="text-sky-200">Phone: +93 783 23 11 88</p>
-          </div>
-        </div>
-
-        <div className="text-center text-sky-300 mt-10 text-sm">
-          © {new Date().getFullYear()} Paikar -EPS- System. All Rights Reserved.
-        </div>
-      </footer>
-    </div>
+      {/* <Footer /> */}
+    </>
   );
 }
 
 /* ---------- smaller components ---------- */
 
-function MobileLink({ children, to = "/", onClick = () => {} }) {
-  return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className="block px-3 py-2 rounded-md text-sky-700 font-medium hover:bg-sky-50"
-    >
-      {children}
-    </Link>
-  );
-}
+
 
 function MiniFeature({ icon, title }) {
   return (
@@ -415,8 +286,6 @@ function InstallPWA() {
     </button>
   );
 }
-
-
 
 
 function PWASection() {

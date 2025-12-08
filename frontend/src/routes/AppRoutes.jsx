@@ -11,7 +11,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Auth routes */}
-      <Route path="/" element={<WebModule />} />
+      <Route path="/*" element={<WebModule />} />
       <Route path="auth/*" element={<AuthModule />} />
       
       {/* Owner routes */}

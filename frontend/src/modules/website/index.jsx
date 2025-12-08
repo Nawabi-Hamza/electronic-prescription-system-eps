@@ -2,6 +2,9 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import NotFoundPage from '../common/404';
 import WebLayout from '../../layouts/WebLayout';
 import HomePage from './pages/HomePage';
+import Features from './pages/Features';
+import Appoinment from './pages/Appoinment';
+import Contact from './pages/Contact';
 
 
 const WebModule = () => {
@@ -16,12 +19,10 @@ const WebModule = () => {
         }
       >
         <Route path="/" element={<HomePage />} />
-        {/* <Route path="" element={<OwnerDashboard />} /> */}
-        {/* <Route path="doctors" element={<Doctors />} /> */}
-        {/* <Route path="payments" element={<Payments />} /> */}
-
-        {/* <Route path="profile" element={<Profile title="Owner Profile" />} /> */}
-        {/* <Route path="ai-mode" element={<AiMode />} /> */}
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/appointment" element={<Appoinment />} />
+        <Route path="/contact" element={<Contact />} />
       </Route>
 
         <Route path="*" element={<NotFoundPage />} />
