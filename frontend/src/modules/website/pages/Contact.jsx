@@ -3,7 +3,7 @@ import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
 
 function Contact() {
   return (
-    <div className="w-full overflow-x-hidden relative antialiased bg-white">
+    <div className="w-full overflow-x-hidden relative bg-white antialiased animate__fadeIn animate__animated animate__delay-.5s">
       {/* Header */}
       <section className="px-6 md:px-16 py-20 bg-gradient-to-b from-sky-100/70 to-white">
         <div className="max-w-3xl mx-auto text-center">

@@ -8,11 +8,6 @@ function HomePage() {
 
   return (
     <>
-      {/* <Navbar /> */}
-
-
-
-      {/* HEADER */}
 
 
       {/* HERO (with SVG decorations) */}
@@ -199,13 +194,9 @@ function HomePage() {
         </Link>
       </section>
 
-      {/* FOOTER */}
-      {/* <Footer /> */}
     </>
   );
 }
-
-/* ---------- smaller components ---------- */
 
 
 

@@ -49,7 +49,7 @@ export default function Appoinment() {
   };
 
   return (
-    <div className=" bg-gray-100 flex justify-center py-10 px-4">
+    <div className=" bg-gray-100 flex justify-center py-10 px-4 antialiased animate__fadeIn animate__animated animate__delay-.5s">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-xl p-6">
         
         {/* STEP HEADER */}

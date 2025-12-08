@@ -55,7 +55,7 @@ function Features() {
   ];
 
   return (
-    <div className="w-full overflow-x-hidden relative antialiased bg-white">
+    <div className="w-full overflow-x-hidden relative bg-white antialiased animate__fadeIn animate__animated animate__delay-.5s">
       {/* Header Section */}
       <section className="px-6 md:px-16 py-20 bg-gradient-to-b from-sky-100/80 to-white">
         <div className="max-w-4xl mx-auto text-center">
