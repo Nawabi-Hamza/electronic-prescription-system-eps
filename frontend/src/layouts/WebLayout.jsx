@@ -6,7 +6,7 @@ import Footer from '../modules/website/components/Footer';
 const WebLayout = () => {
 
   return (
-    <div className="w-full  overflow-x-hidden  relative antialiased animate__backInDown animate__animated animate__delay-.5s">
+    <div className="w-full  overflow-x-hidden  relative antialiased animate__fadeIn animate__animated animate__delay-.5s">
       <>
         <Navbar  />
       </>
