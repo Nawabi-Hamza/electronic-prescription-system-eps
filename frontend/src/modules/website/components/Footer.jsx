@@ -17,6 +17,7 @@ function Footer() {
             <ul className="space-y-2 text-sky-200">
               <li><Link to="/" className="hover:text-white flex gap-2"><ArrowBigRight /> Home</Link></li>
               <li><Link to="/appointment" className="hover:text-white flex gap-2"><ArrowBigRight /> Appointment</Link></li>
+              <li><Link to="/appointment/track" className="hover:text-white flex gap-2"><ArrowBigRight /> Track Appointment</Link></li>
               <li><Link to="/contact" className="hover:text-white flex gap-2"><ArrowBigRight /> Contact</Link></li>
               <li><Link to="/auth/login" className="hover:text-white flex gap-2"><ArrowBigRight /> I am doctor ?</Link></li>
             </ul>

@@ -42,9 +42,33 @@ const prescriptionHeaderSchema = Joi.object({
   template_design: Joi.string().allow(null, '')
 });
 
+const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/; // HH:MM 24-hour format
 
+const daySchema = Joi.object({
+  in_time: Joi.string().pattern(timePattern).required()
+    .messages({ "string.pattern.base": "Invalid time format (HH:MM)" }),
+  out_time: Joi.string().pattern(timePattern).required()
+    .messages({ "string.pattern.base": "Invalid time format (HH:MM)" }),
+  status: Joi.string().valid("open","close").required()
+    .messages({ "any.only": "Status must be either Open or Closed" }),
+  slot_duration: Joi.number().integer().min(5).max(180).required()
+    .messages({ "number.base": "Slot duration must be a number", 
+                "number.min": "Slot duration must be at least 1 minutes",
+                "number.max": "Slot duration cannot exceed 180 minutes" }),
+});
+
+const updateTimingSchema = Joi.object({
+  saturday: daySchema.required(),
+  sunday: daySchema.required(),
+  monday: daySchema.required(),
+  tuesday: daySchema.required(),
+  wednesday: daySchema.required(),
+  thursday: daySchema.required(),
+  friday: daySchema.required(),
+});
 
 module.exports = {
     addMedicineSchema,
-    prescriptionHeaderSchema
+    prescriptionHeaderSchema,
+    updateTimingSchema
 };

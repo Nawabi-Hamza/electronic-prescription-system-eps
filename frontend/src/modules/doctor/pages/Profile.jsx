@@ -33,7 +33,7 @@ const Profile = () => {
       <Link to="/doctor" className={banner.back}><ArrowBigLeftDashIcon/> Back</Link>
       <div className='space-y-4'>
         <ClientProfile user={user} />
-        {data?.available_days && <ClientAailabelTime available_days={data.available_days} />}
+        {data?.available_days && <ClientAvailableTime available_days={data.available_days} />}
         {data?.specializations && <ClientSpecializations specializations={data.specializations} />}
         {data?.addresses && <ClientAddresses addresses={data.addresses} /> }
         
@@ -403,82 +403,108 @@ function UpdateSpecialization({ isModalOpen, closeModal, sp, setSp }){
     )
 }
 
-function ClientAailabelTime({ available_days }){
-    const [isModalOpen,setIsModalOpen] = useState(false)
-    const [timing, setTiming] = useState(available_days[0]||{})
-    return(
-     <SectionContainer title='Available Days'>
-                <PenBox className={`${icon.primary} absolute top-4 right-4`} onClick={()=> setIsModalOpen(true)} />
-            <div>
-                <div className="flex flex-wrap gap-2">
-                    {timing && Object.entries(timing)
-                    .filter(([key]) =>
-                        ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].includes(key) 
-                    // && value == 1
-                    )
-                    .map(([day,v]) => (
-                        <span
-                        key={day}
-                        className={v ? badge.successSm:badge.dangerSm}
-                        >
-                        {day.charAt(0).toUpperCase() + day.slice(1)} 
-                        </span>
-                    ))
-                    }
+function ClientAvailableTime({ available_days }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [timing, setTiming] = useState(
+    available_days.reduce((acc, day) => {
+      acc[day.day_of_week] = day;
+      return acc;
+    }, {})
+  );
 
+  const daysOrder = [
+    { key: "saturday", label: "Saturday", emoji: "👋🏻" },
+    { key: "sunday", label: "Sunday", emoji: "🌞" },
+    { key: "monday", label: "Monday", emoji: "🌙" },
+    { key: "tuesday", label: "Tuesday", emoji: "🔥" },
+    { key: "wednesday", label: "Wednesday", emoji: "💧" },
+    { key: "thursday", label: "Thursday", emoji: "⚡" },
+    { key: "friday", label: "Friday", emoji: "🎉" },
+  ];
+
+  return (
+    <SectionContainer title="Available Days">
+      <PenBox
+        className={`${icon.primary} absolute top-4 right-4 cursor-pointer`}
+        onClick={() => setIsModalOpen(true)}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        {daysOrder.map(({ key, label, emoji }) => {
+          const dayData = timing[key];
+          // if (!dayData) return null;
+
+          return (
+            <div
+              key={key}
+              className={`p-4 rounded-md shadow-md ${dayData?.status === "open" ? "bg-sky-50  shadow-sky-200":"bg-red-50  shadow-red-200"} `}
+            >
+              <span className="text-lg font-semibold">
+                {emoji} {label}
+              </span>
+              {dayData && dayData.status === "open" ?
+                <div className="mt-2 space-y-1 text-gray-700 text-sm">
+                  <div>
+                    <strong>Open Time:</strong> {FormatToAmPm(dayData.in_time) || "--"}
+                  </div>
+                  <div>
+                    <strong>Close Time:</strong> {FormatToAmPm(dayData.out_time) || "--"}
+                  </div>
+                  <div>
+                    <strong>Visit Duration:</strong> {dayData.slot_duration} min
+                  </div>
                 </div>
+                :
+                <div className="mt-2 text-center font-bold  text-red-700 text-lg">
+                  Closed
+                </div>
+              }
             </div>
+          );
+        })}
+      </div>
 
-                {/* Timings */}
-                {timing && 
-                    <div className="flex gap-5 justify-between md:justify-start text-sm">
-                        <div className="flex flex-col shadow bg-indigo-50 rounded-md shadow-indigo-400 p-2">
-                            <span className="text-gray-500">Open Time</span>
-                            <span className="font-medium">{FormatToAmPm(timing.in_time) || "--"}</span>
-                        </div>
-
-                        <div className="flex flex-col shadow bg-indigo-50 rounded-md shadow-indigo-400 p-2">
-                            <span className="text-gray-500">Close Time</span>
-                            <span className="font-medium">{FormatToAmPm(timing.out_time) || "--"}</span>
-                        </div>
-                    </div>
-                }
-                <UpdateAvailabelTime isModalOpen={isModalOpen} closeModal={()=> setIsModalOpen(false)} timing={timing} setTiming={setTiming} />
-    </SectionContainer>)
+      <UpdateAvailabelTime
+        isModalOpen={isModalOpen}
+        closeModal={() => setIsModalOpen(false)}
+        timing={timing}
+        setTiming={setTiming}
+      />
+    </SectionContainer>
+  );
 }
 
+
+
 function UpdateAvailabelTime({ isModalOpen, closeModal, timing, setTiming }){
+  // console.log(timing)
+
     const { register, handleSubmit, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
     const onSubmit = async(data)=>{
         try{
-            const user_data = Object.entries(data).reduce((a, [k, v]) => typeof v === "object" && v !== null ? { ...a, ...v } : { ...a, [k]: v }, {});
-            const res = await updateDoctorTiming(user_data)
+            const res = await updateDoctorTiming(data)
             toast.success(res.message)
-            setTiming(res.timing)
+            setTiming(data)
             closeModal()
         }catch(err){
-            console.error("❌ Student submission failed:", err);
+            console.error("❌ schedual submission failed:", err);
             toast.error(err?.response?.data?.message || err || "Something went wrong");
         }
     }
 
-    const defaultValues = timing && {
-    days: {
-        saturday: timing?.saturday || 0,
-        sunday: timing?.sunday || 0,
-        monday: timing?.monday || 0,
-        tuesday: timing?.tuesday || 0,
-        wednesday: timing?.wednesday || 0,
-        thursday: timing?.thursday || 0,
-        friday: timing?.friday || 0,
-    },
-    time: {
-        in_time: timing?.in_time || "",
-        out_time: timing?.out_time || "",
-    },
-    }
+  const defaultValues = timing
+    ? Object.entries(timing).reduce((acc, [day, val]) => {
+        acc[day] = {
+          status: val.status || "Open",
+          in_time: val.in_time || "",
+          out_time: val.out_time || "",
+          slot_duration: val.slot_duration || 30,
+        };
+        return acc;
+      }, {})
+    : {};
     return(
-        <Modal isOpen={isModalOpen} containerStyle="xsm" onClose={closeModal} title="Update Timing">
+        <Modal isOpen={isModalOpen} containerStyle="sm" onClose={closeModal} title="📅 Days Schedule">
             <FieldsGroupForm
                 fields={timingFields}
                 register={register}
@@ -487,7 +513,7 @@ function UpdateAvailabelTime({ isModalOpen, closeModal, timing, setTiming }){
                 trigger={trigger}
                 setValue={setValue}
                 isSubmitting={isSubmitting}
-                defaultValues={timing && defaultValues}
+                defaultValues={defaultValues}
                 onSubmit={handleSubmit(onSubmit)}
             />
         </Modal>

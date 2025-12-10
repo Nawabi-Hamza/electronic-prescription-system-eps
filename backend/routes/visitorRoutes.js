@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createVisitAppointment, getDoctors } = require('../controllers/visitorController');
+const { createVisitAppointment, getDoctors, getDoctorTiming, getUserAppointments } = require('../controllers/visitorController');
 
 
 // Middlewares
@@ -17,15 +17,10 @@ router.use(sanitizeInput)
 
 
 router.get("/doctors", getDoctors)
+router.get("/doctor-timing/:id", getDoctorTiming)
+// getUserAppointments
+router.get("/appointment/:device_id",  getUserAppointments)
 router.post("/appointment", visitorTakeAppointmentLimit, validateSchema(appointmentSchema), createVisitAppointment)
-
-// router.get("/profile/details", getAllDetailsOfDoctor)
-
-
-// router.delete("/profile/specialization/:id", deleteSpecialization)
-
-// router.post("/profile/address", addAddress)
-// router.delete("/profile/address/:id", deleteAddress)
 
   
 

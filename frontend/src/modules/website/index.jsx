@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import Features from './pages/Features';
 import Appoinment from './pages/Appoinment';
 import Contact from './pages/Contact';
+import TrackAppointment from './pages/TrackAppointment';
 
 
 const WebModule = () => {
@@ -22,6 +23,7 @@ const WebModule = () => {
         <Route path="/home" element={<HomePage />} />
         <Route path="/features" element={<Features />} />
         <Route path="/appointment" element={<Appoinment />} />
+        <Route path="/appointment/track" element={<TrackAppointment />} />
         <Route path="/contact" element={<Contact />} />
       </Route>
 

@@ -12,7 +12,7 @@ const roleCheck = require('../middlewares/roleCheck');
 const { sanitizeInput } = require('../middlewares/sanitizeHtml');
 const { checkDoctorPayment } = require('../middlewares/checkDoctorPayment');
 const validateSchema = require('../validators/validateSchema');
-const { addMedicineSchema, prescriptionHeaderSchema } = require('../validators/doctorSchema');
+const { addMedicineSchema, prescriptionHeaderSchema, updateTimingSchema } = require('../validators/doctorSchema');
 const { clientUpdateHeaderLimiter, clientUploadFileLimiter } = require('../middlewares/rateLimit');
 const { uploadFile } = require('../middlewares/multer');
 const { cleanupFileOnError } = require('../middlewares/cleanUpFileOnError');
@@ -51,7 +51,7 @@ const uploadDoctorSignature = {
 router.get("/profile/details", getAllDetailsOfDoctor)
 router.get("/profile/payments", checkDoctorPayment, paymentDone)
 
-router.put("/profile/update-timing", updateTiming)
+router.put("/profile/update-timing", validateSchema(updateTimingSchema), updateTiming)
 
 router.get("/payments", getAllPaymentsOfDoctor)
 

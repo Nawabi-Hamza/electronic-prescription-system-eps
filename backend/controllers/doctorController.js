@@ -1,9 +1,51 @@
 const { query } = require("../config/query")
-const redis = require("../config/redis");
 const { getOrSetCache, invalidateKey } = require("../middlewares/cache");
 const bcrypt = require("bcryptjs");
 const fs = require("fs")
 const path = require("path")
+
+
+// const getAllDetailsOfDoctor = async (req, res) => {
+//   const doctor_id = req.user.id;
+
+//   try {
+//     const cacheKey = "doctor_list_details_" + doctor_id;
+
+//     const result = await getOrSetCache(
+//       cacheKey,
+//       async () => {
+
+//         // 1️⃣ Get doctor main info
+//         const doctor = await query(`SELECT id, generated_id, clinic_name, doctor_name, lastname, status FROM doctors WHERE id = ?`, [doctor_id]);
+//         if (!doctor.length) return null;
+//         const doc = doctor[0];
+//         // 2️⃣ Get addresses
+//         const addresses = await query(`SELECT id, type, country, province AS city, district, room_number, floor_number, address, status FROM addresses WHERE doctors_id = ?`, [doctor_id]);
+//         // 3️⃣ Get specializations
+//         const specializations = await query(`SELECT id, specialization_name AS name, specialization_description AS description, status FROM specializations WHERE doctors_id = ?`, [doctor_id]);
+//         // 4️⃣ Get available days
+//         const available_days = await query(`SELECT id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time FROM available_days WHERE doctors_id = ?`, [doctor_id]);
+//         // 5️⃣ Combine all results into one object
+//         return {
+//           ...doc,
+//           addresses,
+//           specializations,
+//           available_days,
+//         };
+//       },
+//       60 // cache 60 seconds
+//     );
+
+//     return res.json({
+//       from: "db/cache",
+//       records: result,
+//     });
+
+//   } catch (err) {
+//     console.error("ROUTE ERROR:", err);
+//     res.status(500).send("Database error");
+//   }
+// };
 
 
 const getAllDetailsOfDoctor = async (req, res) => {
@@ -25,7 +67,7 @@ const getAllDetailsOfDoctor = async (req, res) => {
         // 3️⃣ Get specializations
         const specializations = await query(`SELECT id, specialization_name AS name, specialization_description AS description, status FROM specializations WHERE doctors_id = ?`, [doctor_id]);
         // 4️⃣ Get available days
-        const available_days = await query(`SELECT id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time FROM available_days WHERE doctors_id = ?`, [doctor_id]);
+        const available_days = await query(`SELECT id, day_of_week, slot_duration, max_patients_per_slot, DATE_FORMAT(in_time, '%H:%i') AS in_time, DATE_FORMAT(out_time, '%H:%i') AS out_time, status FROM available_days WHERE doctors_id = ?`, [doctor_id]);
         // 5️⃣ Combine all results into one object
         return {
           ...doc,
@@ -57,55 +99,124 @@ const paymentDone = async(req, res) => {
 }
 
 // START AVAILABLE TIMING CONTROLLER
-const updateTiming = async (req, res) => {
-  const doctor_id = req.user.id;
+// const updateTiming = async (req, res) => {
+//   const doctor_id = req.user.id;
 
-  const { saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time } = req.body;
+//   const { saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time } = req.body;
+
+//   try {
+
+//     // Check if timing exists
+//     const check = await query(
+//       `SELECT id FROM available_days WHERE doctors_id = ?`,
+//       [doctor_id]
+//     );
+
+//     // If not exists -> INSERT
+//     if (check.length === 0) {
+//       await query(
+//         `INSERT INTO available_days 
+//           (doctors_id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time)
+//         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+//         [ doctor_id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time ]
+//       );
+//     }
+
+//     // If exists -> UPDATE
+//     else {
+//       await query(
+//         `UPDATE available_days 
+//             SET saturday = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, in_time = ?, out_time = ?
+//         WHERE doctors_id = ?`,
+//         [ saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time, doctor_id ]
+//       );
+//     }
+
+//     // Return updated timing
+//     const updated = await query(`SELECT * FROM available_days WHERE doctors_id = ?`, [doctor_id]);
+
+//     invalidateKey("doctor_list_details_" + doctor_id)
+
+//     res.json({
+//       success: true,
+//       message: "Timing updated successfully",
+//       timing: updated[0]
+//     });
+
+//   } catch (error) {
+//     console.error("UPDATE TIMING ERROR:", error);
+//     res.status(500).json({ error: "Database error" });
+//   }
+// };
+
+
+
+const updateTiming = async (req, res) => { 
+  const doctor_id = req.user.id;
+  const scheduleObj = req.body;
+
+  // Convert object to array for easier processing
+  const schedule = Object.entries(scheduleObj).map(([day_of_week, { in_time, out_time, slot_duration, status }]) => ({
+    day_of_week,
+    in_time,
+    out_time,
+    status,
+    slot_duration: Number(slot_duration), // ensure number
+  }));
 
   try {
+    for (const day of schedule) {
+      const { day_of_week, in_time, out_time, slot_duration, status } = day;
 
-    // Check if timing exists
-    const check = await query(
-      `SELECT id FROM available_days WHERE doctors_id = ?`,
+      // if (in_time >= out_time) {
+      //   return res.status(400).json({ error: `In time must be before out time for ${day_of_week}` });
+      // }
+
+      // Upsert timing for each day
+      const check = await query(
+        `SELECT id FROM available_days WHERE doctors_id = ? AND day_of_week = ?`,
+        [doctor_id, day_of_week]
+      );
+
+      if (check.length === 0) {
+        await query(
+          `INSERT INTO available_days (doctors_id, day_of_week, in_time, out_time, slot_duration, status)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [doctor_id, day_of_week, in_time, out_time, slot_duration, status]
+        );
+      } else {
+        await query(
+          `UPDATE available_days 
+           SET in_time = ?, out_time = ?, slot_duration = ? , status = ?
+           WHERE doctors_id = ? AND day_of_week = ?`,
+          [in_time, out_time, slot_duration, status, doctor_id, day_of_week]
+        );
+      }
+    }
+
+    // Return updated schedule
+    const updated = await query(
+      `SELECT * FROM available_days 
+       WHERE doctors_id = ? 
+       ORDER BY FIELD(day_of_week, 'saturday','sunday','monday','tuesday','wednesday','thursday','friday')`,
       [doctor_id]
     );
 
-    // If not exists -> INSERT
-    if (check.length === 0) {
-      await query(
-        `INSERT INTO available_days 
-          (doctors_id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [ doctor_id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time ]
-      );
-    }
-
-    // If exists -> UPDATE
-    else {
-      await query(
-        `UPDATE available_days 
-            SET saturday = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, in_time = ?, out_time = ?
-        WHERE doctors_id = ?`,
-        [ saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time, doctor_id ]
-      );
-    }
-
-    // Return updated timing
-    const updated = await query(`SELECT * FROM available_days WHERE doctors_id = ?`, [doctor_id]);
-
-    invalidateKey("doctor_list_details_" + doctor_id)
+    await invalidateKey("doctor_list_details_" + doctor_id);
 
     res.json({
       success: true,
-      message: "Timing updated successfully",
-      timing: updated[0]
+      message: 'Timing updated successfully',
+      schedule: updated
     });
 
   } catch (error) {
     console.error("UPDATE TIMING ERROR:", error);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({ error: 'Database error' });
   }
 };
+
+
 // END AVAILABLE TIMING CONTROLLER
 
 // START SPECIALIZATION CONTROLLER
