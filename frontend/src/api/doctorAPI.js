@@ -50,3 +50,36 @@ export  const fetchPrescriptionHeader = async ({ seter }) => {
       console.error("Fetch header error:", err);
     }
   };
+
+export  const fetchVisitorsAppointment = async ({ seter }) => {
+    try {
+      const res = await api.get("/doctor/appointment");
+      if (res.data.appointments) {
+        seter(res.data.appointments);
+      }
+    } catch (err) {
+      console.error("Fetch header error:", err);
+    }
+  };
+  // /appointment-reject/:id
+
+
+export async function rejectVisitorAppointment(id) {
+  try {
+    const response = await api.put(`/doctor/appointment-reject/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("reject appointment error:", error);
+    throw error;
+  }
+}
+
+export async function acceptVisitorAppointment(id) {
+  try {
+    const response = await api.put(`/doctor/appointment-accept/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("accept appointment error:", error);
+    throw error;
+  }
+}

@@ -259,7 +259,7 @@ const getUserAppointments = async (req, res) => {
            d.clinic_name
          FROM visits v
          LEFT JOIN doctors d ON v.doctors_id = d.id
-         WHERE v.device_id = ? AND v.status = 'pending'
+         WHERE v.device_id = ? AND v.status = 'pending' AND DATE(v.visit_date) = CURDATE()
          ORDER BY v.created_at DESC`,
         [device_id]
       );

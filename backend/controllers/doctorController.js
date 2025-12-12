@@ -788,7 +788,6 @@ const updateSignature = async (req, res) => {
       `SELECT id, signature_logo FROM prescription_header WHERE doctors_id = ?`,
       [doctorId]
     );
-    console.log(existing)
     if (existing) {
       // DELETE OLD FILE (if exists)
       if (existing.signature_logo) {
@@ -823,7 +822,93 @@ const updateSignature = async (req, res) => {
   }
 };
 
+const getVisitorsAppointment = async(req, res) => {
+  try {
+    const { id } = req.user;
 
+    if (!id) {
+      return res.status(400).json({ message: "Doctor ID required" });
+    }
+
+    const cacheKey = `doctor_appointment_today_${id}`;
+
+    const appointments = await getOrSetCache(cacheKey, async () => {
+      // 1️⃣ Fetch all pending appointments for this device
+      const userAppointments = await query(
+        `SELECT 
+           v.id as visit_id,
+           v.visit_number,
+           v.patient_name,
+           v.age, 
+           v.description,
+           v.phone,
+           v.status
+         FROM visits v
+         LEFT JOIN doctors d ON v.doctors_id = d.id
+         WHERE d.id = ? AND v.status = 'pending' AND DATE(v.visit_date) = CURDATE()
+         ORDER BY v.created_at DESC`,
+        [id]
+      );
+
+      if (userAppointments.length === 0) return [];
+      return userAppointments;
+
+    }, 60); // cache for 60 seconds
+
+    return res.status(200).json({
+      from: "db/cache",
+      message: "Appointments fetched",
+      appointments
+    });
+
+  } catch (err) {
+    console.error("Error fetching appointments:", err);
+    return res.status(500).json({
+      message: "Server error",
+      error: err.message
+    });
+  }
+}
+
+const rejectVisitorAppointment = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+    const visit_id = req.params.id
+
+    // UPDATE NEW FILE
+    await query(
+      `UPDATE visits SET visited = 1, status = 'reject' WHERE id = ? AND doctors_id = ?`,
+      [visit_id, doctorId]
+    );
+
+    res.json({
+      message: "appointment updated successfully!",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating appointment" });
+  }
+};
+
+const acceptVisitorAppointment = async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+    const visit_id = req.params.id
+
+    // UPDATE NEW FILE
+    await query(
+      `UPDATE visits SET visited = 1, status = 'visited' WHERE id = ? AND doctors_id = ?`,
+      [visit_id, doctorId]
+    );
+
+    res.json({
+      message: "appointment accepted successfully!",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating appointment" });
+  }
+};
 
 // END PRESCRIPTION HEADER
 module.exports = {
@@ -842,5 +927,8 @@ module.exports = {
     getPrescriptionHeader,
     logoUploadMethod,
     updateClinicLogo,
-    updateSignature
+    updateSignature,
+    getVisitorsAppointment,
+    rejectVisitorAppointment,
+    acceptVisitorAppointment
 }

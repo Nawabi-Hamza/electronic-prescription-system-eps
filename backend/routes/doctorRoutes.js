@@ -4,7 +4,10 @@ const { getAllDetailsOfDoctor, updateTiming, addSpecialization, addAddress, dele
          addMedicine, getAllMedicine, deleteMedicine, getAllPaymentsOfDoctor, savePrescriptionHeader, 
          getPrescriptionHeader, updateClinicLogo,
          logoUploadMethod,
-         updateSignature} = require('../controllers/doctorController');
+         updateSignature,
+         getVisitorsAppointment,
+         rejectVisitorAppointment,
+         acceptVisitorAppointment} = require('../controllers/doctorController');
 
 // Middlewares
 const authMiddleware = require('../middlewares/auth');
@@ -75,13 +78,9 @@ router.post("/prescription/header", clientUpdateHeaderLimiter, validateSchema(pr
 router.post("/prescription/header/clinic-logo", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadClinicLogo), updateClinicLogo);
 router.post("/prescription/header/signature", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadDoctorSignature), updateSignature);
 
-
-// router.post(
-//   "/prescription/header-file/signature",
-//   checkDoctorPayment,
-//   uploadFile(uploadDoctorSignature),
-//   updateSignature
-// );
+router.get("/appointment", getVisitorsAppointment)
+router.put("/appointment-reject/:id", rejectVisitorAppointment)
+router.put("/appointment-accept/:id", acceptVisitorAppointment)
 
   
 
