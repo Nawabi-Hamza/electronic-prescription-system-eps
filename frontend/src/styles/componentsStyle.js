@@ -11,6 +11,7 @@ export const tableStyles = {
   tbody: "bg-white divide-y divide-gray-200",
   bodyRow: "hover:bg-gray-100 transition-colors duration-300 ease-in-out",
   td: "px-3 py-2 whitespace-nowrap text-sm text-gray-700",
+  medicine_td: "px-1 py-2 whitespace-nowrap text-sm text-gray-700",
   primaryBtn: "text-sky-400 cursor-pointer",
   dangerBtn: "text-red-400 cursor-pointer",
   prevBtn: "px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 cursor-pointer",

@@ -7,14 +7,30 @@ import { useEffect } from 'react'
 import { fetchPrescriptionHeader, getAllMedicine } from '../../../api/doctorAPI'
 import { useState } from 'react'
 import SimpleTemplate from './PrescriptionTemplates/SimpleTemplate'
+import SecondaryTemplate from './PrescriptionTemplates/SecondaryTemplate'
+import ModernTemplate from './PrescriptionTemplates/ModernTemplate'
 
 function PrescriptionPage({ payments }) {
-  const [ ph, setPh ] = useState([])
-  const [ medicine, setMedicine ] = useState([])
-  useEffect(() => { 
-    fetchPrescriptionHeader({ seter: setPh });
-    getAllMedicine({ seter: setMedicine })
- }, [])
+    const [ ph, setPh ] = useState([])
+    const [ medicine, setMedicine ] = useState([])
+    const [templateType, setTemplateType] = useState('simple'); // default template
+
+    useEffect(() => { 
+        fetchPrescriptionHeader({ seter: setPh });
+        getAllMedicine({ seter: setMedicine })
+            // Get template type from localStorage
+        const storedTemplate = localStorage.getItem('prescriptionTemplate');
+        if (storedTemplate) setTemplateType(storedTemplate.toLowerCase());
+    }, [])
+
+    const renderTemplate = () => {
+      switch(templateType) {
+        case 'secondary': return <SecondaryTemplate doctor={ph} medicines={medicine} />;
+        case 'modern': return <ModernTemplate doctor={ph} medicines={medicine} />;
+        case 'simple':
+        default: return <SimpleTemplate doctor={ph} medicines={medicine} />;
+      }
+    };
   // console.log(medicine)
   return (<>
     <Link to="/doctor" className={banner.back}>
@@ -27,7 +43,9 @@ function PrescriptionPage({ payments }) {
         <Link to="./settings" className={btnStyle.filled+" flex items-center gap-2"}><Cog /> Settings</Link>
       </div>
 
-      <SimpleTemplate doctor={ph} medicines={medicine} />
+      {/* <SimpleTemplate doctor={ph} medicines={medicine} /> */}
+      {/* <SecondaryTemplate doctor={ph} medicines={medicine} /> */}
+      {renderTemplate()}
     </div>
   </>
   )

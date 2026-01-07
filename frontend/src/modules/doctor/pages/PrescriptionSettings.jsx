@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ArrowBigLeftDashIcon, Section, SquarePen } from "lucide-react";
+import { ArrowBigLeftDashIcon, CheckCircle, Section, SquarePen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { badge, banner, btnStyle, dropdownStyle, gridStyle, icon, inputStyle, labelStyle } from "../../../styles/componentsStyle";
 import PaymentBanner from "./PaymentBanner";
 import api from "../../../api/axios";
-import { fetchPrescriptionHeader } from "../../../api/doctorAPI";
+import { fetchPrescriptionHeader, getAllMedicine } from "../../../api/doctorAPI";
 import SectionContainer from "../../../componenets/SectionContainer";
 import ImageUpload from "../../../componenets/ImageUpload";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,8 @@ import { ConfirmToast } from "../../../componenets/Toaster";
 import ImageViewer from "../../../componenets/ImageViewer";
 import Modal from "../../../componenets/ModalContainer";
 import ProgressContainer from "../../../componenets/ProgressContainer";
+import SimpleTemplate from "./PrescriptionTemplates/SimpleTemplate";
+import SecondaryTemplate from "./PrescriptionTemplates/SecondaryTemplate";
 
 function PrescriptionSettings({ payments }) {
   const [header, setHeader] = useState();
@@ -34,6 +36,7 @@ function PrescriptionSettings({ payments }) {
        header && 
       <>
         <ClientDoctument header={header} /><br />
+        <TemplateDesign header={header} /><br /><br />
         <DoctorDetails header={header} /><br /><br />
         {/* <PrescriptionForm header={header} /> */}
       </>
@@ -83,18 +86,6 @@ function DoctorDetails({ header }) {
             label: "Description",
             type: "text", // because you use <p> ... </p>
             placeholder: "Short clinic description...",
-          },
-          {
-            name: "template_design",
-            label: "Template Style",
-            type: "select",
-            required: true,
-            options: [
-              { label: "Simple", value: "simple" },
-              { label: "Elegant", value: "elegant" },
-              { label: "Modern", value: "modern" },
-              { label: "Minimal", value: "minimal" },
-            ],
           },
         ],
       },
@@ -211,8 +202,6 @@ function ClientDoctument({ header }) {
 }
 
 
-
-
 function UpdatePrescriptionFile({ isModalOpen, closeModal, type, setProfile, currentImage }) {
   const { handleSubmit, reset, formState: { isSubmitting } } = useForm();
   const [progress, setProgress] = useState(0);
@@ -321,3 +310,52 @@ function UpdatePrescriptionFile({ isModalOpen, closeModal, type, setProfile, cur
 }
 
 
+function TemplateDesign() {
+  const [selectedTemplate, setSelectedTemplate] = useState(
+    localStorage.getItem("prescriptionTemplate") || "simple"
+  );
+
+  const templates = [
+    { id: "simple", name: "Simple Template", img: "/templates/simple.png" },
+    { id: "secondary", name: "Secondary Template", img: "/templates/secondary.png" },
+    { id: "modern", name: "Modern Template", img: "/templates/modern.png" },
+  ];
+
+  const handleTemplateSelect = (templateId) => {
+    setSelectedTemplate(templateId);
+    localStorage.setItem("prescriptionTemplate", templateId);
+  };
+
+  return (
+    <>
+      {/* Template Selection Section */}
+      <SectionContainer title="Select Prescription Template">
+        <div className="flex gap-4 overflow-auto p-4">
+          {templates.map((t) => (
+            <div
+              key={t.id}
+              className="relative cursor-pointer min-w-[200px] border border-sky-200 rounded overflow-hidden shadow hover:scale-[102%] transition-transform"
+              onClick={() => handleTemplateSelect(t.id)}
+              style={{ width: "200px" }}
+            >
+              <img
+                src={t.img}
+                alt={t.name}
+                className="w-full h-auto block"
+              />
+
+              {/* Overlay tick if selected */}
+              {selectedTemplate === t.id && (
+                <div className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
+                  <CheckCircle size={20} className="text-green-500" />
+                </div>
+              )}
+
+              <div className="text-center bg-gray-50 p-1 text-sm">{t.name}</div>
+            </div>
+          ))}
+        </div>
+      </SectionContainer>
+    </>
+  );
+}

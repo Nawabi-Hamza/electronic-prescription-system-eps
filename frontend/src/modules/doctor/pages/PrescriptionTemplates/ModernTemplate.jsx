@@ -4,10 +4,22 @@ import "react-quill/dist/quill.snow.css";
 import "./Style.css";
 import { btnStyle, dropdownStyle, inputStyle, labelStyle, tableStyles } from "../../../../styles/componentsStyle";
 import SectionContainer from "../../../../componenets/SectionContainer";
+import ReactQuill from "react-quill";
 import CreatableSelect from "react-select/creatable";
 import { Printer } from "lucide-react";
 import { dosageOptions, medicineForms, timeOptions, numberOptions } from "./data";
 
+/* ---------- Quill config ---------- */
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    ["clean"],
+  ],
+};
+const formats = ["header", "bold", "italic", "underline", "list", "bullet", "align"];
 
 /* ---------- Helpers ---------- */
 const isoToday = () => new Date().toISOString().split("T")[0];
@@ -15,7 +27,7 @@ const formatMonthDay = (iso) =>
   iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "__________";
 
 /* ---------- Main Component ---------- */
-export default function SimpleTemplate({ doctor, medicines }) {
+export default function ModernTemplate({ doctor, medicines }) {
   const { doctor_name, lastname, clinic_name, name_prefex, clinic_logo, signature_logo, registration_number, description, addresses, phone, } = doctor || {};
 
   const logoUrl = clinic_logo ? `/uploads/clinic_logo/${clinic_logo}` : null;
@@ -27,6 +39,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
   const [patientAge, setPatientAge] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [nextVisit, setNextVisit] = useState(isoToday());
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     if (!medicineSearch || medicineSearch.length < 2) return setSuggestions([]);
@@ -131,8 +144,15 @@ export default function SimpleTemplate({ doctor, medicines }) {
           </div>
         </SectionContainer>
 
-        <div id="main-section" className="overflow-hidden md:grid-cols-3 gap-2 mt-2 bg-white p-2 rounded">
-          <div className=" overflow-auto">
+        <div id="main-section" className="grid overflow-hidden md:grid-cols-3 gap-2 mt-2 bg-white p-2 rounded">
+          <div className="md:col-span-1 w-full bg-sky-50 p-2 rounded">
+            <ReactQuill theme="snow" value={content} onChange={setContent} modules={modules} formats={formats} className="print:hidden h-auto" />
+            <div id="content-sidebar" className="hidden print:block p-2 rounded">
+              <div dangerouslySetInnerHTML={{ __html: content }} />
+            </div>
+          </div>
+
+          <div className="md:col-span-2 overflow-auto">
             <Body
               medicineSearch={medicineSearch}
               setMedicineSearch={setMedicineSearch}
@@ -183,14 +203,24 @@ function Header({ logoUrl, name_prefex, doctor_name, lastname, clinic_name, regi
 
   return (
     <div id="header-container">
-      <div className="md:flex items-center justify-between">
-        <div className="px-4">
+      <div className="md:flex items-center justify-center">
+        <div className="w-32 h-32 rounded overflow-hidden flex items-center justify-center">
+          {logoUrl ? (
+            <ImageViewer imagePath={logoUrl} alt="Clinic Logo" className="w-full object-contain" showPreview={false} />
+          ) : (
+            <span className="text-xs text-gray-400">No Logo</span>
+          )}
+        </div>
+
+        <div className="flex-1 text-center px-4">
           <h1 className="text-3xl font-bold uppercase tracking-wide">
             {name_prefex} {doctor_name} {lastname}
           </h1>
           <p className="text-lg font-semibold">{clinic_name}</p>
+          <p className="text-sm mt-1">Reg. No: {registration_number}</p>
           {description && <p className="text-xs mt-2 italic text-gray-600">{description}</p>}
         </div>
+
         <div>
           <p>Phone: {phone}</p>
           <p>Bill No: {billNumber}</p>
@@ -275,7 +305,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
 
 
   return (
-    <SectionContainer title="RX:" className="min-h-[70vh] shadow-none border-l border-slate-400 rounded-none">
+    <SectionContainer title="RX:" className="min-h-[58vh] shadow-none border-l border-slate-400 rounded-none">
       {/* Medicine Search */}
       <div className="mb-2 relative print:hidden">
         <input
@@ -398,11 +428,14 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
 
 
 
-function Footer({ doctor_name, lastname, addresses }) {
+function Footer({ signatureUrl, doctor_name, lastname, addresses }) {
   return (
     <>
       <div className="flex justify-end">
         <div className="text-center">
+          <div className="h-20 w-48 flex justify-center items-center">
+            {signatureUrl ? <ImageViewer imagePath={signatureUrl} alt="Signature" className="h-full object-contain" showPreview={false} /> : <span className="text-xs text-gray-400">No Signature</span>}
+          </div>
           <p className="border-t pt-1 font-semibold">Dr. {doctor_name} {lastname}</p>
         </div>
       </div>
