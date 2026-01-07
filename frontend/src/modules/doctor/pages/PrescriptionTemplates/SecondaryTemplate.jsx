@@ -276,7 +276,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
         name: m.name,
         brand_name: m.brand_name || "",
         form: m.form || "",
-        dosage: m.dosage || "",
+        dosage: m.strength || "",
         number: m.number || "",
         time: m.time || ""
       }
