@@ -324,6 +324,7 @@ function TemplateDesign() {
   const handleTemplateSelect = (templateId) => {
     setSelectedTemplate(templateId);
     localStorage.setItem("prescriptionTemplate", templateId);
+    toast.success(`Prescription Design Changed to ${templateId}`)
   };
 
   return (
