@@ -46,8 +46,9 @@ function MedicineForm({ setMedicine, updateMedicine, setUpdateMedicine }){
     const { register, control, errors, trigger, reset, setValue, isSubmitting, handleSubmit } = useForm()
 
     const onSubmit = async(data) =>{
-        try{
-            const user_data = Object.entries(data).reduce((a, [k, v]) => typeof v === "object" && v !== null ? { ...a, ...v } : { ...a, [k]: v }, {});        
+      try{
+        const user_data = Object.entries(data).reduce((a, [k, v]) => typeof v === "object" && v !== null ? { ...a, ...v } : { ...a, [k]: v }, {});        
+        // return console.log(user_data)
             const res = await addNewMedicine(user_data)
             setMedicine( prev => [{ ...user_data, id:res.medicine_id }, ...prev])
             reset()

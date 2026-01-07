@@ -17,10 +17,9 @@ const formatMonthDay = (iso) =>
 /* ---------- Main Component ---------- */
 export default function SimpleTemplate({ doctor, medicines }) {
   const { doctor_name, lastname, clinic_name, name_prefex, clinic_logo, signature_logo, registration_number, description, addresses, phone, } = doctor || {};
-
   const logoUrl = clinic_logo ? `/uploads/clinic_logo/${clinic_logo}` : null;
   const signatureUrl = signature_logo ? `/uploads/doctor_signatures/${signature_logo}` : null;
-
+  console.log(medicines)
   const [medicineSearch, setMedicineSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [patientName, setPatientName] = useState("");
@@ -161,7 +160,7 @@ function Field({ label, children, className = "" }) {
   );
 }
 
-function Header({ logoUrl, name_prefex, doctor_name, lastname, clinic_name, registration_number, description, phone, patientName, patientAge, patientGender, nextVisit }) {
+function Header({ name_prefex, doctor_name, lastname, clinic_name, registration_number, description, phone, patientName, patientAge, patientGender, nextVisit }) {
   // Get bill number from localStorage or default
   const [billNumber, setBillNumber] = React.useState(() => {
     const stored = localStorage.getItem("billNumber");
@@ -245,7 +244,6 @@ const smallSelectStyles = {
 function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }) {
   const [items, setItems] = useState([]);
 
-
   // Insert medicine — auto-fill if available
   const insertMedicine = (m) => {
     setItems((prev) => [
@@ -255,7 +253,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
         name: m.name,
         brand_name: m.brand_name || "",
         form: m.form || "",
-        dosage: m.dosage || "",
+        dosage: m.strength || "",
         number: m.number || "",
         time: m.time || ""
       }

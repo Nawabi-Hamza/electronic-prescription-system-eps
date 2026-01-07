@@ -66,7 +66,7 @@ router.post("/profile/address", addAddress)
 router.delete("/profile/address/:id", deleteAddress)
 
 // Routes Need Check Payment Before Use
-router.get("/medicine", validateSchema(addMedicineSchema), checkDoctorPayment, getAllMedicine)
+router.get("/medicine", checkDoctorPayment, getAllMedicine)
 router.post("/medicine", validateSchema(addMedicineSchema), checkDoctorPayment, addMedicine)
 router.delete("/medicine/:id", checkDoctorPayment, deleteMedicine)
 
