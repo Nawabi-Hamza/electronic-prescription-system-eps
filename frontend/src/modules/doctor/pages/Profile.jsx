@@ -411,6 +411,7 @@ function ClientAvailableTime({ available_days }) {
       return acc;
     }, {})
   );
+  const [selectedDay, setSelectedDay] = useState(null);
 
   const daysOrder = [
     { key: "saturday", label: "Saturday", emoji: "👋🏻" },
@@ -424,10 +425,10 @@ function ClientAvailableTime({ available_days }) {
 
   return (
     <SectionContainer title="Available Days">
-      <PenBox
+      {/* <PenBox
         className={`${icon.primary} absolute top-4 right-4 cursor-pointer`}
         onClick={() => setIsModalOpen(true)}
-      />
+      /> */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         {daysOrder.map(({ key, label, emoji }) => {
@@ -437,8 +438,18 @@ function ClientAvailableTime({ available_days }) {
           return (
             <div
               key={key}
-              className={`p-4 rounded-md shadow-md ${dayData?.status === "open" ? "bg-sky-50  shadow-sky-200":"bg-red-50  shadow-red-200"} `}
+              className={`relative p-4 rounded-md shadow-md ${dayData?.status === "open" ? "bg-sky-50  shadow-sky-200":"bg-red-50  shadow-red-200"} `}
             >
+              <PenBox
+                className={`${icon.primary} absolute top-4 right-4 cursor-pointer`}
+                onClick={() => {
+                  setIsModalOpen(true) 
+                  // console.log(key)
+                  setSelectedDay(key);
+
+                }}  
+              />
+
               <span className="text-lg font-semibold">
                 {emoji} {label}
               </span>
@@ -465,57 +476,70 @@ function ClientAvailableTime({ available_days }) {
       </div>
 
       <UpdateAvailabelTime
-        isModalOpen={isModalOpen}
-        closeModal={() => setIsModalOpen(false)}
-        timing={timing}
-        setTiming={setTiming}
-      />
+          isModalOpen={isModalOpen}
+          closeModal={() => {
+            setSelectedDay(null);
+            setIsModalOpen(false);
+          }}
+          dayKey={selectedDay}
+          dayData={selectedDay ? timing[selectedDay] : null}
+          setTiming={setTiming}
+        />
     </SectionContainer>
   );
 }
 
 
 
-function UpdateAvailabelTime({ isModalOpen, closeModal, timing, setTiming }){
-  // console.log(timing)
+function UpdateAvailabelTime({ isModalOpen, closeModal, dayKey, dayData, setTiming }){
 
     const { register, handleSubmit, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
-    const onSubmit = async(data)=>{
-        try{
-            const res = await updateDoctorTiming(data)
-            toast.success(res.message)
-            setTiming(data)
-            closeModal()
-        }catch(err){
-            console.error("❌ schedual submission failed:", err);
-            toast.error(err?.response?.data?.message || err || "Something went wrong");
-        }
-    }
+    
+    const onSubmit = async (data) => {
+        try {
+          const updatedDay = data[dayKey];
+          const payload = { day_of_week: dayKey, ...updatedDay };
+          const res = await updateDoctorTiming(payload);
+          toast.success(res.message);
+          setTiming(prev => ({
+            ...prev,
+            [dayKey]: payload,
+          }));
 
-  const defaultValues = timing
-    ? Object.entries(timing).reduce((acc, [day, val]) => {
-        acc[day] = {
-          status: val.status || "Open",
-          in_time: val.in_time || "",
-          out_time: val.out_time || "",
-          slot_duration: val.slot_duration || 30,
-        };
-        return acc;
-      }, {})
-    : {};
+          closeModal();
+        } catch (err) {
+          if (err.status == 400 ) toast.error(err.response.data.error)
+          else toast.error("Something went wrong");
+        }
+      };
+
+
+    const defaultValues = dayKey
+      ? {
+          [dayKey]: {
+            status: dayData?.status || "open",
+            in_time: dayData?.in_time || "",
+            out_time: dayData?.out_time || "",
+            slot_duration: dayData?.slot_duration || 30,
+          },
+        }
+      : {};
+
+    const singleDayFields = timingFields.filter(field => field.name === dayKey);
+
     return(
-        <Modal isOpen={isModalOpen} containerStyle="sm" onClose={closeModal} title="📅 Days Schedule">
-            <FieldsGroupForm
-                fields={timingFields}
-                register={register}
-                control={control}
-                errors={errors}
-                trigger={trigger}
-                setValue={setValue}
-                isSubmitting={isSubmitting}
-                defaultValues={defaultValues}
-                onSubmit={handleSubmit(onSubmit)}
-            />
+        <Modal isOpen={isModalOpen} containerStyle="sm" onClose={closeModal} title={`📅 Update ${dayKey}`}>
+          <FieldsGroupForm
+            fields={singleDayFields}
+            register={register}
+            control={control}
+            errors={errors}
+            trigger={trigger}
+            setValue={setValue}
+            isSubmitting={isSubmitting}
+            defaultValues={defaultValues}
+            onSubmit={handleSubmit(onSubmit)}
+          />
         </Modal>
     )
 }

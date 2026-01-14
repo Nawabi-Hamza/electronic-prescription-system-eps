@@ -4,7 +4,7 @@ import { showModalStyle } from "../../../styles/modalStyles";
 import { btnStyle, divStyle, inputStyle } from "../../../styles/componentsStyle";
 import { Trash, UserPen, Eye, X, Search, PhoneCall, MessageCircle, MessageCircleDashed, MessageCircleMore, UserPenIcon, Section } from "lucide-react";
 import { useForm } from "react-hook-form";
-import {  userFieldsGroup } from "../../../utils/FormFields";
+import {  updateUserFieldsGroup, userFieldsGroup } from "../../../utils/FormFields";
 import ImageViewer from "../../../componenets/ImageViewer";
 import { toast } from "react-toastify";
 import Modal from "../../../componenets/ModalContainer";
@@ -12,15 +12,15 @@ import { ConfirmToast } from "../../../componenets/Toaster";
 import Table from "../../../componenets/Table";
 // import { deleteStudent, fetchStudents, createStudent, updateStudent } from "../../../api/ownerAPI";
 // import FieldsResultStepper from "../../../componenets/FieldsGroupForm";
-import { fetchUsers, fetchUsersDetails, createUser } from "../../../api/ownerAPI";
+import { fetchUsers, fetchUsersDetails, createUser, deleteUser } from "../../../api/ownerAPI";
 import SectionContainer from "../../../componenets/SectionContainer";
 import FieldsGroupForm from "../../../componenets/FieldsGroupForm";
 
 function Doctors() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  // const { reset } = useForm();
   const [refresh,setRefresh] = useState(false)
 
   // Fetch Users
@@ -36,20 +36,20 @@ function Doctors() {
     }
   };
 
-  useEffect(() => { loadUsers() }, [refresh]);
+    useEffect(() => { loadUsers() }, [refresh]);
 
-  // function handleDelete(id){
-  //   ConfirmToast("Are you sure to remove this student?", async()=>{
-  //     try {
-  //         await deleteStudent(id);
-  //         setStudents((prevStudents) => prevStudents.filter(student => student.generated_id !== id));
-  //         toast.success(`${id} student record removed successfuly`)
-  //     } catch (error) {
-  //         toast.error(`${id} Delete faild!`)
-  //         console.error("Delete failed:", error);
-  //     }
-  //   })
-  // };
+    function handleDelete(id, generated_id){
+      ConfirmToast("Are you sure to remove this user?", async()=>{
+        try {
+            await deleteUser(id);
+            setUsers((prev) => prev.filter(user => user.id !== id));
+            toast.success(`${generated_id} user record removed successfuly`)
+        } catch (error) {
+            toast.error(`${generated_id} Delete faild!`)
+            console.error("Delete failed:", error);
+        }
+      })
+    };
   
 
     const [showInfoModal, setShowInfoModal] = useState(false);
@@ -62,31 +62,20 @@ function Doctors() {
 
     const handleEdit = (record)=>{
       setSelectedStudent(record)
-      setIsModalOpen(true)
+      setIsUpdateModalOpen(true)
     }
 
-    const closeInfoModal = () => {
-        setSelectedStudent(null);
-        setShowInfoModal(false);
-    };
-
-    // Close modal handler (resets form)
-    // const closeModal = () => {
-    //     setSelectedStudent(null)
-    //     setIsModalOpen(false);
-    // };
-
-  // Basic search filter for table (you can improve it)
-  const filteredUsers = useMemo(() => {
-    const term = searchTerm.toLowerCase();
-    return users?.filter((s) => 
-      s.generated_id?.toLowerCase().includes(term) ||
-      (s.doctor_name)?.toLowerCase().includes(term) ||
-      s.clinic_name?.toLowerCase().includes(term) ||
-      s.email?.toLowerCase().includes(term) ||
-      s.phone?.toLowerCase().includes(term)
-    )
-  }, [users, searchTerm]);
+    // Basic search filter for table (you can improve it)
+    const filteredUsers = useMemo(() => {
+      const term = searchTerm.toLowerCase();
+      return users?.filter((s) => 
+        s.generated_id?.toLowerCase().includes(term) ||
+        (s.doctor_name)?.toLowerCase().includes(term) ||
+        s.clinic_name?.toLowerCase().includes(term) ||
+        s.email?.toLowerCase().includes(term) ||
+        s.phone?.toLowerCase().includes(term)
+      )
+    }, [users, searchTerm]);
 
   return (
     <div>
@@ -114,23 +103,21 @@ function Doctors() {
                     className: ts.primaryBtn,
                     onClick: () =>  showUserformation(row.id),
                 },
-                row?.status?.includes("active") &&
                 {
                     label: <UserPen size={20} />,
                     className: ts.primaryBtn, 
                     onClick: () =>  handleEdit(row),
                 },
-                row?.status?.includes("active", "pending") &&
                 {
                     label: <Trash size={20} />,
                     className: ts.dangerBtn,
-                    // onClick: () =>  handleDelete(row.generated_id),
+                    onClick: () =>  handleDelete(row.id, row.generated_id),
                 }
-                
               ]}
       />
-      <ShowUserModal showInfoModal={showInfoModal} selectedStudent={selectedStudent} closeInfoModal={closeInfoModal} />
-      <AddUserModal selectedStudent={selectedStudent} isModalOpen={isModalOpen} setRefresh={setRefresh} setIsModalOpen={setIsModalOpen} setSelectedStudent={setSelectedStudent} />
+      <ShowUserModal showInfoModal={showInfoModal} selectedUser={selectedStudent} closeInfoModal={() => setShowInfoModal(false)} />
+      <AddUserModal isModalOpen={isModalOpen} setRefresh={setRefresh} handleClose={() => setIsModalOpen(false)}  />
+      <UpdateUserModal isModalOpen={isUpdateModalOpen} setRefresh={setRefresh} handleClose={() => setIsUpdateModalOpen(false)}  />
     </div>
   )
 }
@@ -163,149 +150,276 @@ function HeaderSection({ searchTerm, setSearchTerm, setIsModalOpen, setSelectedS
 }
 
 
-function AddUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStudent, setSelectedStudent }) {
-const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
 
-  useEffect(() => {
-    if (selectedStudent) {
-      reset(defaultValues); // populate form when editing
-    } else {
-      reset(); // clear previous values
-    }
-  }, [selectedStudent, reset]);
+function AddUserModal({ isModalOpen, setRefresh, handleClose }) {
+  const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
 
+  /* ================= SUBMIT ================= */
   const onSubmit = async (data) => {
     try {
-      const { ...rest } = data;
-      
-      const user_data = Object.entries(rest).reduce((a, [k, v]) => typeof v === "object" && v !== null ? { ...a, ...v } : { ...a, [k]: v }, {});
-    // return console.log(user_data)
+      const user_data = { ...data.profile, ...data.personal_info, ...data.account_info };
 
-
-
-      // selectedStudent
-      // ? await updateStudent(selectedStudent.generated_id, studentData)
-      // :
-       await createUser(user_data);
-      
-      setRefresh((p) => !p);
-      toast.success(`${selectedStudent ? "Student updated" : "Student added"} successfully`);
-      reset();
-      setSelectedStudent(false)
-      setIsModalOpen(false);
+      // console.log("FINAL USER PAYLOAD:", user_data);
+      await createUser(user_data);
+      setRefresh(p => !p);
+      toast.success("User updated successfully");
+      reset({})
+      handleClose();
     } catch (err) {
-      console.error("❌ doctor submission failed:", err);
-      toast.error(err?.response?.data?.message || err || "Something went wrong");
+      // console.error("❌ user submission failed:", err);
+      toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
-  // ✅ FINAL FIXED defaultValues structure
-  const defaultValues = selectedStudent && {
-        profile: {
-          students_profile: selectedStudent?.profile || "",
-          firstname: selectedStudent?.firstname || "",
-          lastname: selectedStudent?.lastname || "",
-          date_of_birth: selectedStudent?.date_of_birth || "",
-          gender: selectedStudent?.gender || "",
-          join_date: selectedStudent?.join_date || "",
-          nationality: selectedStudent?.nationality || "",
-          mother_language: selectedStudent?.mother_language || "",
-        },
-        family_info: {
-          father_name: selectedStudent?.father_name || "",
-          grand_father_name: selectedStudent?.grand_father_name || "",
-          father_job: selectedStudent?.father_job || "",
-          brother_name: selectedStudent?.brother_name || "",
-          brother_name2: selectedStudent?.brother_name2 || "",
-          mama_name: selectedStudent?.mama_name || "",
-          kaka_name: selectedStudent?.kaka_name || "",
-          bacha_kaka_name: selectedStudent?.bacha_kaka_name || "",
-          bacha_mama_name: selectedStudent?.bacha_mama_name || "",
-        },
-        contact_id: {
-          phone: selectedStudent?.phone || "",
-          whatsapp_phone: selectedStudent?.whatsapp_phone || "",
-          email: selectedStudent?.email || "",
-          national_id: selectedStudent?.national_id || "",
-          assas_number: selectedStudent?.assas_number || "",
-          description: selectedStudent?.description || "",
-        },
-        address_info: {
-          current_address: {
-            ...selectedStudent?.current_address,
-          },
-          permanent_address: {
-            ...selectedStudent?.permanent_address,
-          },
-        },
+  /* ================= RENDER ================= */
+  return (
+    <Modal onClose={handleClose} containerStyle="sm" isOpen={isModalOpen} title={`Add User`}>
+      <FieldsGroupForm
+        fields={userFieldsGroup}
+        register={register}
+        control={control}
+        errors={errors}
+        trigger={trigger}
+        setValue={setValue}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSubmit(onSubmit)}
+      />
+    </Modal>
+  );
+}
+
+function UpdateUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStudent, setSelectedStudent }) {
+  console.log(selectedStudent)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    trigger,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm();
+
+  /* ================= DEFAULT VALUES ================= */
+  const defaultValues = React.useMemo(() => {
+    if (!selectedStudent) return {};
+
+    return {
+      profile: {
+        profile: selectedStudent.profile || "",
+        doctor_name: selectedStudent.doctor_name || "",
+        lastname: selectedStudent.lastname || "",
+      },
+      personal_info: {
+        clinic_name: selectedStudent.clinic_name || "",
+        gender: selectedStudent.gender || "",
+        experience_year: selectedStudent.experience_year || "",
+        date_of_birth: selectedStudent.date_of_birth || "",
+        status: selectedStudent.status || "active",
+        calendar_type: selectedStudent.calendar_type || "miladi",
+        clinic_fee: selectedStudent.clinic_fee || "",
+      },
+      account_info: {
+        phone: selectedStudent.phone || "",
+        email: selectedStudent.email || "",
       }
-    
-      const handleClose = ()=>{
-        console.log("close model caled")
-        reset()
-        setValue(null)
-        setSelectedStudent(null)
-        setIsModalOpen(false)
-      }
-      
+    };
+  }, [selectedStudent]);
+
+  useEffect(() => {
+    if (selectedStudent) reset(defaultValues);
+  }, [selectedStudent, defaultValues, reset]);
+
+  /* ================= SUBMIT ================= */
+  const onSubmit = async (data) => {
+    try {
+      const payload = {
+        ...data.profile,
+        ...data.personal_info,
+        ...data.account_info,
+      };
+      console.log(payload)
+      // await updateUser(selectedStudent.id, payload);
+
+      setRefresh(p => !p);
+      toast.success("User updated successfully");
+      handleClose();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Update failed");
+    }
+  };
+
+  const handleClose = () => {
+    reset({});
+    setSelectedStudent(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <Modal
       onClose={handleClose}
       containerStyle="sm"
       isOpen={isModalOpen}
-      title={`${selectedStudent ? "Edit" : "Add"} Student ${selectedStudent?.generated_id || ""}`}
+      title="Edit User"
     >
-
-{/* <FieldsGroupForm
-  fields={[
-    {
-      name: "addresses",
-      type: "array",
-      label: "Doctor Addresses",
-      fields: [
-        { name: "type", type: "select", label: "Country",
-          option: ["Permanent", "Current"]
-         },
-        { name: "country", type: "text", label: "Country" },
-        { name: "city", type: "text", label: "City" },
-        { name: "street", type: "textarea", label: "Street Address" },
-        { name: "floor_number", type: "textarea", label: "Street Address" },
-        { name: "room_number", type: "textarea", label: "Street Address" },
-        { name: "address", type: "textarea", label: "Street Address" },
-      ]
-    }
-  ]}
-  register={register}
-  control={control}
-  errors={errors}
-  setValue={setValue}
-/> */}
-
-      {/* <form onSubmit={handleSubmit(onSubmit)}> */}
-        <FieldsGroupForm
-          fields={userFieldsGroup}
-          register={register}
-          control={control}
-          errors={errors}
-          trigger={trigger}
-          setValue={setValue}
-          isSubmitting={isSubmitting}
-          defaultValues={selectedStudent && defaultValues }
-          onSubmit={handleSubmit(onSubmit)}
-        />
-      {/* </form> */}
+      <FieldsGroupForm
+        fields={updateUserFieldsGroup}
+        register={register}
+        control={control}
+        errors={errors}
+        trigger={trigger}
+        setValue={setValue}
+        isSubmitting={isSubmitting}
+        defaultValues={defaultValues}
+        onSubmit={handleSubmit(onSubmit)}
+      />
     </Modal>
   );
 }
 
+// function AddUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStudent, setSelectedStudent }) {
+// const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
+
+//   useEffect(() => {
+//     if (selectedStudent) {
+//       reset(defaultValues); // populate form when editing
+//     } else {
+//       reset(); // clear previous values
+//     }
+//   }, [selectedStudent, reset]);
+
+//   const onSubmit = async (data) => {
+//     try {
+//       const { ...rest } = data;
+      
+//       const user_data = Object.entries(rest).reduce((a, [k, v]) => typeof v === "object" && v !== null ? { ...a, ...v } : { ...a, [k]: v }, {});
+//     return console.log(user_data)
 
 
-function ShowUserModal({ showInfoModal, selectedStudent, closeInfoModal }) {
-  // if (!showInfoModal || !selectedStudent) return null;
+
+//       // selectedStudent
+//       // ? await updateStudent(selectedStudent.generated_id, studentData)
+//       // :
+//        await createUser(user_data);
+      
+//       setRefresh((p) => !p);
+//       toast.success(`${selectedStudent ? "Student updated" : "Student added"} successfully`);
+//       reset();
+//       setSelectedStudent(false)
+//       setIsModalOpen(false);
+//     } catch (err) {
+//       console.error("❌ doctor submission failed:", err);
+//       toast.error(err?.response?.data?.message || err || "Something went wrong");
+//     }
+//   };
+
+//   // ✅ FINAL FIXED defaultValues structure
+//   const defaultValues = selectedStudent && {
+//         profile: {
+//           students_profile: selectedStudent?.profile || "",
+//           firstname: selectedStudent?.firstname || "",
+//           lastname: selectedStudent?.lastname || "",
+//           date_of_birth: selectedStudent?.date_of_birth || "",
+//           gender: selectedStudent?.gender || "",
+//           join_date: selectedStudent?.join_date || "",
+//           nationality: selectedStudent?.nationality || "",
+//           mother_language: selectedStudent?.mother_language || "",
+//         },
+//         family_info: {
+//           father_name: selectedStudent?.father_name || "",
+//           grand_father_name: selectedStudent?.grand_father_name || "",
+//           father_job: selectedStudent?.father_job || "",
+//           brother_name: selectedStudent?.brother_name || "",
+//           brother_name2: selectedStudent?.brother_name2 || "",
+//           mama_name: selectedStudent?.mama_name || "",
+//           kaka_name: selectedStudent?.kaka_name || "",
+//           bacha_kaka_name: selectedStudent?.bacha_kaka_name || "",
+//           bacha_mama_name: selectedStudent?.bacha_mama_name || "",
+//         },
+//         contact_id: {
+//           phone: selectedStudent?.phone || "",
+//           whatsapp_phone: selectedStudent?.whatsapp_phone || "",
+//           email: selectedStudent?.email || "",
+//           national_id: selectedStudent?.national_id || "",
+//           assas_number: selectedStudent?.assas_number || "",
+//           description: selectedStudent?.description || "",
+//         },
+//         address_info: {
+//           current_address: {
+//             ...selectedStudent?.current_address,
+//           },
+//           permanent_address: {
+//             ...selectedStudent?.permanent_address,
+//           },
+//         },
+//       }
+    
+//       const handleClose = ()=>{
+//         console.log("close model caled")
+//         reset()
+//         setValue(null)
+//         setSelectedStudent(null)
+//         setIsModalOpen(false)
+//       }
+      
+//   return (
+//     <Modal
+//       onClose={handleClose}
+//       containerStyle="sm"
+//       isOpen={isModalOpen}
+//       title={`${selectedStudent ? "Edit" : "Add"} Student ${selectedStudent?.generated_id || ""}`}
+//     >
+
+// {/* <FieldsGroupForm
+//   fields={[
+//     {
+//       name: "addresses",
+//       type: "array",
+//       label: "Doctor Addresses",
+//       fields: [
+//         { name: "type", type: "select", label: "Country",
+//           option: ["Permanent", "Current"]
+//          },
+//         { name: "country", type: "text", label: "Country" },
+//         { name: "city", type: "text", label: "City" },
+//         { name: "street", type: "textarea", label: "Street Address" },
+//         { name: "floor_number", type: "textarea", label: "Street Address" },
+//         { name: "room_number", type: "textarea", label: "Street Address" },
+//         { name: "address", type: "textarea", label: "Street Address" },
+//       ]
+//     }
+//   ]}
+//   register={register}
+//   control={control}
+//   errors={errors}
+//   setValue={setValue}
+// /> */}
+
+//       {/* <form onSubmit={handleSubmit(onSubmit)}> */}
+//         <FieldsGroupForm
+//           fields={userFieldsGroup}
+//           register={register}
+//           control={control}
+//           errors={errors}
+//           trigger={trigger}
+//           setValue={setValue}
+//           isSubmitting={isSubmitting}
+//           defaultValues={selectedStudent && defaultValues }
+//           onSubmit={handleSubmit(onSubmit)}
+//         />
+//       {/* </form> */}
+//     </Modal>
+//   );
+// }
+
+
+
+function ShowUserModal({ showInfoModal, selectedUser, closeInfoModal }) {
+
   const [ user, setUser ] = useState({})
-  const loadUsers = async (selectedStudent_id) => {
+  const loadUsers = async (selectedUser_id) => {
     try {
-      await fetchUsersDetails({ seter: setUser, user_id: selectedStudent_id});
+      await fetchUsersDetails({ seter: setUser, user_id: selectedUser_id});
       // setUsersdata);
     } catch (error) {
       console.error(`Error loading users: ${error.message}`);
@@ -318,7 +432,7 @@ function ShowUserModal({ showInfoModal, selectedStudent, closeInfoModal }) {
 
   // console.log(user)
 
-  useEffect(() => { loadUsers(selectedStudent) }, [selectedStudent]);
+  useEffect(() => { loadUsers(selectedUser) }, [selectedUser]);
 
   return (
     <Modal isOpen={showInfoModal} containerStyle="sm" onClose={closeInfoModal} title={`Doctor - ${user.doctor_name}`}>
@@ -511,45 +625,32 @@ function ShowUserModal({ showInfoModal, selectedStudent, closeInfoModal }) {
 
           {user?.available_days?.length > 0 && (
             <SectionContainer title="Available Days">
+              {user.available_days.map( item => (
+                <>
+                  <div className="shadow p-4 mb-4">
+                    {/* <h3 className="text-sm font-medium text-gray-600 mb-1">Available Days</h3> */}
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                        <span className="font-semibold uppercase">{item.day_of_week}</span>
+                        <span className={item.status == "open" ? badge.successSm: badge.dangerSm}>{item.status}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="flex flex-col">
+                        <span className="text-gray-500">Start Time</span>
+                        <span className="font-medium">
+                          {item.in_time || "--"}
+                        </span>
+                      </div>
 
-              <div>
-                {/* <h3 className="text-sm font-medium text-gray-600 mb-1">Available Days</h3> */}
-                <div className="flex flex-wrap gap-2">
-
-                  {Object.entries(user.available_days[0])
-                    .filter(([key]) =>
-                      ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"].includes(key) 
-                    // && value == 1
-                    )
-                    .map(([day,v]) => (
-                      <span
-                        key={day}
-                        className={v ? badge.successSm:badge.dangerSm}
-                      >
-                        {day.charAt(0).toUpperCase() + day.slice(1)} 
-                      </span>
-                    ))
-                  }
-
-                </div>
-              </div>
-
-              {/* Timings */}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="flex flex-col">
-                  <span className="text-gray-500">Start Time</span>
-                  <span className="font-medium">
-                    {user.available_days[0].in_time || "--"}
-                  </span>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="text-gray-500">End Time</span>
-                  <span className="font-medium">
-                    {user.available_days[0].out_time || "--"}
-                  </span>
-                </div>
-              </div>
+                      <div className="flex flex-col">
+                        <span className="text-gray-500">End Time</span>
+                        <span className="font-medium">
+                          {item.out_time || "--"}
+                        </span>
+                      </div>
+                    </div>        
+                  </div>
+                </>
+              ))}
             </SectionContainer>
           )}
         </div>

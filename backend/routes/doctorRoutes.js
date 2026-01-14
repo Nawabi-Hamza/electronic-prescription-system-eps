@@ -15,7 +15,7 @@ const roleCheck = require('../middlewares/roleCheck');
 const { sanitizeInput } = require('../middlewares/sanitizeHtml');
 const { checkDoctorPayment } = require('../middlewares/checkDoctorPayment');
 const validateSchema = require('../validators/validateSchema');
-const { addMedicineSchema, prescriptionHeaderSchema, updateTimingSchema } = require('../validators/doctorSchema');
+const { addMedicineSchema, prescriptionHeaderSchema, updateSingleDaySchema } = require('../validators/doctorSchema');
 const { clientUpdateHeaderLimiter, clientUploadFileLimiter } = require('../middlewares/rateLimit');
 const { uploadFile } = require('../middlewares/multer');
 const { cleanupFileOnError } = require('../middlewares/cleanUpFileOnError');
@@ -52,9 +52,10 @@ const uploadDoctorSignature = {
 
 
 router.get("/profile/details", getAllDetailsOfDoctor)
-router.get("/profile/payments", checkDoctorPayment, paymentDone)
+// router.get("/profile/payments", checkDoctorPayment, paymentDone)
+router.get("/profile/payments", paymentDone)
 
-router.put("/profile/update-timing", validateSchema(updateTimingSchema), updateTiming)
+router.put("/profile/update-timing", validateSchema(updateSingleDaySchema), updateTiming)
 
 router.get("/payments", getAllPaymentsOfDoctor)
 
@@ -66,17 +67,23 @@ router.post("/profile/address", addAddress)
 router.delete("/profile/address/:id", deleteAddress)
 
 // Routes Need Check Payment Before Use
-router.get("/medicine", checkDoctorPayment, getAllMedicine)
-router.post("/medicine", validateSchema(addMedicineSchema), checkDoctorPayment, addMedicine)
-router.delete("/medicine/:id", checkDoctorPayment, deleteMedicine)
+// router.get("/medicine", checkDoctorPayment, getAllMedicine)
+// router.post("/medicine", validateSchema(addMedicineSchema), checkDoctorPayment, addMedicine)
+// router.delete("/medicine/:id", checkDoctorPayment, deleteMedicine)
+router.get("/medicine", getAllMedicine)
+router.post("/medicine", validateSchema(addMedicineSchema), addMedicine)
+router.delete("/medicine/:id", deleteMedicine)
 
 // Prescription Header
+// router.post("/prescription/header", clientUpdateHeaderLimiter, validateSchema(prescriptionHeaderSchema), checkDoctorPayment, savePrescriptionHeader);
 router.get("/prescription/header", getPrescriptionHeader)
-router.post("/prescription/header", clientUpdateHeaderLimiter, validateSchema(prescriptionHeaderSchema), checkDoctorPayment, savePrescriptionHeader);
+router.post("/prescription/header", clientUpdateHeaderLimiter, validateSchema(prescriptionHeaderSchema), savePrescriptionHeader);
 
 
-router.post("/prescription/header/clinic-logo", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadClinicLogo), updateClinicLogo);
-router.post("/prescription/header/signature", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadDoctorSignature), updateSignature);
+// router.post("/prescription/header/clinic-logo", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadClinicLogo), updateClinicLogo);
+// router.post("/prescription/header/signature", clientUploadFileLimiter, cleanupFileOnError, checkDoctorPayment, uploadFile(uploadDoctorSignature), updateSignature);
+router.post("/prescription/header/clinic-logo", clientUploadFileLimiter, cleanupFileOnError, uploadFile(uploadClinicLogo), updateClinicLogo);
+router.post("/prescription/header/signature", clientUploadFileLimiter, cleanupFileOnError, uploadFile(uploadDoctorSignature), updateSignature);
 
 router.get("/appointment", getVisitorsAppointment)
 router.put("/appointment-reject/:id", rejectVisitorAppointment)

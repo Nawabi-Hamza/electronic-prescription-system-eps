@@ -1,7 +1,8 @@
 const { query } = require("../config/query")
 const { getOrSetCache, invalidateKey } = require("../middlewares/cache");
 const bcrypt = require("bcryptjs");
-
+const path = require("path")
+const fs = require("fs")
 
 const cache_doctor_list = "doctors_list"
 let cache_single_doctor = "doctor_list_item_"
@@ -147,6 +148,75 @@ const addNewDoctor = async(req, res) => {
   }
 }
 
+const deleteDoctor = async (req, res) => {
+  try {
+    const doctor_id = req.params.user_id;
+
+    if (!doctor_id) {
+      return res.status(400).json({ message: "Doctor ID is required" });
+    }
+
+    /* 1️⃣ Check doctor exists & get photo */
+    const doctor = await query("SELECT photo FROM doctors WHERE id = ?", [doctor_id]);
+
+    if (!doctor.length) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    /* 2️⃣ Delete related records FIRST */
+    await query("DELETE FROM available_days WHERE doctors_id = ?", [doctor_id]);
+    await query("DELETE FROM doctor_payments WHERE doctor_id = ?", [doctor_id]);
+    await query("DELETE FROM addresses WHERE doctors_id = ?", [doctor_id]);
+    await query("DELETE FROM logger WHERE user_id = ?", [doctor_id]);
+    await query("DELETE FROM medicines WHERE doctors_id = ?", [doctor_id]);
+    await query("DELETE FROM specializations WHERE doctors_id = ?", [doctor_id]); // if exists
+    await query("DELETE FROM visits WHERE doctors_id = ?", [doctor_id]);
+
+        /* 2️⃣ Get prescription header logos (ONLY ONE RECORD) */
+    const [prescription] = await query("SELECT clinic_logo, signature_logo FROM prescription_header WHERE doctors_id = ?", [doctor_id]);
+
+    if (prescription?.clinic_logo) {
+      const clinicLogoPath = path.join(__dirname, "..", "uploads", "clinic_logo", prescription.clinic_logo);
+      if (fs.existsSync(clinicLogoPath)) {
+        fs.unlinkSync(clinicLogoPath);
+      }
+    }
+
+    if (prescription?.signature_logo) {
+      const signaturePath = path.join(__dirname, "..", "uploads", "doctor_signatures", prescription.signature_logo);
+      if (fs.existsSync(signaturePath)) {
+        fs.unlinkSync(signaturePath);
+      }
+    }
+
+    const photo = doctor[0].photo;
+
+    /* 2️⃣ Delete photo if exists */
+    if (photo) {
+      const imagePath = path.join(__dirname, "..", "uploads", "profiles", photo);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
+    await query("DELETE FROM prescription_header WHERE doctors_id = ?", [doctor_id]);
+
+    /* 3️⃣ Delete doctor record */
+    await query("DELETE FROM doctors WHERE id = ?", [doctor_id]);
+
+    /* 4️⃣ Clear cache */
+    invalidateKey("doctor_list");
+
+    return res.json({
+      success: true,
+      message: "Doctor deleted successfully"
+    });
+
+  } catch (err) {
+    console.error("❌ DELETE DOCTOR ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // PAYMENTS FOR DOCTOR
 // GET /owner/payments/filter?year=2025&month=2
@@ -238,7 +308,6 @@ const getDoctorsWithoutPayment = async (req, res) => {
   }
 };
 
-
 const addPaymentForDoctor = async (req, res) => {
   try {
     const ownerId = req.user.id
@@ -303,6 +372,7 @@ module.exports = {
     showAllDoctors,
     showSingleDoctors,
     addNewDoctor,
+    deleteDoctor,
     addPaymentForDoctor,
     getDoctorPaymentsByYearMonth,
     getDoctorsWithoutPayment

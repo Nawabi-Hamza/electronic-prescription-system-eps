@@ -47,6 +47,16 @@ const path = require("path")
 //   }
 // };
 
+const deleteFileIfExists = (filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log("Deleted old file:", filePath);
+    }
+  } catch (err) {
+    console.error("Error deleting old file:", err);
+  }
+};
 
 const getAllDetailsOfDoctor = async (req, res) => {
   const doctor_id = req.user.id;
@@ -99,99 +109,41 @@ const paymentDone = async(req, res) => {
 }
 
 // START AVAILABLE TIMING CONTROLLER
-// const updateTiming = async (req, res) => {
-//   const doctor_id = req.user.id;
-
-//   const { saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time } = req.body;
-
-//   try {
-
-//     // Check if timing exists
-//     const check = await query(
-//       `SELECT id FROM available_days WHERE doctors_id = ?`,
-//       [doctor_id]
-//     );
-
-//     // If not exists -> INSERT
-//     if (check.length === 0) {
-//       await query(
-//         `INSERT INTO available_days 
-//           (doctors_id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time)
-//         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-//         [ doctor_id, saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time ]
-//       );
-//     }
-
-//     // If exists -> UPDATE
-//     else {
-//       await query(
-//         `UPDATE available_days 
-//             SET saturday = ?, sunday = ?, monday = ?, tuesday = ?, wednesday = ?, thursday = ?, friday = ?, in_time = ?, out_time = ?
-//         WHERE doctors_id = ?`,
-//         [ saturday, sunday, monday, tuesday, wednesday, thursday, friday, in_time, out_time, doctor_id ]
-//       );
-//     }
-
-//     // Return updated timing
-//     const updated = await query(`SELECT * FROM available_days WHERE doctors_id = ?`, [doctor_id]);
-
-//     invalidateKey("doctor_list_details_" + doctor_id)
-
-//     res.json({
-//       success: true,
-//       message: "Timing updated successfully",
-//       timing: updated[0]
-//     });
-
-//   } catch (error) {
-//     console.error("UPDATE TIMING ERROR:", error);
-//     res.status(500).json({ error: "Database error" });
-//   }
-// };
-
-
 
 const updateTiming = async (req, res) => { 
   const doctor_id = req.user.id;
-  const scheduleObj = req.body;
+  const { day_of_week, in_time, out_time, slot_duration, status } = req.body;
 
-  // Convert object to array for easier processing
-  const schedule = Object.entries(scheduleObj).map(([day_of_week, { in_time, out_time, slot_duration, status }]) => ({
-    day_of_week,
-    in_time,
-    out_time,
-    status,
-    slot_duration: Number(slot_duration), // ensure number
-  }));
+  // Ensure slot_duration is number
+  const duration = slot_duration ? Number(slot_duration) : null;
 
   try {
-    for (const day of schedule) {
-      const { day_of_week, in_time, out_time, slot_duration, status } = day;
+    // Optional: validate in_time < out_time if status is open
+    if (status === "open" && in_time >= out_time) {
+      return res.status(400).json({ error: `In time must be before out time for ${day_of_week}` });
+    }
 
-      // if (in_time >= out_time) {
-      //   return res.status(400).json({ error: `In time must be before out time for ${day_of_week}` });
-      // }
+    // Check if row already exists for this doctor and day
+    const existing = await query(
+      `SELECT id FROM available_days WHERE doctors_id = ? AND day_of_week = ?`,
+      [doctor_id, day_of_week]
+    );
 
-      // Upsert timing for each day
-      const check = await query(
-        `SELECT id FROM available_days WHERE doctors_id = ? AND day_of_week = ?`,
-        [doctor_id, day_of_week]
+    if (existing.length === 0) {
+      // Insert new row
+      await query(
+        `INSERT INTO available_days (doctors_id, day_of_week, in_time, out_time, slot_duration, status)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [ doctor_id, day_of_week, in_time, out_time, duration, status ]
       );
-
-      if (check.length === 0) {
-        await query(
-          `INSERT INTO available_days (doctors_id, day_of_week, in_time, out_time, slot_duration, status)
-           VALUES (?, ?, ?, ?, ?, ?)`,
-          [doctor_id, day_of_week, in_time, out_time, slot_duration, status]
-        );
-      } else {
-        await query(
-          `UPDATE available_days 
-           SET in_time = ?, out_time = ?, slot_duration = ? , status = ?
-           WHERE doctors_id = ? AND day_of_week = ?`,
-          [in_time, out_time, slot_duration, status, doctor_id, day_of_week]
-        );
-      }
+    } else {
+      // Update existing row
+      await query(
+        `UPDATE available_days 
+         SET in_time = ?, out_time = ?, slot_duration = ?, status = ?
+         WHERE doctors_id = ? AND day_of_week = ?`,
+        [ in_time, out_time, duration, status, doctor_id, day_of_week ]
+      );
     }
 
     // Return updated schedule
@@ -739,11 +691,15 @@ const updateClinicLogo = async (req, res) => {
 
     // Check if doctor already has a prescription header row
     const [existing] = await query(
-      `SELECT id FROM prescription_header WHERE doctors_id = ?`,
+      `SELECT id, clinic_logo FROM prescription_header WHERE doctors_id = ?`,
       [doctorId]
     );
 
     if (existing) {
+       if (existing.clinic_logo) {
+          const oldFilePath = path.join("uploads/clinic_logo/", existing.clinic_logo);
+          deleteFileIfExists(oldFilePath);
+        }
       // Update existing record
       await query(`UPDATE prescription_header SET clinic_logo = ? WHERE doctors_id = ?`,[filename, doctorId]);
     } else {
@@ -763,16 +719,7 @@ const updateClinicLogo = async (req, res) => {
 };
 
 
-const deleteFileIfExists = (filePath) => {
-  try {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      console.log("Deleted old file:", filePath);
-    }
-  } catch (err) {
-    console.error("Error deleting old file:", err);
-  }
-};
+
 
 const updateSignature = async (req, res) => {
   try {

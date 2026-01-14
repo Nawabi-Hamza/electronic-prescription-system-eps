@@ -138,347 +138,91 @@ export const userFieldsGroup = [
   },
 ];
 
+export const updateUserFieldsGroup = [
+  {
+    group: "profile",
+    fields: [
+      { name: "profile", type: "file", label: "Profile" },
+      { name: "doctor_name", type: "text", label: "First Name" },
+      { name: "lastname", type: "text", label: "Last Name" },
+    ]
+  },
+  {
+    group: "personal_info",
+    fields: [
+      { name: "clinic_name", type: "text", label: "Clinic Name" },
+      { name: "gender", type: "select", options: ["male", "female"] },
+      { name: "experience_year", type: "number" },
+      { name: "date_of_birth", type: "date" },
+      { name: "status", type: "select", options: ["active", "inactive"] },
+      { name: "calendar_type", type: "select", options: ["miladi", "shamsi"] },
+      { name: "clinic_fee", type: "number" },
+    ]
+  },
+  {
+    group: "account_info",
+    fields: [
+      { name: "phone", type: "text" },
+      { name: "email", type: "email" },
+    ]
+  }
+];
 
 const timePattern = /^([0-1]\d|2[0-3]):([0-5]\d)$/; 
 
-export const timingFields = [
+export const timingFields = ["saturday","sunday","monday","tuesday","wednesday","thursday","friday"].map(day => ({
+  name: day,
+  label: `${day[0].toUpperCase()}${day.slice(1)}`, // just label, you can add emoji if you want
+  type: "group",
+  fields: [
     {
-      name: "saturday",
-      label: "👋🏻 Saturday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
+      name: "status",
+      label: "Status",
+      type: "select",
+      options: ["open", "close"],
+      required: true,
+      validation: { required: "Status is required" },
     },
     {
-      name: "sunday",
-      label: "🌞 Sunday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
+      name: "slot_duration",
+      label: "Slot Duration (min)",
+      type: "number",
+      required: true, // keep true, we will handle conditional validation in react-hook-form
+      min: 5,
+      max: 180,
+      validation: {
+        required: "Slot duration is required when status is open",
+        min: { value: 5, message: "Minimum 5 minutes" },
+        max: { value: 180, message: "Maximum 180 minutes" },
+      },
+      // optional: add `dependsOn` property to hide/disable when status=close
+      dependsOn: { field: "status", value: "open" },
     },
     {
-      name: "monday",
-      label: "🌙 Monday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
+      name: "in_time",
+      label: "Open Time",
+      type: "time",
+      required: true,
+      validation: {
+        required: "Open time is required when status is open",
+        pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
+      },
+      dependsOn: { field: "status", value: "open" },
     },
     {
-      name: "tuesday",
-      label: "🔥 Tuesday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
+      name: "out_time",
+      label: "Close Time",
+      type: "time",
+      required: true,
+      validation: {
+        required: "Close time is required when status is open",
+        pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
+      },
+      dependsOn: { field: "status", value: "open" },
     },
-    {
-      name: "wednesday",
-      label: "💧 Wednesday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
-    },
-    {
-      name: "thursday",
-      label: "⚡ Thursday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
-    },
-    {
-      name: "friday",
-      label: "🎉 Friday",
-      type: "group",
-      fields: [
-        {
-          name: "status",
-          label: "Status",
-          type: "select",
-          options: ["open", "close"],
-          required: true,
-          validation: { required: "Status is required" },
-        },
-        {
-          name: "slot_duration",
-          label: "Slot Duration (min)",
-          type: "number",
-          required: true,
-          min: 5,
-          max: 180,
-          validation: {
-            required: "Slot duration is required",
-            min: { value: 5, message: "Minimum 5 minutes" },
-            max: { value: 180, message: "Maximum 180 minutes" },
-          },
-        },
-        {
-          name: "in_time",
-          label: "Open Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Open time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-        {
-          name: "out_time",
-          label: "Close Time",
-          type: "time",
-          required: true,
-          validation: {
-            required: "Close time is required",
-            pattern: { value: timePattern, message: "Invalid time format (HH:MM)" },
-          },
-        },
-      ],
-    },
-];
+  ],
+}));
+
 
 
 export const specializationFields = [

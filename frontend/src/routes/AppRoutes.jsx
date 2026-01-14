@@ -24,7 +24,7 @@ const AppRoutes = () => {
       <Route path="unauthorized" element={<Unauthorized />} />
 
       {/* Default redirect to auth login */}
-      {/* <Route path="*" element={<Navigate to="/auth" replace />} /> */}
+      <Route path="*" element={<Navigate to="/auth" replace />} />
     </Routes>
   );
 };

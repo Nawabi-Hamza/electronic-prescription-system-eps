@@ -7,7 +7,7 @@ const roleCheck = require('../middlewares/roleCheck');
 const { sanitizeInput } = require('../middlewares/sanitizeHtml');
 const { cleanupFileOnError } = require('../middlewares/cleanUpFileOnError'); // remove file if there happen error in next middleware
 const { uploadFile } = require('../middlewares/multer');
-const {  addNewDoctor, showAllDoctors, showSingleDoctors, addPaymentForDoctor, getDoctorPaymentsByYearMonth, getDoctorsWithoutPayment } = require('../controllers/ownerController');
+const {  addNewDoctor, deleteDoctor, showAllDoctors, showSingleDoctors, addPaymentForDoctor, getDoctorPaymentsByYearMonth, getDoctorsWithoutPayment } = require('../controllers/ownerController');
 
 // Validation
 const { addDoctorSchema, addDoctorPaymentSchema } = require('../validators/ownerSchema');
@@ -20,18 +20,13 @@ router.use(sanitizeInput)
 
 const uploadDoctorProfilePicture = {
     fieldName: "profile",
-    uploadDir: "profiles",
-    maxFileSizeMB: 5,
-    maxFiles: 1,
-    multiple: false,
-    allowedTypes: ["image/"],
-    allowedExt: [".jpg", ".jpeg", ".png"],
-    required: false
+    uploadDir: "profiles"
 }
 
 router.get("/users", showAllDoctors);
 router.get("/users/:user_id", showSingleDoctors);
 router.post("/users", cleanupFileOnError, uploadFile(uploadDoctorProfilePicture), validateSchema(addDoctorSchema) , addNewDoctor)
+router.delete("/users/:user_id" , deleteDoctor)
 
 
 router.get("/payments/filter", getDoctorPaymentsByYearMonth)

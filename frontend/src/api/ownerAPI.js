@@ -67,4 +67,17 @@ export async function createUser(data) {
   }
 }
 
+export async function deleteUser(user_id) {
+  try {
+    // if (!data.students_profile) throw "Please select a student profile";
+    // return console.log(user_id)
+            // return console.log(data)
+    const res = await api.delete(`/owner/users/${user_id}`);
+    console.log(res)
 
+    return res;
+  } catch (err) {
+    console.error("create dcotor error:", err?.response?.data?.message || err);
+    throw err;
+  }
+}

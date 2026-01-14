@@ -7,17 +7,6 @@ import SectionContainer from "./SectionContainer";
 // import { Select } from "react-select"
 import Select from "react-select";
 
-
-/**
- * FieldsGroupForm
- *
- * Props:
- * - fields (array) grouped fields (see usage above)
- * - register, control, errors, defaultValues, setValue, isSubmitting (react-hook-form)
- * - onSubmit (function) -> will be used as handleSubmit(onSubmit)
- * - inputStyle, dropdownStyle, labelStyle, btnStyle (optional styles)
- * - renderCustom? (optional) function(field, fieldKey) => JSX for custom field types
- */
 export default function FieldsGroupForm({
   fields = [],
   register,
