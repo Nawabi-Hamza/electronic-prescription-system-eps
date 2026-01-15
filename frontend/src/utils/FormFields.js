@@ -140,33 +140,100 @@ export const userFieldsGroup = [
 
 export const updateUserFieldsGroup = [
   {
-    group: "profile",
+    name: "profile",
+    label: "🧑🏻 Profile",
     fields: [
-      { name: "profile", type: "file", label: "Profile" },
-      { name: "doctor_name", type: "text", label: "First Name" },
-      { name: "lastname", type: "text", label: "Last Name" },
-    ]
+      // {
+      //   name: "profile",
+      //   label: "Doctor Picture",
+      //   type: "image",
+      //   required: false, // ✅ optional on update
+      // },
+      {
+        name: "doctor_name",
+        label: "Doctor name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "lastname",
+        label: "Lastname",
+        type: "text",
+        required: true,
+      },
+    ],
   },
+
   {
-    group: "personal_info",
+    name: "personal_info",
+    label: "😐 Personal Details",
     fields: [
-      { name: "clinic_name", type: "text", label: "Clinic Name" },
-      { name: "gender", type: "select", options: ["male", "female"] },
-      { name: "experience_year", type: "number" },
-      { name: "date_of_birth", type: "date" },
-      { name: "status", type: "select", options: ["active", "inactive"] },
-      { name: "calendar_type", type: "select", options: ["miladi", "shamsi"] },
-      { name: "clinic_fee", type: "number" },
-    ]
+      {
+        name: "clinic_name",
+        label: "Clinic name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "gender",
+        label: "Gender",
+        type: "select",
+        options: ["male", "female", "other"],
+        required: true,
+      },
+      {
+        name: "experience_year",
+        label: "Experience Year",
+        type: "number",
+        required: true,
+      },
+      {
+        name: "date_of_birth",
+        label: "Birth Date",
+        type: "date",
+      },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        options: ["active", "inactive"],
+        required: true,
+      },
+      {
+        name: "calendar_type",
+        label: "Calendar type",
+        type: "select",
+        options: ["shamsi", "qamari", "miladi"],
+        required: true,
+      },
+      {
+        name: "clinic_fee",
+        label: "Clinic fee",
+        type: "number",
+      },
+    ],
   },
+
   {
-    group: "account_info",
+    name: "account_info",
+    label: "🔐 Account Information",
     fields: [
-      { name: "phone", type: "text" },
-      { name: "email", type: "email" },
-    ]
-  }
+      {
+        name: "phone",
+        label: "Phone",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "email",
+        label: "Email",
+        type: "text",
+        required: true,
+      },
+    ],
+  },
 ];
+
 
 const timePattern = /^([0-1]\d|2[0-3]):([0-5]\d)$/; 
 

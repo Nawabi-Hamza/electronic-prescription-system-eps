@@ -32,8 +32,8 @@ const showAllDoctors = async (req, res) => {
       cache_doctor_list,
       async () => {
         return await query(
-          `SELECT id, generated_id, clinic_name, doctor_name, phone, email,
-                  experience_year, photo, calendar_type, status  
+          `SELECT id, generated_id, clinic_name, doctor_name, lastname, phone, email, date_of_birth, clinic_fee,
+                  experience_year, photo, calendar_type, status, gender
            FROM doctors
            ORDER BY id DESC`
         );

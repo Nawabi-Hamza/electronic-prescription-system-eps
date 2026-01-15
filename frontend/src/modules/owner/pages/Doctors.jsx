@@ -87,11 +87,11 @@ function Doctors() {
                     { key: "photo", label: "profile", render: (val, row) => (
                       <ImageViewer
                         imagePath={`/uploads/profiles/${val}`}
-                        altText={`${row.firstname}`}
+                        altText={`${row.doctor_name}-${row.lastname}`}
                         className="w-10 h-10 rounded-md object-cover"
                       />
                     )},
-                    { key: "doctor_name", label: "fullname"},
+                    { key: "doctor_name", label: "fullname", render: (val, row) => (val+' '+row.lastname)},
                     { key: "clinic_name", label: "Clinic"},
                     { key: "phone", label: "Phone" },
                     { key: "status", label: "status", render: (val) => (<span className="uppercase">{val}</span>) },
@@ -117,7 +117,7 @@ function Doctors() {
       />
       <ShowUserModal showInfoModal={showInfoModal} selectedUser={selectedStudent} closeInfoModal={() => setShowInfoModal(false)} />
       <AddUserModal isModalOpen={isModalOpen} setRefresh={setRefresh} handleClose={() => setIsModalOpen(false)}  />
-      <UpdateUserModal isModalOpen={isUpdateModalOpen} setRefresh={setRefresh} handleClose={() => setIsUpdateModalOpen(false)}  />
+      <UpdateUserModal isUpdateModalOpen={isUpdateModalOpen} setRefresh={setRefresh} setIsUpdateModalOpen={setIsUpdateModalOpen} selectedUser={selectedStudent} setSelectedUser={setSelectedStudent} />
     </div>
   )
 }
@@ -188,8 +188,15 @@ function AddUserModal({ isModalOpen, setRefresh, handleClose }) {
   );
 }
 
-function UpdateUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStudent, setSelectedStudent }) {
-  console.log(selectedStudent)
+function UpdateUserModal({
+  isUpdateModalOpen,
+  setIsUpdateModalOpen,
+  setRefresh,
+  selectedUser,
+  setSelectedUser,
+}) {
+
+  
   const {
     register,
     handleSubmit,
@@ -197,69 +204,82 @@ function UpdateUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStud
     control,
     trigger,
     setValue,
-    formState: { errors, isSubmitting }
-  } = useForm();
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {}, // IMPORTANT
+  });
 
   /* ================= DEFAULT VALUES ================= */
-  const defaultValues = React.useMemo(() => {
-    if (!selectedStudent) return {};
+  const defaultValues = useMemo(() => {
+    if (!selectedUser) return {};
 
     return {
       profile: {
-        profile: selectedStudent.profile || "",
-        doctor_name: selectedStudent.doctor_name || "",
-        lastname: selectedStudent.lastname || "",
+        doctor_name: selectedUser.doctor_name ?? "",
+        lastname: selectedUser.lastname ?? "",
       },
       personal_info: {
-        clinic_name: selectedStudent.clinic_name || "",
-        gender: selectedStudent.gender || "",
-        experience_year: selectedStudent.experience_year || "",
-        date_of_birth: selectedStudent.date_of_birth || "",
-        status: selectedStudent.status || "active",
-        calendar_type: selectedStudent.calendar_type || "miladi",
-        clinic_fee: selectedStudent.clinic_fee || "",
+        clinic_name: selectedUser.clinic_name ?? "",
+        gender: selectedUser.gender ?? "",
+        experience_year: selectedUser.experience_year ?? "",
+        date_of_birth: selectedUser.date_of_birth ?? "",
+        status: selectedUser.status ?? "active",
+        calendar_type: selectedUser.calendar_type ?? "miladi",
+        clinic_fee: selectedUser.clinic_fee ?? "",
       },
       account_info: {
-        phone: selectedStudent.phone || "",
-        email: selectedStudent.email || "",
-      }
+        phone: selectedUser.phone ?? "",
+        email: selectedUser.email ?? "",
+      },
     };
-  }, [selectedStudent]);
+  }, [selectedUser]);
 
+  /* ================= RESET FORM WHEN USER CHANGES ================= */
   useEffect(() => {
-    if (selectedStudent) reset(defaultValues);
-  }, [selectedStudent, defaultValues, reset]);
+    if (selectedUser) {
+      reset(defaultValues);
+    }
+  }, [selectedUser, defaultValues, reset]);
 
   /* ================= SUBMIT ================= */
   const onSubmit = async (data) => {
     try {
+      if (!selectedUser?.id) {
+        toast.error("Invalid user ID");
+        return;
+      }
+
       const payload = {
         ...data.profile,
         ...data.personal_info,
         ...data.account_info,
       };
-      console.log(payload)
-      // await updateUser(selectedStudent.id, payload);
 
-      setRefresh(p => !p);
+      console.log("UPDATE PAYLOAD:", payload);
+
+      // ✅ SEND ID
+      // await updateUser(selectedUser.id, payload);
+
+      setRefresh((p) => !p);
       toast.success("User updated successfully");
       handleClose();
     } catch (err) {
+      console.error(err);
       toast.error(err?.response?.data?.message || "Update failed");
     }
   };
 
   const handleClose = () => {
     reset({});
-    setSelectedStudent(null);
-    setIsModalOpen(false);
+    setSelectedUser(null);
+    setIsUpdateModalOpen(false);
   };
 
   return (
     <Modal
       onClose={handleClose}
       containerStyle="sm"
-      isOpen={isModalOpen}
+      isOpen={isUpdateModalOpen}
       title="Edit User"
     >
       <FieldsGroupForm
@@ -270,12 +290,12 @@ function UpdateUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStud
         trigger={trigger}
         setValue={setValue}
         isSubmitting={isSubmitting}
-        defaultValues={defaultValues}
         onSubmit={handleSubmit(onSubmit)}
       />
     </Modal>
   );
 }
+
 
 // function AddUserModal({ isModalOpen, setRefresh, setIsModalOpen, selectedStudent, setSelectedStudent }) {
 // const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting } } = useForm();
