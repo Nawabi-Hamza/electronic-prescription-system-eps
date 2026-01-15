@@ -133,7 +133,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
             </div>
 
             {/* Doctors List */}
-            <div className="mt-5 space-y-3">
+            <div className="mt-5 space-y-5">
               {currentPageDoctors.map((doc) => (
                 <div
                   key={doc.id}
@@ -141,7 +141,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
                     setSelectedDoctor(doc);
                     setStep(2);
                   }}
-                  className="p-4 relative flex gap-2 items-center shadow-sm rounded cursor-pointer bg-white hover:bg-blue-50 transition"
+                  className="p-4 relative overflow-hidden flex gap-2 items-center shadow-sm rounded cursor-pointer bg-white hover:bg-blue-50 transition"
                 >
                 <div>
                     <ImageViewer 
@@ -155,7 +155,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
                   <p className="font-semibold">Dr. {doc.name} {doc.lastname}</p>
                   <p className="text-sm text-gray-600">clinic: {doc.clinic}</p>
                  </div>
-                 <span className={badge.successSm+" absolute right-2"}>Fees: {doc.fee}AF</span>
+                 <span className={badge.successSm+" text-[10px] absolute -right-0 -top-0 rounded-none"}>Fees: {doc.fee}AF</span>
                 </div>
               ))}
             </div>
