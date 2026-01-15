@@ -130,7 +130,7 @@ export const badge = {
 } 
 
 export const banner = {
-    back: " z-10 bg-white max-w-[100px] border border-red-300 font-semibold shadow-md shadow-red-100  mb-4 p-3 text-sm sticky -top-4 rounded-r-full text-red-600 flex items-center gap-2"
+    back: " max-w-[100px]  font-semibold  mb-4 p-3 text-sm  text-red-600 flex items-center gap-2"
 }
 
 export const stepper = {

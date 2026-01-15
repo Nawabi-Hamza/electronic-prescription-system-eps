@@ -96,7 +96,7 @@ export default function ModernTemplate({ doctor, medicines }) {
   return (
     <div className="text-black">
       <div className="flex justify-end mb-4 print:hidden">
-        <button onClick={printPage} className={`${btnStyle.filled} fixed bottom-10 flex gap-1 items-center z-10`}>
+        <button onClick={printPage} className={`${btnStyle.filled} fixed bottom-20 flex gap-1 items-center z-10`}>
           <Printer size={18} /> Print
         </button>
       </div>
@@ -305,7 +305,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
 
 
   return (
-    <SectionContainer title="RX:" className="min-h-[58vh] shadow-none border-l border-slate-400 rounded-none">
+    <SectionContainer title="RX:" className=" shadow-none border-l border-slate-400 rounded-none">
       {/* Medicine Search */}
       <div className="mb-2 relative print:hidden">
         <input
@@ -329,99 +329,100 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
           </div>
         )}
       </div>
-
-      {/* Prescription Table */}
-      <table className="w-full border border-slate-200 text-sm">
-        <thead className="bg-gray-100">
-          <tr>
-            {["Medicine", "Form", "Dosage", "Number", "Time", ""].map((t, i) => (
-              <th key={i} className="p-1">{t}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((it, idx) => (
-            <tr key={idx}>
-              {/* Medicine */}
-              <td className={tableStyles.td + " w-[30%]"}>{it.name}</td>
-
-              {/* Form */}
-              <td className={tableStyles.medicine_td + " w-[20%]"}>
-                <div className="print:hidden">
-                  <CreatableSelect
-                    className="text-xs"
-                    placeholder="Form"
-                    value={it.form ? { value: it.form, label: it.form } : null}
-                    onChange={(option) => update(idx, "form", option?.value || "")}
-                    options={medicineForms}
-                    isClearable
-                    styles={smallSelectStyles}
-                  />
-                </div>
-                <div className="hidden print:block text-xs">{it.form || "—"}</div>
-              </td>
-
-              {/* Dosage */}
-              <td className={tableStyles.medicine_td + " w-[18%]"}>
-                <div className="print:hidden">
-                  <CreatableSelect
-                    className="text-xs"
-                    placeholder="Dosage"
-                    value={it.dosage ? { value: it.dosage, label: it.dosage } : null}
-                    onChange={(option) => update(idx, "dosage", option?.value || "")}
-                    options={dosageOptions}
-                    isClearable
-                    styles={smallSelectStyles}
-                  />
-                </div>
-                <div className="hidden print:block text-xs">{it.dosage || "—"}</div>
-              </td>
-
-              {/* Number */}
-              <td className={tableStyles.medicine_td + " w-[14%]"}>
-                <div className="print:hidden">
-                  <CreatableSelect
-                    className="text-xs"
-                    placeholder="Number"
-                    value={it.number ? { value: it.number, label: it.number } : null}
-                    onChange={(option) => update(idx, "number", option?.value || "")}
-                    options={numberOptions}
-                    isClearable
-                    styles={smallSelectStyles}
-                  />
-                </div>
-                <div className="hidden print:block text-xs">{it.number || "—"}</div>
-              </td>
-
-              {/* Time */}
-              <td className={tableStyles.medicine_td + " w-[30%]"}>
-                <div className="print:hidden">
-                  <CreatableSelect
-                    className="text-xs"
-                    placeholder="Select time..."
-                    value={it.time ? { value: it.time, label: it.time } : null}
-                    onChange={(option) => update(idx, "time", option?.value || "")}
-                    options={timeOptions}
-                    isClearable
-                    styles={smallSelectStyles}
-                  />
-                </div>
-                <div className="hidden print:block text-sm break-words">{it.time || "—"}</div>
-              </td>
-
-              {/* Remove */}
-              <td className={tableStyles.td + " print:hidden"}>
-                <button
-                  onClick={() => remove(idx)}
-                  className="text-red-600 font-bold text-sm cursor-pointer border border-red-400 rounded-full w-4 h-4 flex items-center justify-center"
-                >
-                  −
-                </button>
-              </td>
+      <div className="max-w-[100%] min-h-[64vh] sm:max-w-full overflow-auto">
+        {/* Prescription Table */}
+        <table className="w-full border border-slate-200 text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              {["Medicine", "Form", "Dosage", "Number", "Time", ""].map((t, i) => (
+                <th key={i} className="p-1">{t}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((it, idx) => (
+              <tr key={idx}>
+                {/* Medicine */}
+                <td className={tableStyles.td + " w-[30%]"}>{it.name}</td>
+
+                {/* Form */}
+                <td className={tableStyles.medicine_td + " w-[20%]"}>
+                  <div className="print:hidden">
+                    <CreatableSelect
+                      className="text-xs"
+                      placeholder="Form"
+                      value={it.form ? { value: it.form, label: it.form } : null}
+                      onChange={(option) => update(idx, "form", option?.value || "")}
+                      options={medicineForms}
+                      isClearable
+                      styles={smallSelectStyles}
+                    />
+                  </div>
+                  <div className="hidden print:block text-xs">{it.form || "—"}</div>
+                </td>
+
+                {/* Dosage */}
+                <td className={tableStyles.medicine_td + " w-[18%]"}>
+                  <div className="print:hidden">
+                    <CreatableSelect
+                      className="text-xs"
+                      placeholder="Dosage"
+                      value={it.dosage ? { value: it.dosage, label: it.dosage } : null}
+                      onChange={(option) => update(idx, "dosage", option?.value || "")}
+                      options={dosageOptions}
+                      isClearable
+                      styles={smallSelectStyles}
+                    />
+                  </div>
+                  <div className="hidden print:block text-xs">{it.dosage || "—"}</div>
+                </td>
+
+                {/* Number */}
+                <td className={tableStyles.medicine_td + " w-[14%]"}>
+                  <div className="print:hidden">
+                    <CreatableSelect
+                      className="text-xs"
+                      placeholder="Number"
+                      value={it.number ? { value: it.number, label: it.number } : null}
+                      onChange={(option) => update(idx, "number", option?.value || "")}
+                      options={numberOptions}
+                      isClearable
+                      styles={smallSelectStyles}
+                    />
+                  </div>
+                  <div className="hidden print:block text-xs">{it.number || "—"}</div>
+                </td>
+
+                {/* Time */}
+                <td className={tableStyles.medicine_td + " w-[30%]"}>
+                  <div className="print:hidden">
+                    <CreatableSelect
+                      className="text-xs"
+                      placeholder="Select time..."
+                      value={it.time ? { value: it.time, label: it.time } : null}
+                      onChange={(option) => update(idx, "time", option?.value || "")}
+                      options={timeOptions}
+                      isClearable
+                      styles={smallSelectStyles}
+                    />
+                  </div>
+                  <div className="hidden print:block text-sm break-words">{it.time || "—"}</div>
+                </td>
+
+                {/* Remove */}
+                <td className={tableStyles.td + " print:hidden"}>
+                  <button
+                    onClick={() => remove(idx)}
+                    className="text-red-600 font-bold text-sm cursor-pointer border border-red-400 rounded-full w-4 h-4 flex items-center justify-center"
+                  >
+                    −
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </SectionContainer>
   );
 }
@@ -431,6 +432,7 @@ function Body({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }
 function Footer({ signatureUrl, doctor_name, lastname, addresses }) {
   return (
     <>
+      {signatureUrl && 
       <div className="flex justify-end">
         <div className="text-center">
           <div className="h-20 w-48 flex justify-center items-center">
@@ -439,13 +441,21 @@ function Footer({ signatureUrl, doctor_name, lastname, addresses }) {
           <p className="border-t pt-1 font-semibold">Dr. {doctor_name} {lastname}</p>
         </div>
       </div>
+      }
 
-      <div className="text-sm flex gap-2 mt-4 border-t-2 ">
-        <p className="font-semibold">Address:</p>
-        <p>{addresses?.address}</p>
-        <p>{addresses?.province}, {addresses?.country}</p>
-        <p>District: {addresses?.district}</p>
-        <p>Room: {addresses?.room_number}, Floor: {addresses?.floor_number}</p>
+      <div>
+        {addresses?.length && 
+          <div className="text-sm flex gap-1 mt-4 border-t-2 ">
+            <p className="font-semibold">Address:</p>
+            <p>{addresses[0]?.address}</p>
+            <p>{addresses[0]?.province}, {addresses[0]?.country}</p>
+            <p>District: {addresses[0]?.district}</p>
+            <p>Room: {addresses[0]?.room_number}, Floor: {addresses[0]?.floor_number}</p>
+          </div>
+        }
+        <p>
+          &copy; copy rights by: https://paikareps.com / SUPPORT: +93 771844770
+        </p>
       </div>
     </>
   );

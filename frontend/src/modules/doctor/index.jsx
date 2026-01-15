@@ -27,7 +27,7 @@ const DoctorModule = () => {
         }
       >
         <Route path="/" element={<DoctorDashboard payments={payments}/>} />
-        <Route path="dashboard" element={<DoctorDashboard />} />
+        <Route path="dashboard" element={<DoctorDashboard payments={payments} />} />
 
         <Route path="medicine" element={<Medicine payments={payments} />} />
         <Route path="payments" element={<Payments payments={payments} />} />

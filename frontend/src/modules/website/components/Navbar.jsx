@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Menu, Smartphone, X } from "lucide-react";
+import { Menu, Smartphone, UserCheck, X } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 
@@ -56,15 +56,15 @@ function Navbar() {
             <nav className="px-4 py-6 space-y-3">
             <MobileLink to="/" onClick={() => setOpen(false)}>Home</MobileLink>
             <MobileLink to="/features" onClick={() => setOpen(false)}>Features</MobileLink>
-            <MobileLink to="/appointment" onClick={() => setOpen(false)}>Appointment</MobileLink>
             <MobileLink to="/appointment/track" onClick={() => setOpen(false)}>Track Appointment</MobileLink>
             <MobileLink to="/contact" onClick={() => setOpen(false)}>Contact</MobileLink>
+            <MobileLink to="/doctor" onClick={() => setOpen(false)}><span className='flex gap-2 items-center'><UserCheck /> Doctor</span></MobileLink>
 
             <div className="mt-6">
                 <Link
-                to="/appointment"
-                onClick={() => setOpen(false)}
-                className="block text-center px-4 py-2 bg-sky-600 text-white rounded-lg shadow"
+                  to="/appointment"
+                  onClick={() => setOpen(false)}
+                  className="block text-center px-4 py-2 bg-sky-600 text-white rounded-lg shadow"
                 >
                 Book Appointment
                 </Link>
@@ -87,11 +87,11 @@ function Navbar() {
 
             {/* Desktop nav */}
             <nav className="hidden md:flex gap-4 lg:gap-8 text-gray-600 font-medium">
-            <Link to="/" className="hover:text-sky-600">Home</Link>
-            <Link to="/features" className="hover:text-sky-600">Features</Link>
-            <Link to="/appointment" className="hover:text-sky-600">Appointment</Link>
-            <Link to="/appointment/track" className="hover:text-sky-600">Track</Link>
-            <Link to="/contact" className="hover:text-sky-600">Contact</Link>
+              <Link to="/" className="hover:text-sky-600">Home</Link>
+              <Link to="/features" className="hover:text-sky-600">Features</Link>
+              <Link to="/appointment/track" className="hover:text-sky-600">Track</Link>
+              <Link to="/contact" className="hover:text-sky-600">Contact</Link>
+              <Link to="/doctor" className="hover:text-sky-600">Doctor</Link>
             </nav>
 
             <div className="hidden md:block">

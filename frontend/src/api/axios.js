@@ -32,7 +32,7 @@ api.interceptors.response.use(
     if ((error.response && error.response.status === 401) || error.response.status === 403) {
       // handle logout, redirect, or show message
       localStorage.removeItem('token');
-      window.location.href = '/login'; // or use React Router redirect
+      window.location.href = '/auth/login'; // or use React Router redirect
     }
     return Promise.reject(error);
   }

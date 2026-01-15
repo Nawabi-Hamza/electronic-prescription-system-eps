@@ -1,10 +1,10 @@
 const cors = require("cors");
 
 const allowedOrigins = [
-  process.env.FRONTEND_ADDRESS_1,   // http://paikarict.cloud
-  process.env.FRONTEND_ADDRESS_2,   // https://paikarict.cloud
-  "http://127.0.0.1",
-  "http://localhost"
+  process.env.FRONTEND_ADDRESS_1,   
+  process.env.FRONTEND_ADDRESS_2,  
+  process.env.FRONTEND_ADDRESS_3,   
+  process.env.FRONTEND_ADDRESS_4
 ];
 
 const corsConfig = cors({

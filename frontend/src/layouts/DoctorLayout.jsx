@@ -9,6 +9,7 @@ import { playSound } from '../utils/soundPlayer';
 import { useAuth } from '../hooks/useAuth';
 import { btnStyle } from '../styles/componentsStyle';
 import { LogOut } from 'lucide-react';
+import MobileBottomNav from '../modules/doctor/components/MobileBottomNav';
 const DoctorLayout = () => {
   const { logout } = useAuth()
   const navigate = useNavigate()
@@ -32,10 +33,12 @@ const DoctorLayout = () => {
           </button>
         </Topbar>
         {/* main fills remaining height, scrolls internally */}
-        <main className={mainSectionStyles.container+" max-w-7xl mx-auto"}>
+        <main className={mainSectionStyles.container+" max-w-7xl mx-auto mb-20"}>
           <Outlet />
           <Footer />
         </main>
+        {/* Mobile-only bottom navigation */}
+        <MobileBottomNav />
       </div>
     </div>
   );

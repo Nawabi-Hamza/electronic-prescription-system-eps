@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, ShieldCheck, FileText, Smartphone, CheckCircle2, Star, } from "lucide-react";
+import { Calendar, ShieldCheck, FileText, Smartphone, CheckCircle2, Star, ArrowBigRight, TvMinimalPlay, } from "lucide-react";
 
 function HomePage() {
 
@@ -71,14 +71,14 @@ function HeroSection(){
             <div className="mt-6 grid lg:grid-cols-2 gap-4">
               <Link
                 to="/appointment"
-                className="px-6 py-3 bg-sky-600 text-white rounded-xl hover:bg-sky-700 shadow"
+                className="px-6 py-3 bg-sky-600 text-white rounded-xl hover:bg-sky-700 shadow flex items-center justify-between"
               >
-                Book Appointment
+                <span>Book Appointment</span><span><ArrowBigRight /></span> 
               </Link>
 
-              <button className="px-6 py-3 border border-sky-300 text-sky-700 rounded-xl hover:bg-sky-100">
-                Watch Demo
-              </button>
+              <Link to="https://www.facebook.com/share/v/1BRwZgciou/" target="_blank" className="px-6 flex items-center gap-2 py-3 border border-sky-300 text-sky-700 rounded-xl hover:bg-sky-100">
+                <TvMinimalPlay /> Watch Demo
+              </Link>
             </div>
 
             {/* small feature row */}
@@ -215,7 +215,7 @@ function HowItWork(){
 
         <h3 className="text-3xl font-bold text-sky-700 text-center">How It Works</h3>
 
-        <div className="grid md:grid-cols-3 gap-10 mt-12 text-center">
+        <div className="grid md:grid-cols-3 gap-4 lg:gap-10 mt-12 text-center">
           <StepCard
             number="1"
             title="Choose Doctor"
@@ -263,9 +263,20 @@ function PWASection() {
     const btnMain = document.getElementById("pwa-install-main");
     const btnFloating = document.getElementById("pwa-floating-btn");
 
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+
+    if (isStandalone) return;
+
     function showButtons() {
       if (btnMain) btnMain.classList.remove("hidden");
       if (btnFloating) btnFloating.classList.remove("hidden");
+    }
+
+    function hideButtons() {
+      if (btnMain) btnMain.classList.add("hidden");
+      if (btnFloating) btnFloating.classList.add("hidden");
     }
 
     function beforeInstallHandler(e) {
@@ -274,21 +285,35 @@ function PWASection() {
       showButtons();
     }
 
-    window.addEventListener("beforeinstallprompt", beforeInstallHandler);
-
     async function installApp() {
       const deferredPrompt = deferredPromptRef.current;
-      if (!deferredPrompt) return;
+
+      // Desktop fallback (Chrome / Edge PC)
+      if (!deferredPrompt) {
+        alert(
+          "To install on desktop, click the install icon in the browser address bar."
+        );
+        return;
+      }
 
       deferredPrompt.prompt();
-      const choiceResult = await deferredPrompt.userChoice;
+      const result = await deferredPrompt.userChoice;
 
-      if (choiceResult.outcome === "accepted") {
+      if (result.outcome === "accepted") {
         deferredPromptRef.current = null;
-        if (btnMain) btnMain.classList.add("hidden");
-        if (btnFloating) btnFloating.classList.add("hidden");
+        hideButtons();
       }
     }
+
+    // Mobile & some desktop cases
+    window.addEventListener("beforeinstallprompt", beforeInstallHandler);
+
+    // Desktop heuristic fallback (PC often never fires beforeinstallprompt)
+    setTimeout(() => {
+      if (!deferredPromptRef.current) {
+        showButtons();
+      }
+    }, 3000);
 
     if (btnMain) btnMain.addEventListener("click", installApp);
     if (btnFloating) btnFloating.addEventListener("click", installApp);
@@ -308,15 +333,18 @@ function PWASection() {
         </h3>
 
         <p className="mt-3 text-gray-600 text-lg">
-          Use EPS like a real mobile app — faster access, offline support, and a better user experience.
+          Use EPS like a real app — faster access, offline support, and a better experience.
         </p>
 
-        <div className="mt-8 flex flex-col md:flex-row items-center justify-center gap-6">
+        <div
+          id="pwa-install-main"
+          className="mt-8 flex  md:flex-row items-center justify-center gap-6 cursor-pointer"
+        >
           <div className="flex items-center gap-4 bg-sky-50 px-6 py-4 rounded-xl shadow hover:shadow-lg transition">
             <Smartphone className="h-10 w-10 text-sky-600" />
             <div className="text-left">
               <h4 className="text-xl font-semibold text-sky-700">Mobile App</h4>
-              <p className="text-gray-600 text-sm">Install on Android & iOS</p>
+              <p className="text-gray-600 text-sm">Android & iOS</p>
             </div>
           </div>
 
@@ -324,19 +352,98 @@ function PWASection() {
             <FileText className="h-10 w-10 text-sky-600" />
             <div className="text-left">
               <h4 className="text-xl font-semibold text-sky-700">Desktop Mode</h4>
-              <p className="text-gray-600 text-sm">Install on Windows & Mac</p>
+              <p className="text-gray-600 text-sm">Windows & macOS</p>
             </div>
           </div>
         </div>
-        <button
-          id="pwa-install-main"
-          className=" mt-10 px-8 py-4 bg-sky-600 text-white text-lg rounded-xl shadow hover:bg-sky-700 transition"
-        >
-          Install App
-        </button>
       </div>
     </section>
   );
 }
+
+
+
+// function PWASection() {
+//   const deferredPromptRef = useRef(null);
+
+//   useEffect(() => {
+//     const btnMain = document.getElementById("pwa-install-main");
+//     const btnFloating = document.getElementById("pwa-floating-btn");
+
+//     function showButtons() {
+//       if (btnMain) btnMain.classList.remove("hidden");
+//       if (btnFloating) btnFloating.classList.remove("hidden");
+//     }
+
+//     function beforeInstallHandler(e) {
+//       e.preventDefault();
+//       deferredPromptRef.current = e;
+//       showButtons();
+//     }
+
+//     window.addEventListener("beforeinstallprompt", beforeInstallHandler);
+
+//     async function installApp() {
+//       const deferredPrompt = deferredPromptRef.current;
+//       if (!deferredPrompt) return;
+
+//       deferredPrompt.prompt();
+//       const choiceResult = await deferredPrompt.userChoice;
+
+//       if (choiceResult.outcome === "accepted") {
+//         deferredPromptRef.current = null;
+//         if (btnMain) btnMain.classList.add("hidden");
+//         if (btnFloating) btnFloating.classList.add("hidden");
+//       }
+//     }
+
+//     if (btnMain) btnMain.addEventListener("click", installApp);
+//     if (btnFloating) btnFloating.addEventListener("click", installApp);
+
+//     return () => {
+//       window.removeEventListener("beforeinstallprompt", beforeInstallHandler);
+//       if (btnMain) btnMain.removeEventListener("click", installApp);
+//       if (btnFloating) btnFloating.removeEventListener("click", installApp);
+//     };
+//   }, []);
+
+//   return (
+//     <section className="px-6 md:px-16 py-16 bg-white">
+//       <div className="max-w-4xl mx-auto text-center">
+//         <h3 className="text-3xl font-bold text-sky-700">
+//           Install EPS on Your Phone or Computer
+//         </h3>
+
+//         <p className="mt-3 text-gray-600 text-lg">
+//           Use EPS like a real mobile app — faster access, offline support, and a better user experience.
+//         </p>
+
+//         <div id="pwa-install-main" className="mt-8 flex flex-col md:flex-row items-center justify-center gap-6">
+//           <div className="flex items-center gap-4 bg-sky-50 px-6 py-4 rounded-xl shadow hover:shadow-lg transition">
+//             <Smartphone className="h-10 w-10 text-sky-600" />
+//             <div className="text-left">
+//               <h4 className="text-xl font-semibold text-sky-700">Mobile App</h4>
+//               <p className="text-gray-600 text-sm">Install on Android & iOS</p>
+//             </div>
+//           </div>
+
+//           <div className="flex items-center gap-4 bg-sky-50 px-6 py-4 rounded-xl shadow hover:shadow-lg transition">
+//             <FileText className="h-10 w-10 text-sky-600" />
+//             <div className="text-left">
+//               <h4 className="text-xl font-semibold text-sky-700">Desktop Mode</h4>
+//               <p className="text-gray-600 text-sm">Install on Windows & Mac</p>
+//             </div>
+//           </div>
+//         </div>
+//         {/* <button
+//           id="pwa-install-main"
+//           className=" mt-10 px-8 py-4 bg-sky-600 text-white text-lg rounded-xl shadow hover:bg-sky-700 transition"
+//         >
+//           Install App
+//         </button> */}
+//       </div>
+//     </section>
+//   );
+// }
 export default HomePage;
 

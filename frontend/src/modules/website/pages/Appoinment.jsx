@@ -153,7 +153,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
                 </div>
                  <div>
                   <p className="font-semibold">Dr. {doc.name} {doc.lastname}</p>
-                  <p className="text-sm text-gray-600">{doc.clinic}</p>
+                  <p className="text-sm text-gray-600">clinic: {doc.clinic}</p>
                  </div>
                  <span className={badge.successSm+" absolute right-2"}>Fees: {doc.fee}AF</span>
                 </div>

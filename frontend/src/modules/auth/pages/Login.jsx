@@ -140,7 +140,10 @@ const Login = () => {
           Log In
         </button>
       </div>
-      <Link to="/auth/forgot-password">🔐 Forgot Password ?</Link>
+      <div className='flex justify-between'>
+          <Link to="/" className='text-sky-400'>🏡 Home</Link>
+          <Link to="/auth/forgot-password">🔐 Forgot Password ?</Link>
+      </div>
     </form>
   );
 };
