@@ -13,15 +13,17 @@ export default function MobileBottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg md:hidden">
       <div className="flex justify-around h-16 pb-safe">
-        <NavLink to="/doctor/prescription"
-            className={({ isActive }) =>
-                `${navItem} ${
-                isActive ? activeNav : "text-gray-400"
-                }`
-            }
+
+        <NavLink
+          to="/doctor/medicine"
+          className={({ isActive }) =>
+            `${navItem} ${
+              isActive ? activeNav : "text-gray-400"
+            }`
+          }
         >
-          <NotepadTextDashed size={22} />
-          Prescription
+          <Pill size={22} />
+          Medicine
         </NavLink>
 
         <NavLink
@@ -59,16 +61,15 @@ export default function MobileBottomNav() {
           Profile
         </NavLink>
 
-        <NavLink
-          to="/doctor/medicine"
-          className={({ isActive }) =>
-            `${navItem} ${
-              isActive ? activeNav : "text-gray-400"
-            }`
-          }
+        <NavLink to="/doctor/prescription"
+            className={({ isActive }) =>
+                `${navItem} ${
+                isActive ? activeNav : "text-gray-400"
+                }`
+            }
         >
-          <Pill size={22} />
-          Medicine
+          <NotepadTextDashed size={22} />
+          Prescription
         </NavLink>
       </div>
     </nav>
