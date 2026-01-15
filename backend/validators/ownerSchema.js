@@ -46,6 +46,42 @@ const addDoctorSchema = Joi.object({
         }),
 });
 
+const updateDoctorSchema = Joi.object({
+  doctor_name: Joi.string().min(2),
+
+  lastname: Joi.string().min(2),
+
+  clinic_name: Joi.string().min(2),
+
+  clinic_fee: Joi.number().integer().min(0),
+
+  experience_year: Joi.number().integer().min(0).max(60),
+
+  gender: Joi.string().valid("male", "female", "other"),
+
+  status: Joi.string().valid("active", "inactive", "deleted"),
+
+  calendar_type: Joi.string().valid("shamsi", "qamari", "miladi"),
+
+  date_of_birth: Joi.date()
+    .less("now")
+    .messages({
+      "date.base": "Date of birth must be a valid date",
+      "date.less": "Date of birth must be in the past",
+    }),
+
+  phone: Joi.string()
+    .pattern(/^[0-9()+\-\s]+$/)
+    .messages({
+      "string.pattern.base": "Phone number format is invalid",
+    }),
+
+  email: Joi.string().email().messages({
+    "string.email": "Email must be valid",
+  }),
+})
+  .min(1) // ⬅ prevents empty update
+  .options({ abortEarly: false });
 
 const addDoctorPaymentSchema = Joi.object({
     doctor_id: Joi.number()
@@ -79,4 +115,4 @@ const addDoctorPaymentSchema = Joi.object({
 });
 
 
-module.exports = { addDoctorSchema, addDoctorPaymentSchema };
+module.exports = { addDoctorSchema, addDoctorPaymentSchema, updateDoctorSchema };

@@ -12,7 +12,7 @@ import { ConfirmToast } from "../../../componenets/Toaster";
 import Table from "../../../componenets/Table";
 // import { deleteStudent, fetchStudents, createStudent, updateStudent } from "../../../api/ownerAPI";
 // import FieldsResultStepper from "../../../componenets/FieldsGroupForm";
-import { fetchUsers, fetchUsersDetails, createUser, deleteUser } from "../../../api/ownerAPI";
+import { fetchUsers, fetchUsersDetails, createUser, deleteUser, updateUser } from "../../../api/ownerAPI";
 import SectionContainer from "../../../componenets/SectionContainer";
 import FieldsGroupForm from "../../../componenets/FieldsGroupForm";
 
@@ -188,24 +188,9 @@ function AddUserModal({ isModalOpen, setRefresh, handleClose }) {
   );
 }
 
-function UpdateUserModal({
-  isUpdateModalOpen,
-  setIsUpdateModalOpen,
-  setRefresh,
-  selectedUser,
-  setSelectedUser,
-}) {
+function UpdateUserModal({ isUpdateModalOpen, setIsUpdateModalOpen, setRefresh, selectedUser, setSelectedUser }) {
 
-  
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    trigger,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm({
+  const { register, handleSubmit, reset, control, trigger, setValue, formState: { errors, isSubmitting }, } = useForm({
     defaultValues: {}, // IMPORTANT
   });
 
@@ -242,32 +227,38 @@ function UpdateUserModal({
   }, [selectedUser, defaultValues, reset]);
 
   /* ================= SUBMIT ================= */
-  const onSubmit = async (data) => {
-    try {
-      if (!selectedUser?.id) {
-        toast.error("Invalid user ID");
-        return;
-      }
+  const onSubmit = (data) => {
+      ConfirmToast("Are you sure to update user? ", async function(){
+          try {
+            if (!selectedUser?.id) {
+              toast.error("Invalid user ID");
+              return;
+            }
+            const formatDateForMysql = (value) => {
+              if (!value) return null;
+              return value.includes("T") ? value.split("T")[0] : value;
+            };
 
-      const payload = {
-        ...data.profile,
-        ...data.personal_info,
-        ...data.account_info,
-      };
+            const payload = {
+              ...data.profile,
+              ...data.personal_info,
+              ...data.account_info,
+            };
+            // console.log(selectedUser.id)
+            const updatePayload = { ...payload, date_of_birth: formatDateForMysql(payload.date_of_birth) };
+              await updateUser(selectedUser.id, updatePayload);
+            // ✅ SEND ID
 
-      console.log("UPDATE PAYLOAD:", payload);
+            setRefresh((p) => !p);
+            toast.success("User updated successfully");
+            handleClose();
+          } catch (err) {
+            console.error(err);
+            toast.error(err?.response?.data?.message || "Update failed");
+          }
+      })
+  }
 
-      // ✅ SEND ID
-      // await updateUser(selectedUser.id, payload);
-
-      setRefresh((p) => !p);
-      toast.success("User updated successfully");
-      handleClose();
-    } catch (err) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || "Update failed");
-    }
-  };
 
   const handleClose = () => {
     reset({});

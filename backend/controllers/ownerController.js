@@ -26,6 +26,27 @@ const getNextUserCode = async () => {
 };
 
 
+const getDoctorStatusSummary = async (req, res, next) => {
+  try {
+    const [rows] = await query(`
+      SELECT
+        SUM(status = 'active')   AS active,
+        SUM(status = 'inactive') AS inactive
+      FROM doctors
+      WHERE status IN ('active', 'inactive')
+    `);
+    return res.status(200).json({
+      success: true,
+      data: {
+        active: Number(rows.active) || 0,
+        inactive: Number(rows.inactive) || 0,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const showAllDoctors = async (req, res) => {
   try {
     const result = await getOrSetCache(
@@ -147,6 +168,28 @@ const addNewDoctor = async(req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 }
+
+const updateDoctor = async (req, res) => {
+  const doctorId = req.params.user_id;
+  if(!doctorId) return res.status(404).json({ message: "Doctor id is required" })
+  const { doctor_name, lastname, clinic_name, gender, experience_year, date_of_birth, status, calendar_type, clinic_fee, phone, email } = req.body;
+
+  try {
+    const result = await query(
+      `UPDATE doctors  SET doctor_name = ?, lastname = ?, clinic_name = ?, gender = ?, experience_year = ?, date_of_birth = ?, status = ?, calendar_type = ?, clinic_fee = ?, phone = ?, email = ? WHERE id = ?`,
+      [ doctor_name, lastname, clinic_name, gender, experience_year, date_of_birth, status, calendar_type, clinic_fee, phone, email, doctorId ]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    res.json({ message: "Doctor updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Update failed" });
+  }
+};
 
 const deleteDoctor = async (req, res) => {
   try {
@@ -372,8 +415,10 @@ module.exports = {
     showAllDoctors,
     showSingleDoctors,
     addNewDoctor,
+    updateDoctor,
     deleteDoctor,
     addPaymentForDoctor,
     getDoctorPaymentsByYearMonth,
-    getDoctorsWithoutPayment
+    getDoctorsWithoutPayment,
+    getDoctorStatusSummary
 }

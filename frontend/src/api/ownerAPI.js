@@ -1,5 +1,19 @@
 import api from "./axios";
 
+export const fetchDashboard = async () => {
+  try {
+    const { data } = await api.get("/owner/dashboard");
+
+    return data?.data; // return payload only
+  } catch (error) {
+    const message =
+      error?.response?.data?.message || error.message || "Request failed";
+
+    console.error("Error fetching dashboard:", message);
+    throw new Error(message);
+  }
+};
+
 
 export const fetchUsers = async ({ seter }) => {
   try {
@@ -75,6 +89,18 @@ export async function deleteUser(user_id) {
     const res = await api.delete(`/owner/users/${user_id}`);
     console.log(res)
 
+    return res;
+  } catch (err) {
+    console.error("create dcotor error:", err?.response?.data?.message || err);
+    throw err;
+  }
+}
+
+
+export async function updateUser(user_id, data) {
+  try {
+    if (!user_id) throw "Please select a user to update";
+    const { data: res } = await api.put(`/owner/users/${user_id}`, data);
     return res;
   } catch (err) {
     console.error("create dcotor error:", err?.response?.data?.message || err);
