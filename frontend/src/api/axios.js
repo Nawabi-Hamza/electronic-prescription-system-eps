@@ -38,7 +38,7 @@ api.interceptors.response.use(
   }
 );
 
-export const apiURL = `${API_URL}/api/v1`
+export const apiURL = `${API_URL}/v1`
 
 
 export default api;
