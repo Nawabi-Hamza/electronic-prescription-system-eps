@@ -6,7 +6,7 @@ const MODE = import.meta.env.VITE_PRODUCTION_MODE;
 
 const App = () => {
   // Prevent to inspect to website
-  if(!MODE){
+  if(MODE){
     document.addEventListener('contextmenu', (e) => e.preventDefault());
     document.onkeydown = (e) => {
           if (

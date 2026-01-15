@@ -234,7 +234,7 @@ function UpdatePrescriptionFile({ isModalOpen, closeModal, type, setProfile, cur
           setProgress(Math.round((e.loaded * 100) / e.total)),
       });
 
-       console.log(res)
+      //  console.log(res)
 
       toast.success("Updated successfully");
       setProfile(res.data.filename);
