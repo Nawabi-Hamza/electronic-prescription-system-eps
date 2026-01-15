@@ -4,6 +4,8 @@ const cors = require("cors")
 const allowedOrigins = [
   process.env.FRONTEND_ADDRESS_1,
   process.env.FRONTEND_ADDRESS_2,
+  "http://127.0.0.1",
+  "http://localhost"
 ];  
 
 const corsConfig = cors({
