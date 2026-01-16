@@ -33,12 +33,12 @@ function PrescriptionPage({ payments }) {
     };
   // console.log(medicine)
   return (<>
-    <Link to="/doctor" className={banner.back}>
+    <Link to="/doctor" className={banner.back+" print:hidden"}>
       <ArrowBigLeftDashIcon /> Back
     </Link>
     {!payments?.status &&  <PaymentBanner payments={payments} />}
-    <div className='lg:max-w-[310mm] relative mx-auto  md:p-5'>
-      <div className='flex justify-between items-center mb-4'>
+    <div className='lg:max-w-[310mm] relative mx-auto  md:p-5 '>
+      <div className='flex justify-between items-center mb-4 print:hidden'>
         <h1 className='text-2xl font-semibold'>Prescription Page</h1>
         <Link to="./settings" className={btnStyle.filled+" flex items-center gap-2"}><Cog /> Settings</Link>
       </div>

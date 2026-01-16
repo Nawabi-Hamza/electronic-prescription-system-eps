@@ -206,3 +206,11 @@ Whenever you want to **update from GitHub on VPS**:
 If you want, I can **write this as a single copy-paste script** for your VPS — so next time you just run **one script** and your EPS project is fully updated.
 
 Do you want me to do that?
+
+cd ..
+git pull
+cd frontend
+npm run build
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl reload nginx
