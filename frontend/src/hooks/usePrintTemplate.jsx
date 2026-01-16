@@ -7,7 +7,7 @@ export const usePrintTemplate = (printRef) => {
     pageStyle: `
       @page {
         size: A4;
-        margin: 10mm;
+        margin: 6mm;
       }
 
       body {
