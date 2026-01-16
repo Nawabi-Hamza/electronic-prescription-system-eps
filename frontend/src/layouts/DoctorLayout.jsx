@@ -33,7 +33,7 @@ const DoctorLayout = () => {
           </button>
         </Topbar>
         {/* main fills remaining height, scrolls internally */}
-        <main className={mainSectionStyles.container+" max-w-7xl mx-auto mb-20"}>
+        <main className={mainSectionStyles.container+" max-w-7xl mx-auto mb-16 md:mb-0"}>
           <Outlet />
           <Footer />
         </main>

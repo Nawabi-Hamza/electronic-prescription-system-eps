@@ -2,11 +2,7 @@ import { NavLink } from "react-router-dom";
 import { Home, User, ClipboardList, Settings, Pill, NotepadTextDashed } from "lucide-react";
 
 const navItem = "flex flex-col px-4 py-1 rounded-2xl items-center justify-center gap-1 text-xs font-medium transition";
-
-// const activeNav = "text-sky-600 ";
-
-const activeNav =
-  "text-sky-600 bg-sky-50 shadow-md transform -translate-y-6 transition-all duration-300 ease-out";
+const activeNav = "text-sky-600 bg-sky-50 shadow-md transform -translate-y-6 transition-all duration-300 ease-out";
 
 
 export default function MobileBottomNav() {

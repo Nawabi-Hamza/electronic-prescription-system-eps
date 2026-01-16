@@ -1,6 +1,6 @@
 // src/styles/dashboardStyles.js
 export const mainSectionStyles = {
-  container: "p-4 md:p-6 w-full overflow-auto h-full animate__fadeIn animate__animated animate__delay-.5s",
+  container: "p-4 md:p-6 w-full overflow-auto  animate__fadeIn animate__animated animate__delay-.5s",
   header: "text-2xl font-bold mb-6",
   card: "bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300",
   cardTitle: "text-lg font-semibold mb-2",

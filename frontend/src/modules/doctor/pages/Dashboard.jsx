@@ -27,8 +27,7 @@ const DoctorDashboard = ({ payments }) => {
                     <span className="flex gap-5 items-center text-xl text-gray-800">
                       <ImageViewer 
                         imagePath={`/uploads/profiles/${user.photo}`}
-                        className="rounded h-20 w-20"
-
+                        className="rounded h-20 w-auto"
                       />
                       <div className="uppercase"> 
                         <strong>{user.full_name}</strong>
