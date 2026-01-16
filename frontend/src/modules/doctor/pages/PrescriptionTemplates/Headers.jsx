@@ -24,7 +24,7 @@ export function SimpleHeader({ name_prefex, doctor_name, lastname, clinic_name, 
 
   return (
     <div id="header-container">
-      <div className="md:flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <div className="px-4">
           <h1 className="text-3xl font-bold uppercase tracking-wide">
             {name_prefex} {doctor_name} {lastname}
