@@ -121,7 +121,7 @@ function AddPayment({ doctors, isModalOpen, handleClose }){
                 const res = await api.post("/owner/payments", user_data);
                 if (res.data.status) {
                     toast.success("Payment saved successfully!");
-                    reset(); // clear form
+                    // reset(); // clear form
                 } else {
                     alert(res.data.message || "Something went wrong");
                 }
