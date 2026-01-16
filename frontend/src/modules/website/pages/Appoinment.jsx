@@ -148,7 +148,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
                         imagePath={`/uploads/profiles/${doc.photo}`}
                         altText={doc.name}
                         showPreview={false}
-                        className="h-10 w-10 object-cover rounded"
+                        className="h-12 w-10 object-cover rounded"
                     />
                 </div>
                  <div>
