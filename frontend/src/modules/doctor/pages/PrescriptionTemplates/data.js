@@ -4,6 +4,7 @@ export const medicineForms = [
   { value: "Tablet", label: "Tablet" },
   { value: "Capsule", label: "Capsule" },
   { value: "Syrup", label: "Syrup" },
+  { value: "Serum", label: "Serum" },
   { value: "Injection", label: "Injection" },
   { value: "Cream", label: "Cream" },
   { value: "Ointment", label: "Ointment" },

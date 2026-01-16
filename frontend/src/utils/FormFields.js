@@ -1,6 +1,6 @@
 
 export const afghanistanProvinces = [
-  "Badakhshan", "Badghis", "Baghlan", "Bamyan", "Daykundi", "Farah", "Faryab",
+  "Badakhshan", "Badghis", "Baghlan","Balkh" , "Bamyan", "Daykundi", "Farah", "Faryab",
   "Ghazni", "Ghor", "Helmand", "Herat", "Jowzjan", "Kabul", "Kandahar",
   "Kapisa", "Khost", "Kunar", "Kunduz", "Laghman", "Logar", "Nangarhar",
   "Nimroz", "Nuristan", "Paktia", "Paktika", "Panjshir", "Parwan", "Samangan",
