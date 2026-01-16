@@ -1,14 +1,15 @@
 {
-  "name": "school-mis-ux",
-  "version": "3.2.5",
+  "name": "paikareps-eps",
+  "version": "2.3.0",
   "private": true,
-  "description": "school management system with AI integration, timetable generation, whatsapp messaging",
+  "description": "Electronic Prescription System (EPS) developed by PaikarSoft with offline support and PWA features",
   "keywords": [
-    "school",
-    "mis",
-    "timetable",
-    "generate",
-    "ai"
+    "electronic",
+    "prescription",
+    "eps",
+    "pwa",
+    "offline",
+    "healthcare"
   ],
   "license": "ISC",
   "author": "Hamza Nawabi <hamza.nawabi119@gmail.com> (https://nawabi-resume.netlify.app)",
