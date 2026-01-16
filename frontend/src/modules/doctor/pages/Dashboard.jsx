@@ -53,7 +53,7 @@ const DoctorDashboard = ({ payments }) => {
       {user && (
         <div className={gridStyle.item2atRow}>
           <SectionContainer title="Prescription">
-              <Link to="./prescription">
+              <Link to="/doctor/prescription">
                 <div className={`${cardStyle.container} from-lime-500/10 to-lime-500/5`}>
                   <span className={cardStyle.content}>
                     <NotepadTextDashed className="h-20 w-20 text-lime-500" />
@@ -65,7 +65,7 @@ const DoctorDashboard = ({ payments }) => {
               </Link>
           </SectionContainer>
           <SectionContainer title="Appoinment">
-              <Link to="./appoinment">
+              <Link to="/doctor/appoinment">
                 <div className={`${cardStyle.container} from-indigo-500/10 to-indigo-500/5`}>
                   <span className={cardStyle.content}>
                     <Accessibility className="h-20 w-20 text-indigo-500"/>
@@ -77,7 +77,7 @@ const DoctorDashboard = ({ payments }) => {
               </Link>
           </SectionContainer>
           <SectionContainer title="Midecine">
-              <Link to="./medicine">
+              <Link to="/doctor/medicine">
                 <div className={`${cardStyle.container} from-amber-500/10 to-amber-500/5`}>
                   <span className={cardStyle.content}>
                     <Pill className="h-20 w-20 text-amber-500" />
@@ -89,7 +89,7 @@ const DoctorDashboard = ({ payments }) => {
               </Link>
           </SectionContainer>
           <SectionContainer title="Payments">
-              <Link to={"./payments"}>
+              <Link to={"/doctor/payments"}>
                 <div className={`${cardStyle.container} from-pink-500/10 to-pink-500/5`}>
                   <span className={cardStyle.content}>
                     <HandCoins className={` h-20 w-20 text-pink-500`}/>
