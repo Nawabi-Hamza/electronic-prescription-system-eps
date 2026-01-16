@@ -221,12 +221,12 @@ function ClientProfile({ user }){
 
     return(
      <SectionContainer title='Doctor Profile' className=' md:p-4 bg-white rounded-md'>
-        <div className="md:flex items-center mb-6 relative">
+        <div className="flex items-center relative">
             {user.photo ? (
               <ImageViewer
                 imagePath={`/uploads/profiles/${profile}`}
                 altText={`${user.full_name}`}
-                className="w-auto h-24 rounded-md object-cover mr-6"
+                className="w-auto h-24 rounded-md object-cover mr-2"
                 showPreview={false}
               />
               ) : (
@@ -235,7 +235,7 @@ function ClientProfile({ user }){
               </div>
             )}
             
-          <div className='mt-4 md:mt-0'>
+          <div className='border-l border-sky-500 ps-3'>
             <h2 className="text-xl font-semibold capitalize">
               {user.full_name}
             </h2>
@@ -249,41 +249,41 @@ function ClientProfile({ user }){
             </div>
         </div>
         <hr className='border-sky-500' />   
-        <div className="flex flex-wrap">
-          <div className='w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4'>
-            <h3 className="font-semibold">Username</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 flex-wrap gap-2 ">
+          <div className='bg-gray-50 p-3 md:p-4'>
+            <h3 className="text-slate-600">Username</h3>
             <p>{user.full_name}</p>
           </div>
-          <div className='w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4'>
-            <h3 className="font-semibold">Clinic Name</h3>
+          <div className='bg-gray-50 p-3 md:p-4'>
+            <h3 className="text-slate-600">Clinic Name</h3>
             <p>{user.clinic_name}</p>
           </div>
-          <div className='w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4'>
-            <h3 className="font-semibold">Clinic Fee</h3>
+          <div className='bg-gray-50 p-3 md:p-4'>
+            <h3 className="text-slate-600">Clinic Fee</h3>
             <p>{user.clinic_fee}AF</p>
           </div>
 
-          <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-            <h3 className="font-semibold">Email</h3>
+          <div className="bg-gray-50 p-3 md:p-4">
+            <h3 className="text-slate-600">Email</h3>
             <p>{user.email}</p>
           </div>
 
-          <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-            <h3 className="font-semibold">Phone</h3>
+          <div className="bg-gray-50 p-3 md:p-4">
+            <h3 className="text-slate-600">Phone</h3>
             <p>{user.phone}</p>
           </div>
-          <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-            <h3 className="font-semibold">Calendar Type</h3>
+          <div className="bg-gray-50 p-3 md:p-4">
+            <h3 className="text-slate-600">Calendar Type</h3>
             <p className='uppercase'>{user.calendar_type}</p>
           </div>
 
-          <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-            <h3 className="font-semibold">Join Date</h3>
+          <div className="bg-gray-50 p-3 md:p-4">
+            <h3 className="text-slate-600">Join Date</h3>
             <p className='text-red-300'>{FormatLastLogin(user.join_date)}</p>
           </div>
 
-          <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-            <h3 className="font-semibold">Status</h3>
+          <div className="bg-gray-50 p-3 md:p-4">
+            <h3 className="text-slate-600">Status</h3>
             <p className={`font-semibold capitalize ${user.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
               {user.status}
             </p>
