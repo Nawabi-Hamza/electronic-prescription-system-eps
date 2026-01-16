@@ -14,8 +14,8 @@ export default defineConfig({
       },
       includeAssets: ['pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'PaikarSoft EPS',
-        short_name: 'EPS',
+        name: 'Paikar Electronic Prescription System',
+        short_name: 'Paikar (EPS)',
         description: 'Electronic Prescription System Developed By PaikarSoft.',
         theme_color: '#0084d1',
         background_color: '#0084d1',
