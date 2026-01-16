@@ -214,7 +214,7 @@ const getUserFromTokenClient = async(req, res) => {
       return res.json({ from: "redis", data: JSON.parse(cached) });
     }else{
     const [results] = await query(`SELECT id, generated_id, clinic_name, doctor_name, lastname, CONCAT(doctor_name, " ", lastname) AS full_name , photo, prescription_logo, clinic_fee, calendar_type, created_at as join_date, phone, email, status, created_at FROM doctors WHERE id = ? AND status != 'deleted'`, [userId]);
-      if (results.length === 0) return res.status(404).json({ message: "Client not found or deleted" });
+      if (!results) return res.status(404).json({ message: "Client not found or deleted" });
       results.role = 'doctor';
 
       await redis.setEx(cacheKey, 30, JSON.stringify(results));   //set for 60 second in cache  
