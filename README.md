@@ -207,6 +207,10 @@ If you want, I can **write this as a single copy-paste script** for your VPS —
 
 Do you want me to do that?
 
+git add .
+git commit -m "update simple template"
+git push
+
 cd ..
 git pull
 cd frontend

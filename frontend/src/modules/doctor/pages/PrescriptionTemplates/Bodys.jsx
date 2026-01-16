@@ -94,7 +94,7 @@ export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, set
       </div>
 
       {/* Prescription Table */}
-      <div className="max-w-[100%] min-h-[64vh] sm:max-w-full overflow-auto">
+      <div className="max-w-[100%] min-h-[58vh] sm:max-w-full overflow-auto">
         <table className="w-full border border-slate-200 text-xs">
           <thead className="bg-gray-100">
             <tr>
