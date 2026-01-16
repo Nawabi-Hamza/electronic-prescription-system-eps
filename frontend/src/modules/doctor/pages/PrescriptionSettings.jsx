@@ -139,25 +139,25 @@ function ClientDoctument({ header }) {
   });
 
   return (
-    <SectionContainer title="Doctor Profile" className="md:p-4 bg-white rounded-md">
-      <div className="grid md:grid-cols-2 gap-4">
+    <SectionContainer title="Prescription Settings" className="md:p-4 bg-white rounded-md">
+      <div className="grid grid-cols-2 gap-4">
 
         {/* CLINIC LOGO */}
-        <div className="md:flex gap-2 items-center p-4 shadow-md shadow-slate-200 rounded mb-6 relative">
+        <div className="flex flex-col md:flex-row gap-2 items-center justify-center md:justify-start p-4 shadow-md shadow-slate-200 rounded relative">
           {profile && (
             <ImageViewer
               imagePath={`/uploads/clinic_logo/${profile}`}
               altText="clinic"
-              className="w-auto h-24 rounded-md object-cover"
+              className="w-auto h-16 md:h-24 rounded-md object-cover"
               showPreview={false}
             />
           )}
-
           <div className="mt-4 md:mt-0">
-            <h2 className="text-xl font-semibold capitalize">Clinic Logo</h2>
+            <h2 className="text-md text-center font-semibold capitalize">Clinic Logo</h2>
           </div>
 
-          <div className="ml-auto">
+
+          <div className="absolute top-2 right-2">
             <SquarePen
               className={icon.primary}
               onClick={() => setUploadModal({ open: true, type: "clinic" })}
@@ -166,21 +166,21 @@ function ClientDoctument({ header }) {
         </div>
 
         {/* SIGNATURE */}
-        <div className="md:flex gap-2 items-center p-4 shadow-md shadow-slate-200 rounded mb-6 relative">
+        <div className="flex flex-col md:flex-row gap-2 items-center justify-center md:justify-start p-4 shadow-md shadow-slate-200 rounded relative">
           {signature && (
             <ImageViewer
               imagePath={`/uploads/doctor_signatures/${signature}`}
               altText="signature"
-              className="w-auto h-24 rounded-md object-cover"
+              className="w-auto h-16 md:h-24 rounded-md object-cover"
               showPreview={false}
             />
           )}
 
           <div className="mt-4 md:mt-0">
-            <h2 className="text-xl font-semibold capitalize">Your Signature</h2>
+            <h2 className="text-md text-center font-semibold capitalize">Your Signature</h2>
           </div>
 
-          <div className="ml-auto">
+          <div className="absolute top-2 right-2">
             <SquarePen
               className={icon.primary}
               onClick={() => setUploadModal({ open: true, type: "signature" })}

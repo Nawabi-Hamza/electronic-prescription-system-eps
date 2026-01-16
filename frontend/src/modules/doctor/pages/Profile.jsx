@@ -279,7 +279,7 @@ function ClientProfile({ user }){
 
           <div className="bg-gray-50 p-3 md:p-4">
             <h3 className="text-slate-600">Join Date</h3>
-            <p className='text-red-300'>{FormatLastLogin(user.join_date)}</p>
+            <p className='text-red-300'>{(user?.join_date)?.split('T')[0]}</p>
           </div>
 
           <div className="bg-gray-50 p-3 md:p-4">
