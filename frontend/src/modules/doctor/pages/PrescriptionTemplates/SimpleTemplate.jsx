@@ -64,7 +64,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
       {/* PRINT BUTTON */}
       <button
         onClick={printTemplate}
-        className={`${btnStyle.filled} fixed bottom-20 right-4 flex gap-1 items-center z-10 print:hidden`}
+        className={`${btnStyle.filled} fixed bottom-20  flex gap-1 items-center z-10 print:hidden`}
       >
         <Printer size={18} /> Print
       </button>

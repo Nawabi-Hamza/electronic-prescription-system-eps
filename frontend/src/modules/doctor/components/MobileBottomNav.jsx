@@ -7,7 +7,7 @@ const activeNav = "text-sky-600 bg-sky-50 shadow-md transform -translate-y-3 tra
 
 export default function MobileBottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg md:hidden">
+    <nav className="fixed print:hidden bottom-0 left-0 right-0 z-50 bg-white shadow-lg md:hidden">
       <div className="flex justify-around h-16 pb-safe">
 
         <NavLink

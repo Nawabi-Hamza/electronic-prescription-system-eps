@@ -8,7 +8,7 @@ export default function Topbar({ children }) {
   const { user } = useAuth();
 
   return (
-    <header className={topbarStyles.wrapper} id='container-of-svg'>
+    <header className={topbarStyles.wrapper+" print:hidden"} id='container-of-svg'>
       <div>
         <h1 className={topbarStyles.title}>
           {/* <img src={appConfig.logo} className="w-auto h-8" alt="" /> */}
