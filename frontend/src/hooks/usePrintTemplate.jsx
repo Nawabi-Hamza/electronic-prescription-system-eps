@@ -27,7 +27,9 @@ export const usePrintTemplate = (printRef) => {
         box-sizing: border-box;
         background: white;
       }
-
+      #main-section{
+        display: flex;
+      }
       .ql-editor {
         white-space: normal !important;
         word-break: break-word !important;
