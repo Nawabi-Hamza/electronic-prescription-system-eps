@@ -18,7 +18,7 @@ export function SimpleFooter({ doctor_name, lastname, addresses }) {
           </div>
         }
         <p>
-          &copy; copy rights by: https://paikareps.com / SUPPORT: +93 771844770
+          &copy; All RIGHTS RESERVED BY: https://paikareps.com / SUPPORT: +93 771844770
         </p>
       </div>
     </>
