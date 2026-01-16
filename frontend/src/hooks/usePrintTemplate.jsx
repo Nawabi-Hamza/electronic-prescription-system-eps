@@ -7,7 +7,7 @@ export const usePrintTemplate = (printRef) => {
     pageStyle: `
       @page {
         size: A4;
-        margin: 6mm;
+        margin: 10mm;
       }
 
       body {
@@ -27,9 +27,7 @@ export const usePrintTemplate = (printRef) => {
         box-sizing: border-box;
         background: white;
       }
-      #main-section{
-        display: flex;
-      }
+
       .ql-editor {
         white-space: normal !important;
         word-break: break-word !important;
