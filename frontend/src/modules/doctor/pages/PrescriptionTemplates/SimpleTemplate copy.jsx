@@ -424,5 +424,3 @@ function Footer({ doctor_name, lastname, addresses }) {
     </>
   );
 }
-
-
