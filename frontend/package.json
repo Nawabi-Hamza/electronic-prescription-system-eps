@@ -33,6 +33,7 @@
     "react-chartjs-2": "^5.3.0",
     "react-date-object": "^2.1.9",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.62.0",
     "react-markdown": "^10.1.0",
     "react-multi-date-picker": "^4.5.2",
