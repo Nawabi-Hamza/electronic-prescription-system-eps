@@ -14,13 +14,13 @@ function Appoinment() {
 
   
   return (
-    <div className={mainSectionStyles.container}>
+    <>
         <Link to="/doctor" className={banner.back}>
             <ArrowBigLeftDashIcon /> Back
         </Link>
-        <h1 className='text-2xl font-semibold mb-4'>Appoinment Page</h1>
+        <h1 className='text-xl text-sky-600 font-semibold mb-4'>Appoinment Page</h1>
         <Appointments />
-    </div>
+    </>
   )
 }
 
@@ -57,17 +57,17 @@ function Appointments(){
     <Table
       columns={[
         { key: 'patient_name', label: 'Name'},
-        { key: 'phone', label: 'phone'},
-        { key: 'age', label: 'age'},
-        { key: 'description', label: 'comment',
-           render: val =>
-            <div class="w-32"> 
-              <p class="truncate" title={val}>
-                {val}
-              </p>
-            </div>
-        },
-        { key: 'status', label: 'status', render: val => <span className='uppercase'>{val}</span>},
+        // { key: 'phone', label: 'phone'},
+        // { key: 'age', label: 'age'},
+        // { key: 'description', label: 'comment',
+        //    render: val =>
+        //     <div class="w-32"> 
+        //       <p class="truncate" title={val}>
+        //         {val}
+        //       </p>
+        //     </div>
+        // },
+        // { key: 'status', label: 'status', render: val => <span className='uppercase'>{val}</span>},
         { key: 'visit_number', label: 'visit number', render: (val) => (<p className='text-center'>{val}</p>)},
       ]}
       records={appointments}

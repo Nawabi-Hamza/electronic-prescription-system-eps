@@ -25,14 +25,13 @@ function Medicine({ payments }) {
     :
     <div>
       <Link to="/doctor" className={banner.back}><ArrowBigLeftDashIcon/> Back</Link>
-        <div className='grid lg:grid-cols-2 gap-4'>
-            <div className=' rounded-md shadow-md shadow-indigo-50 lg:max-h-[74vh] overflow-y-auto p-4'>
-                <MedicineForm setMedicine={setMedicine} updateMedicine={updateMedicine} setUpdateMedicine={setUpdateMedicine} />
-            </div>
+        <div className='grid lg:grid-cols-2 space-x-reverse gap-8'>
             <div className='rounded-r lg:max-h-[74vh] overflow-y-auto'>
                 <MedicineTable medicine={medicine} setMedicine={setMedicine} setUpdateMedicine={setUpdateMedicine} />
             </div>
-
+            <div className=' rounded-md shadow-md shadow-indigo-50 lg:max-h-[74vh] overflow-y-auto'>
+                <MedicineForm setMedicine={setMedicine} updateMedicine={updateMedicine} setUpdateMedicine={setUpdateMedicine} />
+            </div>
         </div>
     </div>
   )
@@ -82,7 +81,7 @@ function MedicineForm({ setMedicine, updateMedicine, setUpdateMedicine }){
 
     return(<>
         
-        <h1 className='font-bold text-2xl mb-3 flex items-center justify-between text-slate-600'>{updateMedicine.name ? "Update: "+updateMedicine?.name:"Add New Medicine"} <button className={btnStyle.outlined+" text-sm"} onClick={handleReset}>Reset</button></h1>
+        <h1 className='font-bold text-2xl mb-3 flex items-center justify-between text-sky-600'>{updateMedicine.name ? "Update: \""+updateMedicine?.name+"\"":"Add New Medicine"} <button className={btnStyle.outlined+" text-sm"} onClick={handleReset}>Reset</button></h1>
         <FieldsGroupForm
             fields={medicineFields}
             register={register}
@@ -146,7 +145,7 @@ function MedicineTable({ medicine, setMedicine, setUpdateMedicine }){
             columns={[
                 { key: "name", label: "Name" },
                 { key: "form", label: "form"},
-                { key: "category", label: "category"},
+                // { key: "category", label: "category"},
             ]}
             records={filteredMedicine}
             actions={(row) => [
