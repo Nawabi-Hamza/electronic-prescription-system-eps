@@ -347,8 +347,8 @@ function TemplateDesign() {
 
               {/* Overlay tick if selected */}
               {selectedTemplate === t.id && (
-                <div className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
-                  <CheckCircle size={20} className="text-green-500" />
+                <div className="absolute right-[38%] top-[40%] bg-white  rounded p-1 shadow-lg border border-sky-300">
+                  <CheckCircle size={40} className="text-sky-500 " />
                 </div>
               )}
 
