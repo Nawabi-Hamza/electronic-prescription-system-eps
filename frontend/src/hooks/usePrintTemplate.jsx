@@ -24,7 +24,6 @@ export const usePrintTemplate = (printRef) => {
       .prescription-area {
         width: 210mm;
         min-height: 297mm;
-        padding: 12mm;
         margin: 0 auto;
         box-sizing: border-box;
         background: white;
