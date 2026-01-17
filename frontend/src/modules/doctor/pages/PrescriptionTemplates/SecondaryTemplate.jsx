@@ -51,6 +51,15 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   const [patientGender, setPatientGender] = useState("");
   const [nextVisit, setNextVisit] = useState(isoToday());
   const [content, setContent] = useState("");
+  // Get bill number from localStorage or default
+    const [billNumber, setBillNumber] = React.useState(() => {
+      const stored = localStorage.getItem("billNumber");
+      if (stored) return stored;
+      const defaultBill = 1;
+      localStorage.setItem("billNumber", defaultBill);
+      return defaultBill;
+    });
+  
 
   useEffect(() => {
     if (!medicineSearch || medicineSearch.length < 2) return setSuggestions([]);
@@ -69,22 +78,31 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   /* ---------- PRINT ---------- */
   const printRef = useRef(null);
   const printTemplate = usePrintTemplate(printRef);
+  const handleUpdateAndPrint = function(){
+        const stored = localStorage.getItem("billNumber");
+        const defaultBill = Number(stored) + 1;
+        localStorage.setItem("billNumber", defaultBill);
+        setBillNumber(defaultBill)
+        printTemplate()
+  }
+
 
   return (
     <div className="text-black">
       {/* PRINT BUTTON */}
       <button
-        onClick={printTemplate}
-        className={`${btnStyle.filled} fixed bottom-20 right-4 md:right-56 flex gap-1 items-center z-10 print:hidden`}
+        onClick={handleUpdateAndPrint}
+        className={`${btnStyle.filled} fixed bottom-20 right-4 xl:right-56 flex gap-1 items-center z-10 print:hidden`}
       >
         <Printer size={18} /> Print
       </button>
 
       {/* PRESCRIPTION CONTAINER */}
-      <div ref={printRef} className="print-area bg-white p-2 rounded" id="prescription-area">
+      <div ref={printRef} className="print-area bg-white p-2 rounded prescription-area" id="">
         {/* HEADER */}
         <div className="hidden print:block">
           <SimpleHeader
+            billNumber={billNumber}
             logoUrl={null}
             name_prefex={name_prefex}
             doctor_name={doctor_name}

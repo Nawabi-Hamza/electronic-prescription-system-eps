@@ -36,6 +36,15 @@ export default function SimpleTemplate({ doctor, medicines }) {
   const [patientAge, setPatientAge] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [nextVisit, setNextVisit] = useState(isoToday());
+  // Get bill number from localStorage or default
+  const [billNumber, setBillNumber] = React.useState(() => {
+      const stored = localStorage.getItem("billNumber");
+      if (stored) return stored;
+      const defaultBill = 1;
+      localStorage.setItem("billNumber", defaultBill);
+      return defaultBill;
+  });
+  
 
   useEffect(() => {
     if (!medicineSearch || medicineSearch.length < 2) {
@@ -58,13 +67,21 @@ export default function SimpleTemplate({ doctor, medicines }) {
   /* ---------- PRINT ---------- */
   const printRef = useRef(null);
   const printTemplate = usePrintTemplate(printRef);
+    const handleUpdateAndPrint = function(){
+        const stored = localStorage.getItem("billNumber");
+        const defaultBill = Number(stored) + 1;
+        localStorage.setItem("billNumber", defaultBill);
+        setBillNumber(defaultBill)
+        printTemplate()
+  }
+
 
   return (
-    <div className="text-black">
+    <div className="text-black ">
       {/* PRINT BUTTON */}
       <button
-        onClick={printTemplate}
-        className={`${btnStyle.filled} fixed bottom-20 right-4 md:right-56 flex gap-1 items-center z-10 print:hidden`}
+        onClick={handleUpdateAndPrint}
+        className={`${btnStyle.filled} fixed right-4 xl:right-56 bottom-20 flex gap-1 items-center z-10 print:hidden`}
       >
         <Printer size={18} /> Print
       </button>
@@ -73,6 +90,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
       <div ref={printRef} className="prescription-area">
         <div className="hidden print:block">
           <SimpleHeader
+            billNumber={billNumber}
             logoUrl={logoUrl}
             name_prefex={name_prefex}
             doctor_name={doctor_name}

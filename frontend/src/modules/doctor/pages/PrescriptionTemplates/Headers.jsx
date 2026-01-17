@@ -2,15 +2,9 @@
 
 const formatMonthDay = (iso) => iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "__________";
 
-export function SimpleHeader({ name_prefex, doctor_name, lastname, clinic_name, description, phone, patientName, patientAge, patientGender, nextVisit }) {
+export function SimpleHeader({ billNumber, name_prefex, doctor_name, lastname, clinic_name, description, phone, patientName, patientAge, patientGender, nextVisit }) {
   // Get bill number from localStorage or default
-  const billNumber = () => {
-    const stored = localStorage.getItem("billNumber");
-    if (stored) return stored;
-    const defaultBill = 1;
-    localStorage.setItem("billNumber", defaultBill);
-    return defaultBill;
-  };
+
 
   // Compute next visit date if not provided
   const computeNextVisit = () => {
@@ -34,7 +28,7 @@ export function SimpleHeader({ name_prefex, doctor_name, lastname, clinic_name, 
         </div>
         <div>
           <p>Phone: {phone}</p>
-          <p>Bill No: {billNumber()}</p>
+          <p>Bill No: {billNumber}</p>
           <p>Date: {new Date().toLocaleDateString()}</p>
         </div>
       </div>
