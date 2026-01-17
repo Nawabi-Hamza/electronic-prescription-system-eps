@@ -22,11 +22,11 @@
     "view": "vite preview"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.3.2",
     "@tailwindcss/vite": "^4.1.11",
     "animate.css": "^4.1.1",
     "axios": "^1.11.0",
     "framer-motion": "^12.23.12",
-    "html2pdf.js": "^0.14.0",
     "jalaali-js": "^1.2.8",
     "lucide-react": "^0.540.0",
     "qrcode.react": "^4.2.0",

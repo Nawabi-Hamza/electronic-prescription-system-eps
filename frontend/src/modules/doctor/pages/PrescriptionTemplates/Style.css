@@ -1,3 +1,14 @@
+/* styles.css or globals.css */
+/* .pdf-safe {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.pdf-safe * {
+  background: inherit !important;
+  color: inherit !important;
+  border-color: #000 !important;
+} */
 
 
 @media print {

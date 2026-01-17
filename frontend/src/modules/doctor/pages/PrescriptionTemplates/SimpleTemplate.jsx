@@ -70,7 +70,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
       </button>
 
       {/* PRINT AREA */}
-      <div ref={printRef} id="prescription-area">
+      <div ref={printRef} className="prescription-area">
         <div className="hidden print:block">
           <SimpleHeader
             logoUrl={logoUrl}

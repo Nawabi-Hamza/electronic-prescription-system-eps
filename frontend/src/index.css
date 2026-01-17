@@ -95,3 +95,13 @@ select {
   background-position: right 0.75rem center;
   background-size: 1rem;
 }
+
+/* Add in your global CSS */
+.pdf-safe {
+  background-color: #ffffff !important; /* instead of Tailwind bg-white using oklch */
+  color: #000 !important;               /* replace text colors if needed */
+}
+.pdf-safe * {
+  color: inherit !important;
+  background: inherit !important;
+}
