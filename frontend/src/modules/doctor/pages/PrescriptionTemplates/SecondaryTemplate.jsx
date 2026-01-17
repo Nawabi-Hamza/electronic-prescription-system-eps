@@ -111,9 +111,9 @@ export default function SecondaryTemplate({ doctor, medicines }) {
         />
 
         {/* MAIN SECTION: Quill Left 30%, Body Right 70% */}
-        <div className="flex flex-col print:flex-row gap-2 mt-2">
+        <div className="flex flex-col md:flex-row print:flex-row gap-2 mt-2">
           {/* Quill Editor */}
-          <div className="w-full print:w-[30%] bg-amber-50 p-2 rounded">
+          <div className="w-full md:w-[30%] print:w-[30%] bg-amber-50 p-2 rounded">
             <ReactQuill
               theme="snow"
               value={content}
@@ -130,7 +130,7 @@ export default function SecondaryTemplate({ doctor, medicines }) {
           </div>
 
           {/* Body Table */}
-          <div className="w-full print:w-[70%] overflow-auto">
+          <div className="w-full md:w-[70%] print:w-[70%] overflow-auto">
             <SimpleBody
               medicineSearch={medicineSearch}
               setMedicineSearch={setMedicineSearch}
