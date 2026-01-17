@@ -38,7 +38,7 @@ const smallSelectStyles = {
   menu: (base) => ({ ...base, zIndex: 9999, fontSize: 12 })
 };
 
-export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, setSuggestions }) {
+export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, setSuggestions, height='min-h-[68vh]' }) {
   const [items, setItems] = useState([]);
 
   // Insert medicine — auto-fill if available
@@ -94,7 +94,7 @@ export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, set
       </div>
 
       {/* Prescription Table */}
-      <div className="max-w-[100%] min-h-[60vh] sm:max-w-full overflow-auto">
+      <div className={"max-w-[100%] sm:max-w-full overflow-auto "+height}>
         <table className="w-full border border-slate-200 text-xs">
           <thead className="bg-gray-100">
             <tr>
