@@ -82,21 +82,22 @@ export default function SecondaryTemplate({ doctor, medicines }) {
       {/* PRESCRIPTION CONTAINER */}
       <div ref={printRef} className="print-area bg-white p-2 rounded">
         {/* HEADER */}
-        <SimpleHeader
-          logoUrl={null}
-          name_prefex={name_prefex}
-          doctor_name={doctor_name}
-          lastname={lastname}
-          clinic_name={clinic_name}
-          registration_number={registration_number}
-          description={description}
-          phone={phone}
-          patientName={patientName}
-          patientAge={patientAge}
-          patientGender={patientGender}
-          nextVisit={nextVisit}
-        />
-
+        <div className="hidden print:block">
+          <SimpleHeader
+            logoUrl={null}
+            name_prefex={name_prefex}
+            doctor_name={doctor_name}
+            lastname={lastname}
+            clinic_name={clinic_name}
+            registration_number={registration_number}
+            description={description}
+            phone={phone}
+            patientName={patientName}
+            patientAge={patientAge}
+            patientGender={patientGender}
+            nextVisit={nextVisit}
+          />
+        </div>
         {/* PATIENT DETAILS */}
         <PatientDetailsFields
           patientName={patientName}
@@ -154,7 +155,7 @@ export default function SecondaryTemplate({ doctor, medicines }) {
 /* ---------- CUSTOM FOOTER ---------- */
 function CustomeFooter({ signatureUrl, doctor_name, lastname, addresses }) {
   return (
-    <div className="mt-4">
+    <div className="opacity-0 print:opacity-100">
       <div className="flex justify-end">
         <div className="text-center">
           <div className="h-20 w-48 flex justify-center items-center">
