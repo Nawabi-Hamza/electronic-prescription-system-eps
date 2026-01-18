@@ -6,8 +6,7 @@ const getDoctors = async (req, res) => {
         const doctors = await getOrSetCache('doctors-list-visitors', async () => {
             const result = await query(`SELECT id, clinic_name as clinic, doctor_name as name, lastname, photo, clinic_fee as fee
                     FROM doctors
-                    WHERE status = 'active'
-                    ORDER BY created_at 
+                    ORDER BY created_at DESC
                 `);
             return result;
         }, 60); // cache for 60 seconds
@@ -25,8 +24,19 @@ const getDoctorTiming = async (req, res) => {
   if (!doctor_id) return res.send("Doctor is required!");
 
   try {
+    
+    const doctorRows = await query(`SELECT id, status FROM doctors WHERE id = ? LIMIT 1`, [doctor_id]);
+    if (doctorRows.length === 0) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+    const doctor = doctorRows[0];
+    if (doctor.status !== "active") {
+      return res.status(404).json({
+        error: "Doctor is not active"
+      });
+    }
+    
     const cacheKey = "doctor_timing_today_" + doctor_id;
-
     const result = await getOrSetCache(
       cacheKey,
       async () => {
@@ -44,7 +54,7 @@ const getDoctorTiming = async (req, res) => {
            WHERE doctors_id = ? AND day_of_week = ?`,
           [doctor_id, today]
         );
-
+ 
         if (rows.length === 0) {
           return {
             day: today,

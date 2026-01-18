@@ -47,8 +47,8 @@ export default function Appoinment() {
               step >= 1 ? "text-sky-600 font-semibold" : ""
             }`}
           >
-            <User className="w-6 h-6 mb-1" />
-            <p>Doctor</p>
+            <Calendar className="w-6 h-6 mb-1" />
+            <p>Patient</p>
           </div>
 
           <div
@@ -63,8 +63,9 @@ export default function Appoinment() {
               step >= 2 ? "text-sky-600 font-semibold" : ""
             }`}
           >
-            <Calendar className="w-6 h-6 mb-1" />
-            <p>Patient</p>
+            <User className="w-6 h-6 mb-1" />
+            <p>Doctor</p>
+
           </div>
 
           <div
@@ -84,11 +85,11 @@ export default function Appoinment() {
           </div>
         </div>
 
-        {/* STEP 1 – FIND DOCTOR */}
-        {step === 1 && (<StepOneDoctorList  setSelectedDoctor={setSelectedDoctor} setStep={setStep} />)}
+        {/* STEP 1 – PATIENT INFORMATION */}
+        {step === 1 && (<StepTwoForm setStep={setStep} handleSubmit={handleSubmit} register={register} errors={errors} />)}
 
-        {/* STEP 2 – PATIENT INFORMATION */}
-        {step === 2 && (<StepTwoForm setStep={setStep} handleSubmit={handleSubmit} register={register} errors={errors} />)}
+        {/* STEP 2 – FIND DOCTOR */}
+        {step === 2 && (<StepOneDoctorList  setSelectedDoctor={setSelectedDoctor} setStep={setStep} />)}
 
         {/* STEP 3 – DOCTOR TIMING */}
         {step === 3 && (<StepThreeNumber selectedDoctor={selectedDoctor} handleSubmit={handleSubmit} onSubmit={onSubmit} setStep={setStep} isSubmitting={isSubmitting}  />)}
@@ -139,7 +140,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
                   key={doc.id}
                   onClick={() => {
                     setSelectedDoctor(doc);
-                    setStep(2);
+                    setStep(3);
                   }}
                   className="p-4 relative overflow-hidden flex gap-2 items-center shadow-sm rounded cursor-pointer bg-white hover:bg-blue-50 transition"
                 >
@@ -174,7 +175,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
 function StepTwoForm({ setStep, handleSubmit, register, errors }){  
 
     return(<>
-        <form onSubmit={handleSubmit(() => setStep(3))} className="space-y-4 animate-[fadeIn_0.3s_ease]">
+        <form onSubmit={handleSubmit(() => setStep(2))} className="space-y-4 animate-[fadeIn_0.3s_ease]">
             <h2 className="text-xl font-bold mb-4">Patient Information</h2>
 
             {/* Full Name */}
@@ -278,7 +279,7 @@ function StepThreeNumber({ selectedDoctor, handleSubmit, onSubmit, isSubmitting,
 
   return (
     <div className="animate-[fadeIn_0.3s_ease] space-y-4">
-
+      {!timing && <div className="bg-red-200 p-4 rounded-md shadow">❗ This doctor is not active in system.</div>}
       {/* === Info Card === */}
       {timing && timing?.status!=="close" && (
         <div className="p-5 rounded  space-y-2">
@@ -333,7 +334,7 @@ function StepThreeNumber({ selectedDoctor, handleSubmit, onSubmit, isSubmitting,
       )}
     {timing && timing?.status==="close" ?
         <div>
-            <p className={badge.dangerSm+" sm:text-2xl sm:p-4"}>⚠️ Doctor is not in clinic today, clinic is closed!</p>
+            <p className={"bg-red-200 rounded-md shadow sm:text-2xl p-4"}>⚠️ Doctor is not in clinic today, clinic is closed !</p>
             <button
                 className="px-4 py-2 bg-gray-200 rounded-md mt-4 hover:bg-gray-300 transition"
                 onClick={() => setStep(1)}
@@ -344,23 +345,24 @@ function StepThreeNumber({ selectedDoctor, handleSubmit, onSubmit, isSubmitting,
         :
         <>
             {/* === Slot Selection (Horizontal Scroll) === */}
-            <h2 className="text-xl font-bold mb-2">Your Number</h2>
+            {timing && <h2 className="text-xl font-bold mb-2">Your Number</h2> }
+            
 
             <div className="flex gap-2 items-center mb-4">
-            {/* Current number the user will get */}
-            {timing && (
-                <button
-                className="min-w-[70px] px-4 py-2 rounded-lg border text-center shadow-sm bg-sky-600 text-white font-bold"
-                disabled
-                >
-                {timing.next_available_number}
-                </button>
-            )}
-
-            <span className="text-gray-600"> — Your ticket number</span>
+              {/* Current number the user will get */}
+              {timing && (
+                  <button
+                  className="min-w-[70px] px-4 py-2 rounded-lg border text-center shadow-sm bg-sky-600 text-white font-bold"
+                  disabled
+                  >
+                  {timing.next_available_number}
+                  </button>
+              )}
+            
+              {timing && <span className="text-gray-600"> — Your ticket number</span>}
             </div>
-
-            <h2 className="text-lg font-semibold mb-2">Taken Numbers</h2>
+              {timing && <h2 className="text-lg font-semibold mb-2">Taken Numbers</h2>}
+            
 
             <div className="flex gap-2 flex-wrap">
             {timing?.taken_numbers?.map((num) => (
