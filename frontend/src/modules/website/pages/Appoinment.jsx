@@ -47,8 +47,8 @@ export default function Appoinment() {
               step >= 1 ? "text-sky-600 font-semibold" : ""
             }`}
           >
-            <Calendar className="w-6 h-6 mb-1" />
-            <p>Patient</p>
+              <User className="w-6 h-6 mb-1" />
+              <p>Doctor</p>
           </div>
 
           <div
@@ -63,8 +63,8 @@ export default function Appoinment() {
               step >= 2 ? "text-sky-600 font-semibold" : ""
             }`}
           >
-            <User className="w-6 h-6 mb-1" />
-            <p>Doctor</p>
+            <Calendar className="w-6 h-6 mb-1" />
+            <p>Patient</p>
 
           </div>
 
@@ -84,12 +84,13 @@ export default function Appoinment() {
             <p>Timing</p>
           </div>
         </div>
+        {/* STEP 1 – FIND DOCTOR */}
+        {step === 1 && (<StepOneDoctorList  setSelectedDoctor={setSelectedDoctor} setStep={setStep} />)}
 
-        {/* STEP 1 – PATIENT INFORMATION */}
-        {step === 1 && (<StepTwoForm setStep={setStep} handleSubmit={handleSubmit} register={register} errors={errors} />)}
 
-        {/* STEP 2 – FIND DOCTOR */}
-        {step === 2 && (<StepOneDoctorList  setSelectedDoctor={setSelectedDoctor} setStep={setStep} />)}
+        {/* STEP 2 – PATIENT INFORMATION */}
+        {step === 2 && (<StepTwoForm setStep={setStep} handleSubmit={handleSubmit} register={register} errors={errors} />)}
+
 
         {/* STEP 3 – DOCTOR TIMING */}
         {step === 3 && (<StepThreeNumber selectedDoctor={selectedDoctor} handleSubmit={handleSubmit} onSubmit={onSubmit} setStep={setStep} isSubmitting={isSubmitting}  />)}
@@ -140,7 +141,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
                   key={doc.id}
                   onClick={() => {
                     setSelectedDoctor(doc);
-                    setStep(3);
+                    setStep(2);
                   }}
                   className="p-4 relative overflow-hidden flex gap-2 items-center shadow-sm rounded cursor-pointer bg-white hover:bg-blue-50 transition"
                 >
@@ -175,7 +176,7 @@ function StepOneDoctorList({ setSelectedDoctor, setStep, handleSubmit }){
 function StepTwoForm({ setStep, handleSubmit, register, errors }){  
 
     return(<>
-        <form onSubmit={handleSubmit(() => setStep(2))} className="space-y-4 animate-[fadeIn_0.3s_ease]">
+        <form onSubmit={handleSubmit(() => setStep(3))} className="space-y-4 animate-[fadeIn_0.3s_ease]">
             <h2 className="text-xl font-bold mb-4">Patient Information</h2>
 
             {/* Full Name */}
@@ -337,7 +338,7 @@ function StepThreeNumber({ selectedDoctor, handleSubmit, onSubmit, isSubmitting,
             <p className={"bg-red-200 rounded-md shadow sm:text-2xl p-4"}>⚠️ Doctor is not in clinic today, clinic is closed !</p>
             <button
                 className="px-4 py-2 bg-gray-200 rounded-md mt-4 hover:bg-gray-300 transition"
-                onClick={() => setStep(1)}
+                onClick={() => setStep(2)}
                 >
                 Back
             </button>
