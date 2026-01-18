@@ -1,3 +1,7 @@
 DOCUMENTS
 node_modules
 dev-dist
+
+app.bat
+backend.log
+frontend.log
