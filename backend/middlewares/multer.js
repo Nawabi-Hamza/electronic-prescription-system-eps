@@ -2,6 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+const filePath = process.env.FILE_PATH
 // Magic byte signatures for stronger detection
 const FILE_SIGNATURES = {
   jpg: ["ffd8ffe0", "ffd8ffe1", "ffd8ffe2", "ffd8ffe3", "ffd8ffe8"],
@@ -27,7 +28,8 @@ function uploadFile({
   // 1️⃣ Storage rules
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      const folder = path.join(path.resolve(), "uploads", uploadDir);
+      // const folder = path.join(path.resolve(), "uploads", uploadDir);
+      const folder = path.join(path.resolve(), filePath, uploadDir);
       if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true });
       cb(null, folder);
     },
