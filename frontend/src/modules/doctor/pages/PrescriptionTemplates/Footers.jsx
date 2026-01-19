@@ -30,7 +30,7 @@ export function SimpleFooter({ doctor_name, lastname, addresses }) {
 /* ---------- CUSTOM FOOTER ---------- */
 export function CustomeFooter({ signatureUrl, doctor_name, lastname, addresses }) {
   return (
-    <div className="h-0 print:h-full">
+    <div className="h-0 overflow-hidden  print:h-full">
       <div className="flex justify-end ">
         <div className="text-center">
           <div className="h-20 w-48 flex justify-center items-center">
