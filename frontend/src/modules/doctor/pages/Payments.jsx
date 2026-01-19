@@ -53,7 +53,7 @@ function Payments({ payments }) {
                                         .map((m) => (
                                             <div
                                                 key={`${year}-${m.month_number}`}
-                                                className={`p-4 rounded-xl shadow transition hover:shadow-xl hover:cursor-pointer border
+                                                className={`p-2 md:p-4 rounded-md shadow transition hover:shadow-xl hover:cursor-pointer border
                                                     ${
                                                         m.is_paid
                                                             ? "bg-green-50 border-green-300"
@@ -62,17 +62,25 @@ function Payments({ payments }) {
                                                 `}
                                             >
                                                 <div className="flex justify-between items-center">
-                                                    <h3 className="text-lg font-semibold">{m.month_name}</h3>
+                                                    <h3 className="text-sm md:text-lg flex w-full me-2 justify-between font-semibold">
+                                                        <span>{m.month_name}</span>
+                                                        {m.paid_at && (
+                                                            <span>
+                                                                {/* <strong>Paid At:</strong>{" "} */}
+                                                                {new Date(m.paid_at).toLocaleDateString()}
+                                                            </span>
+                                                        )}
+                                                    </h3>
                                                     {m.is_paid ? (
-                                                        <CheckCircle className="text-green-600" />
+                                                        <CheckCircle className="h-5 w-5 text-green-600" />
                                                     ) : (
-                                                        <XCircle className="text-red-600" />
+                                                        <XCircle className="h-5 w-5 text-red-600" />
                                                     )}
                                                 </div>
 
-                                                <div className="mt-2 text-sm opacity-75">
+                                                <div className="flex justify-between text-sm opacity-75">
                                                     <p>
-                                                        <strong>Amount sdfs:</strong>{" "}
+                                                        <strong>Amount:</strong>{" "}
                                                         {m.total_amount ? `${m.total_amount} AFN` : "0 AFN"}
                                                     </p>
                                                     <p>
@@ -80,12 +88,6 @@ function Payments({ payments }) {
                                                         {m.is_paid ? "Paid" : "Unpaid"}
                                                     </p>
 
-                                                    {m.paid_at && (
-                                                        <p>
-                                                            <strong>Paid At:</strong>{" "}
-                                                            {new Date(m.paid_at).toLocaleDateString()}
-                                                        </p>
-                                                    )}
                                                 </div>
                                             </div>
                                         ))}
