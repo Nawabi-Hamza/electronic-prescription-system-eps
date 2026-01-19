@@ -170,7 +170,7 @@ const OwnerDashboard = () => {
 
         <Table
               columns={[
-                { key: "id", label: "id", render: (v, r) => `${v} ${r.lastname}` },
+                { key: "generated_id", label: "id" },
                 { key: "doctor_name", label: "Doctor", render: (v, r) => `${v} ${r.lastname}` },
                 { key: "clinic_name", label: "Clinic" },
                 { key: "action", label: "Action" },

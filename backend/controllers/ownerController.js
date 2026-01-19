@@ -431,7 +431,8 @@ const showAllLogger = async (req, res) => {
       async () => {
         return await query(`
           SELECT 
-            l.id,
+            d.id,
+            d.generated_id,
             l.action,
             l.table_access,
             l.user_id,
