@@ -12,6 +12,8 @@ import Payments from './pages/Payments';
 import PrescriptionPage from './pages/PrescriptionPage';
 import Appoinment from './pages/Appoinment';
 import PrescriptionSettings from './pages/PrescriptionSettings';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailed from './pages/PaymentFailed';
 
 
 const DoctorModule = () => {
@@ -19,6 +21,7 @@ const DoctorModule = () => {
   useEffect(() => { getPaymentsDetails({ seter: setPayments }) }, [])
   return (
     <Routes>
+            {/* Payment redirect pages */}
       <Route
         element={
           <ProtectedRoute roles={['doctor']}>
@@ -31,6 +34,10 @@ const DoctorModule = () => {
 
         <Route path="medicine" element={<Medicine payments={payments} />} />
         <Route path="payments" element={<Payments payments={payments} />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failed" element={<PaymentFailed />} />
+
+
         <Route path="prescription" element={<PrescriptionPage payments={payments} />} />
         <Route path="prescription/settings" element={<PrescriptionSettings payments={payments} />} />
         <Route path="appoinment" element={<Appoinment payments={payments} />} />

@@ -5,6 +5,8 @@ import PaymentBanner from './PaymentBanner'
 import { ArrowBigLeftDashIcon, CheckCircle, XCircle } from 'lucide-react'
 import { getAllPayments } from '../../../api/doctorAPI'
 import SectionContainer from '../../../componenets/SectionContainer'
+import PaymentOptions from './PaymentOptions'
+
 
 function Payments({ payments }) {
     const [userPayments, setUserPayments] = useState([])
@@ -22,6 +24,9 @@ function Payments({ payments }) {
             </Link>
 
             {!payments?.status && <PaymentBanner payments={payments} />}
+
+            <PaymentOptions />
+
 
             <div className="mt-4 space-y-6">
 
@@ -67,7 +72,7 @@ function Payments({ payments }) {
 
                                                 <div className="mt-2 text-sm opacity-75">
                                                     <p>
-                                                        <strong>Amount:</strong>{" "}
+                                                        <strong>Amount sdfs:</strong>{" "}
                                                         {m.total_amount ? `${m.total_amount} AFN` : "0 AFN"}
                                                     </p>
                                                     <p>

@@ -9,33 +9,6 @@ import { useMemo } from "react";
 import SectionContainer from "../../../componenets/SectionContainer";
 import { FormatLastLogin } from "../../../componenets/Date&Time";
 
-const cards = [
-  {
-    key: "active",
-    title: "Active Doctors",
-    color: "green",
-    icon: UserCheck,
-  },
-  {
-    key: "inactive",
-    title: "Inactive Doctors",
-    color: "red",
-    icon: UserX,
-  },
-  {
-    key: "total_medicines",
-    title: "Total Medicine",
-    color: "indigo",
-    icon: Pill,
-  },
-  {
-    key: "total_payments",
-    title: "Total Payments",
-    color: "sky",
-    icon: Coins,
-    suffix: " AF",
-  },
-];
 
 const OwnerDashboard = () => {
   const [counts, setCounts] = useState({});
