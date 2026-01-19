@@ -20,6 +20,12 @@ export const userFieldsGroup = [
         required: false,
         validation: { required: "Doctor profile is required" },
       },
+    ],
+  },
+  {
+    name: "personal_info",
+    label: "😐 Personal Details",
+    fields: [
       {
         name: "doctor_name",
         label: "Doctor name",
@@ -34,12 +40,6 @@ export const userFieldsGroup = [
         required: true,
         validation: { required: "Lastname is required" },
       },
-    ],
-  },
-  {
-    name: "personal_info",
-    label: "😐 Personal Details",
-    fields: [
       {
         name: "clinic_name",
         label: "Clinic name",
