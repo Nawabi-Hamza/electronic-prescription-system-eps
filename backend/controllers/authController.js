@@ -5,7 +5,8 @@ const { query } = require('../config/query'); // ✅ use your shared query helpe
 const { generateToken } = require('../middlewares/jwt');
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
-const redis = require("../config/redis")
+const redis = require("../config/redis");
+const { logDoctorAction } = require('../middlewares/logger');
 
 // const newOwner = {
 //   name: "Hamza Nawabi",
@@ -64,6 +65,8 @@ const clientLogin = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(404).json({ message: '🔑Invalid email or password' });
 
+    await logDoctorAction({ action: 'LOGIN', table: 'doctors', doctorId: user.id });
+
     const token = generateToken({
       id: user.id,
       role: 'doctor',
@@ -107,6 +110,8 @@ const updatePassword = async (req, res) => {
   
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       await query("UPDATE doctors SET password = ? WHERE id = ?", [hashedPassword, loggedInUserId]);
+      await logDoctorAction({ action: 'UPDATE_PASSWORD', table: 'doctors', doctorId: loggedInUserId });
+
       res.status(201).json({ message: 'Password Updated successfully' });
 
     }
@@ -158,6 +163,7 @@ const updateProfilePicture = async (req, res) => {
   
       const profilePic = req.file.filename;
       await query("UPDATE doctors SET photo = ? WHERE id = ?", [profilePic, loggedInUserId]);
+      await logDoctorAction({ action: 'UPDATE_PROFILE', table: 'doctors', doctorId: loggedInUserId });
   
       res.status(201).json({ message: 'Profile picture updated successfully', photo: profilePic });
     }

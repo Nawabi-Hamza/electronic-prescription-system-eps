@@ -28,18 +28,31 @@ const getNextUserCode = async () => {
 
 const getDoctorStatusSummary = async (req, res, next) => {
   try {
-    const [rows] = await query(`
-      SELECT
+    const [doctorRows] = await query(`
+      SELECT 
         SUM(status = 'active')   AS active,
         SUM(status = 'inactive') AS inactive
       FROM doctors
       WHERE status IN ('active', 'inactive')
     `);
+    // total medicines
+    const [medicineRows] = await query(`
+      SELECT COUNT(*) AS total_medicines
+      FROM medicines
+    `);
+
+    // total payments
+    const [paymentRows] = await query(`
+      SELECT COALESCE(SUM(amount), 0) AS total_payments
+      FROM doctor_payments
+    `);
     return res.status(200).json({
       success: true,
       data: {
-        active: Number(rows.active) || 0,
-        inactive: Number(rows.inactive) || 0,
+        active: Number(doctorRows.active) || 0,
+        inactive: Number(doctorRows.inactive) || 0,
+        total_medicines: Number(medicineRows.total_medicines) || 0,
+        total_payments: Number(paymentRows.total_payments) || 0,
       },
     });
   } catch (error) {
@@ -410,6 +423,40 @@ const addPaymentForDoctor = async (req, res) => {
   }
 };
 
+const showAllLogger = async (req, res) => {
+  try {
+    const cache_logger_list = "cache:logger:list";
+    const result = await getOrSetCache(
+      cache_logger_list,
+      async () => {
+        return await query(`
+          SELECT 
+            l.id,
+            l.action,
+            l.table_access,
+            l.user_id,
+            l.created_at,
+            d.doctor_name,
+            d.lastname,
+            d.clinic_name
+          FROM logger l
+          LEFT JOIN doctors d ON d.id = l.user_id
+          ORDER BY l.id DESC
+        `);
+      },
+      60 // cache for 60 seconds
+    );
+
+    return res.json({
+      from: "db/cache",
+      records: result,
+    });
+
+  } catch (err) {
+    console.error("LOGGER ROUTE ERROR:", err);
+    res.status(500).send("Database error");
+  }
+};
 
 module.exports = {
     showAllDoctors,
@@ -420,5 +467,6 @@ module.exports = {
     addPaymentForDoctor,
     getDoctorPaymentsByYearMonth,
     getDoctorsWithoutPayment,
-    getDoctorStatusSummary
+    getDoctorStatusSummary,
+    showAllLogger
 }

@@ -2,7 +2,8 @@ const { query } = require("../config/query")
 const { getOrSetCache, invalidateKey } = require("../middlewares/cache");
 const bcrypt = require("bcryptjs");
 const fs = require("fs")
-const path = require("path")
+const path = require("path");
+const { logDoctorAction } = require("../middlewares/logger");
 
 
 // const getAllDetailsOfDoctor = async (req, res) => {
@@ -702,9 +703,12 @@ const updateClinicLogo = async (req, res) => {
         }
       // Update existing record
       await query(`UPDATE prescription_header SET clinic_logo = ? WHERE doctors_id = ?`,[filename, doctorId]);
+      await logDoctorAction({ action: 'UPDATE_CLINIC_LOGO', table: 'prescription_header', doctorId: doctorId });
+
     } else {
       // Insert new record
       await query(`INSERT INTO prescription_header (doctors_id, name_prefex, clinic_logo, template_design) VALUES (?, ?, ? ,?)`,[doctorId, 'Dr.', filename, 'simple']);
+      await logDoctorAction({ action: 'ADD_CLINIC_LOGO', table: 'prescription_header', doctorId: doctorId });
     }
 
     res.json({
@@ -750,6 +754,8 @@ const updateSignature = async (req, res) => {
         `UPDATE prescription_header SET signature_logo = ? WHERE doctors_id = ?`,
         [filename, doctorId]
       );
+      await logDoctorAction({ action: 'UPDATE_SIGNATURE', table: 'prescription_header', doctorId: doctorId });
+
     } else {
       // INSERT NEW
       await query(
@@ -757,6 +763,7 @@ const updateSignature = async (req, res) => {
          VALUES (?, ?, ?, ?)`,
         [doctorId, "Dr.", filename, "simple"]
       );
+      await logDoctorAction({ action: 'ADD_SIGNATURE', table: 'prescription_header', doctorId: doctorId });
     }
 
     res.json({

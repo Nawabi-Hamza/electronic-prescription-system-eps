@@ -7,7 +7,7 @@ const roleCheck = require('../middlewares/roleCheck');
 const { sanitizeInput } = require('../middlewares/sanitizeHtml');
 const { cleanupFileOnError } = require('../middlewares/cleanUpFileOnError'); // remove file if there happen error in next middleware
 const { uploadFile } = require('../middlewares/multer');
-const {  addNewDoctor, deleteDoctor, showAllDoctors, showSingleDoctors, addPaymentForDoctor, getDoctorPaymentsByYearMonth, getDoctorsWithoutPayment, updateDoctor, getDoctorStatusSummary } = require('../controllers/ownerController');
+const {  addNewDoctor, deleteDoctor, showAllDoctors, showSingleDoctors, addPaymentForDoctor, getDoctorPaymentsByYearMonth, getDoctorsWithoutPayment, updateDoctor, getDoctorStatusSummary, showAllLogger } = require('../controllers/ownerController');
 
 // Validation
 const { addDoctorSchema, addDoctorPaymentSchema, updateDoctorSchema } = require('../validators/ownerSchema');
@@ -36,6 +36,7 @@ router.get("/payments/filter", getDoctorPaymentsByYearMonth)
 router.get("/payments/unpaid/filter", getDoctorsWithoutPayment);
 router.post("/payments", validateSchema(addDoctorPaymentSchema) , addPaymentForDoctor)
 
+router.get("/logger", showAllLogger)
 // router.post(
 //   "/documents",
 //   uploadFile({

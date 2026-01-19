@@ -14,6 +14,18 @@ export const fetchDashboard = async () => {
   }
 };
 
+export const fetchLogs = async () => {
+  try {
+    const res = await api.get("/owner/logger");
+    return res?.data?.records; // return payload only
+  } catch (error) {
+    const message =
+      error?.response?.data?.message || error.message || "Request failed";
+
+    console.error("Error fetching dashboard:", message);
+    throw new Error(message);
+  }
+};
 
 export const fetchUsers = async ({ seter }) => {
   try {
