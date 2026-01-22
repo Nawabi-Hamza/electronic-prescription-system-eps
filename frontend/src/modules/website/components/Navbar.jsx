@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Menu, Smartphone, UserCheck, X } from "lucide-react";
+import { Menu, Smartphone, User, UserCheck, X } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 
@@ -66,7 +66,7 @@ function Navbar() {
                   onClick={() => setOpen(false)}
                   className="block text-center px-4 py-2 bg-sky-600 text-white rounded-lg shadow"
                 >
-                Book Appointment
+                  Book Appointment
                 </Link>
             </div>
             </nav>
@@ -82,7 +82,9 @@ function Navbar() {
                 <Menu className="h-6 w-6 text-sky-600" />
             </button>
 
-            <h1 className="text-2xl font-bold text-sky-600">Paikar (EPS)</h1>
+              
+            <h1 className="text-2xl  font-bold text-sky-600">Paikar (EPS)</h1>
+            <Link to="/doctor" className="text-sky-600 hover:text-sky-400 px-2 rounded-full border border-sky-600  md:hidden absolute right-4"><User className='h-10 w-6' /></Link>
             </div>
 
             {/* Desktop nav */}
