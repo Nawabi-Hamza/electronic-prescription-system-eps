@@ -14,6 +14,7 @@ export default defineConfig({
       },
       includeAssets: ['pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
+        id: '/', 
         name: 'Paikar Electronic Prescription System',
         short_name: 'Paikar (EPS)',
         description: 'Electronic Prescription System Developed By PaikarSoft.',

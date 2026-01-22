@@ -7,7 +7,9 @@ import { SimpleHeader } from "./Headers";
 import { SimpleBody } from "./Bodys";
 import { PatientDetailsFields } from "./PatientDetailsFields";
 import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
-
+import "./SimpleTemplate.css"
+import html2canvas from "html2canvas"
+import { jsPDF } from "jspdf"
 
 
 /* ---------- Helpers ---------- */
@@ -78,8 +80,36 @@ export default function SimpleTemplate({ doctor, medicines }) {
   }
 
 
+  const handleSavePDF = async () => {
+    const element = printRef.current;
+    if (!element) return;
 
+    // Force print styles
+    element.classList.add("print-force");
 
+    const canvas = await html2canvas(element, {
+      scale: 2, // high quality
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: "a4",
+    });
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight =
+      (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("prescription.pdf");
+
+    element.classList.remove("print-force");
+  };
 
 
   return (
@@ -90,6 +120,12 @@ export default function SimpleTemplate({ doctor, medicines }) {
         className={`${btnStyle.filled} fixed right-4 xl:right-56 bottom-20 flex gap-1 items-center z-10 print:hidden`}
       >
         <Printer size={18} /> Print
+      </button>
+      <button
+        onClick={handleSavePDF}
+        className={`${btnStyle.filled} fixed right-4 xl:right-56 bottom-0 flex gap-1 items-center z-10 print:hidden`}
+      >
+        <Printer size={18} /> PDF
       </button>
 
 

@@ -9,6 +9,7 @@ import { useState } from 'react'
 import SimpleTemplate from './PrescriptionTemplates/SimpleTemplate'
 import SecondaryTemplate from './PrescriptionTemplates/SecondaryTemplate'
 import ModernTemplate from './PrescriptionTemplates/ModernTemplate'
+import ClassicTemplate from './PrescriptionTemplates/ClassicTemplate'
 
 function PrescriptionPage({ payments }) {
     const [ ph, setPh ] = useState([])
@@ -27,6 +28,7 @@ function PrescriptionPage({ payments }) {
       switch(templateType) {
         case 'secondary': return <SecondaryTemplate doctor={ph} medicines={medicine} />;
         case 'modern': return <ModernTemplate doctor={ph} medicines={medicine} />;
+        case 'classic': return <ClassicTemplate doctor={ph} medicines={medicine} />;
         case 'simple':
         default: return <SimpleTemplate doctor={ph} medicines={medicine} />;
       }
@@ -36,7 +38,7 @@ function PrescriptionPage({ payments }) {
     <Link to="/doctor" className={banner.back+" print:hidden"}>
       <ArrowBigLeftDashIcon /> Back
     </Link>
-    {!payments?.status &&  <PaymentBanner payments={payments} />}
+    {/* {!payments?.status &&  <PaymentBanner payments={payments} />} */}
     <div className='lg:max-w-[310mm] relative mx-auto  md:p-5 '>
       <div className='flex justify-between items-center mb-4 print:hidden'>
         <h1 className='text-2xl font-semibold'>Prescription Page</h1>
@@ -44,7 +46,7 @@ function PrescriptionPage({ payments }) {
       </div>
 
       {/* <SimpleTemplate doctor={ph} medicines={medicine} /> */}
-      {/* <SecondaryTemplate doctor={ph} medicines={medicine} /> */}
+      {/* <ClassicTemplate doctor={ph} medicines={medicine} /> */}
       {renderTemplate()}
     </div>
   </>

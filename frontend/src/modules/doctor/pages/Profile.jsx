@@ -265,7 +265,7 @@ function ClientProfile({ user }){
 
           <div className="bg-gray-50 p-3 md:p-4">
             <h3 className="text-slate-600">Email</h3>
-            <p>{user.email}</p>
+            <p className='break-all'>{user.email}</p>
           </div>
 
           <div className="bg-gray-50 p-3 md:p-4">

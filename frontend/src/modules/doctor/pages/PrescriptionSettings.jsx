@@ -319,6 +319,7 @@ function TemplateDesign() {
     { id: "simple", name: "Simple Template", img: "/templates/simple.png" },
     { id: "secondary", name: "Secondary Template", img: "/templates/secondary.png" },
     { id: "modern", name: "Modern Template", img: "/templates/modern.png" },
+    { id: "classic", name: "Classic Template", img: "/templates/classic.png" },
   ];
 
   const handleTemplateSelect = (templateId) => {
