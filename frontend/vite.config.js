@@ -12,28 +12,32 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
-      includeAssets: ['pwa-192x192.png', 'pwa-512x512.png'],
+      includeAssets: ['faveicon.ico'],
       manifest: {
         id: '/', 
         name: 'Paikar Electronic Prescription System',
         short_name: 'Paikar (EPS)',
         description: 'Electronic Prescription System Developed By PaikarSoft.',
         theme_color: '#0084d1',
-        background_color: '#0084d1',
+        background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/',
+        start_url: '.',
         icons: [
           {
-            src: '/pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
+            src: '/heart-plus.svg',
+            sizes: 'any',
+            type: 'image/svg+xml', 
+            purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/logo-192x192.png', // Mandatory PNG for installation
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/logo-512x512.png', // Mandatory PNG for installation
             sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
+            type: 'image/png'
           }
         ]
       }
