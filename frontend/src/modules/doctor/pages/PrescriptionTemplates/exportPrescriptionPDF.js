@@ -10,7 +10,9 @@ export async function exportPrescriptionPDF(ref) {
 
   const img = canvas.toDataURL("image/png");
 
+  const timestamp = new Date().toISOString();
+
   const pdf = new jsPDF("p", "mm", "a4");
   pdf.addImage(img, "PNG", 0, 0, 210, 297);
-  pdf.save("prescription.pdf");
+  pdf.save(`prescription-${timestamp}.pdf`);
 }

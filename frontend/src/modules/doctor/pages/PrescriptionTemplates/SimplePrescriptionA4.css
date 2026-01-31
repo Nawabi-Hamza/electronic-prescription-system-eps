@@ -106,8 +106,7 @@
 
 .signature {
   position: absolute;
-  bottom: -10px;
-  /* rigth: 20px; */
+  bottom: 0;
   z-index: -1;
 
 }
