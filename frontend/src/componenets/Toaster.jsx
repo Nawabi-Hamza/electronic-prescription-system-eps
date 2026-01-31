@@ -36,7 +36,7 @@ export function ConfirmToast(content,onConfirm){
             onConfirm(); // call your delete function
             toast.dismiss(); // remove the toast
           }}
-          className={btnStyle.filled}
+          className={btnStyle.filled+" bg-emerald-600"}
         >
           Yes
         </button>

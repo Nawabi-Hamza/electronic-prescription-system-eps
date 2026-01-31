@@ -38,7 +38,7 @@ const smallSelectStyles = {
   menu: (base) => ({ ...base, zIndex: 9999, fontSize: 12 })
 };
 
-export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, setSuggestions, height='min-h-[68vh]' }) {
+export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, setSuggestions, height='min-h-[68vh]', setMed }) {
   const [items, setItems] = useState([]);
 
   // Insert medicine — auto-fill if available
@@ -55,6 +55,18 @@ export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, set
         time: m.time || ""
       }
     ]);
+    setMed((prev) => [
+      ...prev,
+      {
+        id: m.id || Date.now(),
+        name: m.name,
+        brand_name: m.brand_name || "",
+        form: m.form || "",
+        dosage: m.strength || "",
+        number: m.number || "",
+        time: m.time || ""
+      }
+    ])
     setMedicineSearch("");
     setSuggestions([]);
   };
@@ -64,8 +76,14 @@ export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, set
     insertMedicine({ id: Date.now(), name: medicineSearch.trim() });
   };
 
-  const update = (i, field, val) => setItems((prev) => prev.map((it, idx) => (idx === i ? { ...it, [field]: val } : it)));
-  const remove = (i) => setItems((prev) => prev.filter((_, idx) => idx !== i));
+  const update = (i, field, val) => {
+    setItems((prev) => prev.map((it, idx) => (idx === i ? { ...it, [field]: val } : it)))
+    setMed((prev) => prev.map((it, idx) => (idx === i ? { ...it, [field]: val } : it)))
+  };
+  const remove = (i) => {
+    setItems((prev) => prev.filter((_, idx) => idx !== i))
+    setMed((prev) => prev.filter((_, idx) => idx !== i))
+  };
 
   return (
     <SectionContainer title="RX:" className="shadow-none border-l border-slate-400 rounded-none">

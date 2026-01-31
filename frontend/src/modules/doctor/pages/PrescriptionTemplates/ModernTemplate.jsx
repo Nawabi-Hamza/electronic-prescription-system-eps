@@ -44,6 +44,10 @@ export default function ModernTemplate({ doctor, medicines }) {
   const [patientGender, setPatientGender] = useState("");
   const [nextVisit, setNextVisit] = useState(isoToday());
   const [content, setContent] = useState("");
+
+    const [prescriptionItems, setPrescriptionItems] = useState([]);
+  
+
   // Get bill number from localStorage or default
   const [billNumber, setBillNumber] = React.useState(() => {
     const stored = localStorage.getItem("billNumber");
@@ -141,6 +145,8 @@ export default function ModernTemplate({ doctor, medicines }) {
               suggestions={suggestions}
               setSuggestions={setSuggestions}
               height={"min-h-[61vh]"}
+              setMed={setPrescriptionItems}
+
             />
           </div>
         </div>

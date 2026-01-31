@@ -10,6 +10,8 @@ import { PatientDetailsFields } from "./PatientDetailsFields";
 import { SimpleBody } from "./Bodys";
 import ImageViewer from "../../../../componenets/ImageViewer";
 import { CustomeFooter } from "./Footers";
+import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
+import PrescriptionPrintA4 from "./SecondaryPrescriptionA4";
 
 /* ---------- Quill config ---------- */
 const modules = {
@@ -51,14 +53,17 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   const [patientGender, setPatientGender] = useState("");
   const [nextVisit, setNextVisit] = useState(isoToday());
   const [content, setContent] = useState("");
+
+  const [prescriptionItems, setPrescriptionItems] = useState([]);
+  
   // Get bill number from localStorage or default
-    const [billNumber, setBillNumber] = React.useState(() => {
-      const stored = localStorage.getItem("billNumber");
-      if (stored) return stored;
-      const defaultBill = 1;
-      localStorage.setItem("billNumber", defaultBill);
-      return defaultBill;
-    });
+  const [billNumber, setBillNumber] = React.useState(() => {
+    const stored = localStorage.getItem("billNumber");
+    if (stored) return stored;
+    const defaultBill = 1;
+    localStorage.setItem("billNumber", defaultBill);
+    return defaultBill;
+  });
   
 
   useEffect(() => {
@@ -78,15 +83,17 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   /* ---------- PRINT ---------- */
   const printRef = useRef(null);
   const printTemplate = usePrintTemplate(printRef);
+
   const handleUpdateAndPrint = function(){
-        const stored = localStorage.getItem("billNumber");
-        const defaultBill = Number(stored) + 1;
-        localStorage.setItem("billNumber", defaultBill);
-        setBillNumber(defaultBill)
-        printTemplate()
+      const stored = localStorage.getItem("billNumber");
+      const defaultBill = Number(stored) + 1;
+      localStorage.setItem("billNumber", defaultBill);
+      setBillNumber(defaultBill)
+      printTemplate()
   }
 
-
+  /* ---------- PDF EXPORT ---------- */
+  const pdfRef = useRef(null);
   return (
     <div className="text-black">
       {/* PRINT BUTTON */}
@@ -95,6 +102,14 @@ export default function SecondaryTemplate({ doctor, medicines }) {
         className={`${btnStyle.filled} fixed bottom-20 right-4 xl:right-56 flex gap-1 items-center z-10 print:hidden`}
       >
         <Printer size={18} /> Print
+      </button>
+
+      {/* MOBILE SAVE PDF */}
+      <button
+        onClick={() => exportPrescriptionPDF(pdfRef)}
+        className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
+      >
+        <Printer size={18} /> Save PDF
       </button>
 
       {/* PRESCRIPTION CONTAINER */}
@@ -156,6 +171,7 @@ export default function SecondaryTemplate({ doctor, medicines }) {
               suggestions={suggestions}
               setSuggestions={setSuggestions}
               height={"min-h-[61vh]"}
+              setMed={setPrescriptionItems}
             />
           </div>
         </div>
@@ -166,6 +182,41 @@ export default function SecondaryTemplate({ doctor, medicines }) {
           doctor_name={doctor_name}
           lastname={lastname}
           addresses={addresses}
+        />
+      </div>
+
+            {/* OFF-SCREEN PDF TEMPLATE */}
+      <div style={{ position: "fixed", left: "-9999px", top: '-9999px', }}>
+        <PrescriptionPrintA4
+          ref={pdfRef}
+          billNumber={billNumber}
+          date={new Date().toLocaleDateString()}
+          doctor={{
+            prefix: name_prefex,
+            name: doctor_name,
+            lastname,
+            clinic: clinic_name,
+            description,
+            phone,
+          }}
+          patient={{
+            name: patientName,
+            age: patientAge,
+            gender: patientGender,
+            nextVisit,
+          }}
+          sideContent={content}
+          medicines={prescriptionItems}
+          logoUrl={null}
+          signatureUrl={signatureUrl}
+          footer={{
+            address: addresses?.[0]?.address,
+            province: addresses?.[0]?.province,
+            country: addresses?.[0]?.country,
+            district: addresses?.[0]?.district,
+            room: addresses?.[0]?.room_number,
+            floor: addresses?.[0]?.floor_number,
+          }}
         />
       </div>
     </div>

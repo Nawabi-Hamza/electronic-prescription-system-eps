@@ -35,6 +35,11 @@ export const dosageOptions = [
     { value: "20 mg", label: "20 mg" },
     { value: "50 mg", label: "50 mg" },
     { value: "100 mg", label: "100 mg" },
+    { value: "200 mg", label: "200 mg" },
+    { value: "250 mg", label: "250 mg" },
+    { value: "400 mg", label: "400 mg" },
+    { value: "500 mg", label: "500 mg" },
+    { value: "1000 mg", label: "1000 mg" },
 
     // Milliliters / Syrup / Drops
     { value: "2 ml", label: "2 ml" },
