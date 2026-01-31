@@ -13,6 +13,7 @@ import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
 // import PrescriptionPrintA4 from "./PrescriptionPrintA4";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SimplePrescriptionA4";
+import { toast } from "react-toastify";
 // import "./PDF.css"
 
 
@@ -48,6 +49,8 @@ export default function SimpleTemplate({ doctor, medicines }) {
   const [nextVisit, setNextVisit] = useState(isoToday());
 
   const [prescriptionItems, setPrescriptionItems] = useState([]);
+
+  const [download, setDownload] = useState(false)
 
   const [billNumber, setBillNumber] = useState(() => {
     const stored = localStorage.getItem("billNumber");
@@ -98,12 +101,20 @@ export default function SimpleTemplate({ doctor, medicines }) {
       </button>
 
       {/* MOBILE SAVE PDF */}
-      <button
-        onClick={() => exportPrescriptionPDF(pdfRef)}
-        className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
-      >
-        <Printer size={18} /> Save PDF
-      </button>
+      {!download ?
+        <button
+          onClick={async() => {
+            setDownload(true)
+            await exportPrescriptionPDF(pdfRef)
+            toast.success("Prescription Downloaded.")
+            setDownload(false)
+          }}
+          className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
+        >
+          <Printer size={18} /> Save PDF
+        </button>
+        : <button className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}>Downloading...</button>
+      }
 
       {/* SCREEN + DESKTOP PRINT AREA */}
       <div ref={printRef} className="prescription-area">

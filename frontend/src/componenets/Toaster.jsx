@@ -21,7 +21,7 @@ export default function Toaster(){
           pauseOnHover
           theme="light"
           transition={Slide}
-          onOpen={() => playSound("success")}
+          // onOpen={() => playSound("success")}
     />
   );
 };
@@ -52,7 +52,7 @@ export function ConfirmToast(content,onConfirm){
       autoClose: false, // keep toast until user clicks
       closeOnClick: false,
       draggable: false,
-      onOpen: playSound("default")
+      // onOpen: playSound("default")
     }
   );
 };

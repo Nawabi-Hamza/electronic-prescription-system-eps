@@ -38,7 +38,7 @@ const smallSelectStyles = {
   menu: (base) => ({ ...base, zIndex: 9999, fontSize: 12 })
 };
 
-export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, setSuggestions, height='min-h-[68vh]', setMed }) {
+export function SimpleBody({ medicineSearch, setMedicineSearch, suggestions, setSuggestions, height='min-h-[68vh]', setMed, }) {
   const [items, setItems] = useState([]);
 
   // Insert medicine — auto-fill if available

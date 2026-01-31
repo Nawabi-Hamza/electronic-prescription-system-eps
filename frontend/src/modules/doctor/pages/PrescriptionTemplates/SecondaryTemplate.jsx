@@ -12,6 +12,7 @@ import ImageViewer from "../../../../componenets/ImageViewer";
 import { CustomeFooter } from "./Footers";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SecondaryPrescriptionA4";
+import { toast } from "react-toastify";
 
 /* ---------- Quill config ---------- */
 const modules = {
@@ -55,6 +56,7 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   const [content, setContent] = useState("");
 
   const [prescriptionItems, setPrescriptionItems] = useState([]);
+  const [download, setDownload] = useState(false)
   
   // Get bill number from localStorage or default
   const [billNumber, setBillNumber] = React.useState(() => {
@@ -99,18 +101,26 @@ export default function SecondaryTemplate({ doctor, medicines }) {
       {/* PRINT BUTTON */}
       <button
         onClick={handleUpdateAndPrint}
-        className={`${btnStyle.filled} fixed bottom-20 right-4 xl:right-56 flex gap-1 items-center z-10 print:hidden`}
+        className={`${btnStyle.filled} hidden md:fixed bottom-20 right-4 xl:right-56 md:flex gap-1 items-center z-10 print:hidden`}
       >
         <Printer size={18} /> Print
       </button>
 
       {/* MOBILE SAVE PDF */}
-      <button
-        onClick={() => exportPrescriptionPDF(pdfRef)}
-        className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
-      >
-        <Printer size={18} /> Save PDF
-      </button>
+      {!download ?
+        <button
+          onClick={async() => {
+            setDownload(true)
+            await exportPrescriptionPDF(pdfRef)
+            toast.success("Prescription Downloaded.")
+            setDownload(false)
+          }}
+          className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
+        >
+          <Printer size={18} /> Save PDF
+        </button>
+        : <button className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}>Downloading...</button>
+      }
 
       {/* PRESCRIPTION CONTAINER */}
       <div ref={printRef} className="print-area bg-white p-2 rounded prescription-area" id="">
