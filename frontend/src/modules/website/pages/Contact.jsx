@@ -41,7 +41,8 @@ function Contact() {
             <MapPin className="h-10 w-10 text-sky-600 mb-3" />
             <h3 className="text-xl font-semibold text-sky-700">Address</h3>
             <p className="text-gray-600 mt-2">Kabul, Afghanistan</p>
-            <p className="text-gray-600 mt-2">https://paikareps.netlify.app</p>
+            <p className="text-gray-600 mt-2">https://paikarict.cloud</p>
+            <p className="text-gray-600 mt-2">https://paikareps.com</p>
           </div>
         </div>
       </section>

@@ -3,8 +3,7 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 import { btnStyle } from "../styles/componentsStyle";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react"; 
-import { playSound } from '../utils/soundPlayer';
-
+import "./Toaster.css"
 
 
 export default function Toaster(){

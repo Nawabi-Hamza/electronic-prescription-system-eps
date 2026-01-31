@@ -12,19 +12,19 @@ const App = () => {
       <AuthProvider>
         {/* Global SEO Meta Tags */}
         <Helmet>
-          <title>PaikarSoft EPS – Electronic Prescription System</title>
+          <title>Paikar EPS – Electronic Prescription System</title>
           <meta
             name="description"
-            content="PaikarSoft EPS is an advanced electronic prescription system for doctors and clinics. Fast, reliable, and easy to use."
+            content="Paikar EPS is an advanced electronic prescription system for doctors and clinics. Fast, reliable, and easy to use."
           />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <link rel="canonical" href="https://paikareps.com" />
 
           {/* Open Graph */}
-          <meta property="og:title" content="PaikarSoft EPS – Electronic Prescription System" />
+          <meta property="og:title" content="Paikar EPS – Electronic Prescription System" />
           <meta
             property="og:description"
-            content="PaikarSoft EPS is an advanced electronic prescription system for doctors and clinics. Fast, reliable, and easy to use."
+            content="Paikar EPS is an advanced electronic prescription system for doctors and clinics. Fast, reliable, and easy to use."
           />
           <meta property="og:image" content="/pwa-512x512.png" />
           <meta property="og:url" content="https://paikareps.com" />
@@ -32,15 +32,14 @@ const App = () => {
 
           {/* Twitter */}
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="PaikarSoft EPS – Electronic Prescription System" />
+          <meta name="twitter:title" content="Paikar EPS – Electronic Prescription System" />
           <meta
             name="twitter:description"
-            content="PaikarSoft EPS is an advanced electronic prescription system for doctors and clinics. Fast, reliable, and easy to use."
+            content="Paikar EPS is an advanced electronic prescription system for doctors and clinics. Fast, reliable, and easy to use."
           />
           <meta name="twitter:image" content="/pwa-512x512.png" />
         </Helmet>
-
-        <Toaster />
+          <Toaster />
         <AppRoutes />
       </AuthProvider>
     </HelmetProvider>
