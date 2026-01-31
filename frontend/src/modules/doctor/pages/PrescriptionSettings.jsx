@@ -59,13 +59,27 @@ function DoctorDetails({ header }) {
         name: "doctor_info",
         label: "Doctor Information",
         fields: [
-          {
-            name: "name_prefex",
-            label: "Doctor Name Prefix",
-            type: "text",
-            required: true,
-            placeholder: "e.g. Dr. Ahmad, Pro. Smith",
-          },
+            {
+              name: "name_prefex",
+              label: "Doctor Name Prefix",
+              type: "text",
+              required: true,
+              placeholder: "e.g. Dr., Prof.",
+              validation: {
+                required: "Prefix is required",
+                maxLength: {
+                  value: 5,
+                  message: "Prefix must not be more than 5 characters",
+                },
+                // pattern: {
+                //   value: /^(Dr\.?|Pro\.?|Prof\.?)$/i,
+                //   message: "Only Dr, Pro, or Prof is allowed",
+                // },
+                validate: (value) =>
+                  value.trim().length > 0 || "Prefix cannot be empty spaces",
+              },
+            },
+
           {
             name: "registration_number",
             label: "Registration Number",
@@ -84,9 +98,26 @@ function DoctorDetails({ header }) {
           {
             name: "description",
             label: "Description",
-            type: "text", // because you use <p> ... </p>
+            type: "text",
             placeholder: "Short clinic description...",
+            validation: {
+              minLength: {
+                value: 10,
+                message: "Description must be at least 10 characters",
+              },
+              maxLength: {
+                value: 255,
+                message: "Description must not exceed 255 characters",
+              },
+              validate: (value) => {
+                if (!value) return true; // optional field
+                if (!value.trim()) return "Description cannot be only spaces";
+                if (/<\/?[a-z][\s\S]*>/i.test(value)) return "HTML tags are not allowed";
+                return true;
+              },
+            },
           },
+
         ],
       },
 

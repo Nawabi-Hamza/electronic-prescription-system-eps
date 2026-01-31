@@ -6,26 +6,27 @@
 /* Mobile only */
 @media (max-width: 640px) {
   .Toastify__toast-container {
-    top: 12px !important;
-    right: 12px !important;
-    left: 12px !important;
+    top: 14px !important;
+    right: 14px !important;
+    left: 14px !important;
     width: auto !important; /* prevent full-width */
   }
 
-  .Toastify__toast {
-    border-radius: 12px 12px 0 0;
-    margin-bottom: 8px;
+}
 
-    /* 🔥 Glass / Blur effect */
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(20px);
+.Toastify__toast {
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 8px;
 
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  }
+  /* 🔥 Glass / Blur effect */
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(20px);
 
-  /* Optional: text color improvement */
-  .Toastify__toast-body {
-    color: #0f172a; /* slate-900 */
-  }
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Optional: text color improvement */
+.Toastify__toast-body {
+  color: #0f172a; /* slate-900 */
 }

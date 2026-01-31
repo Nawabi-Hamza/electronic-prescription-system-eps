@@ -16,7 +16,7 @@ const DoctorLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100 animate__backInDown animate__animated animate__delay-.5s">
       {/* flex-col, flex-grow, and full height */}
-      <div className="flex w-full overflow-auto flex-col flex-grow h-full">
+      <div className="flex w-full overflow-auto  flex-col flex-grow h-full">
         <Topbar>
           <button
             className={btnStyle.danger}
