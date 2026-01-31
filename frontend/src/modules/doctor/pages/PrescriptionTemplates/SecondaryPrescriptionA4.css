@@ -55,7 +55,7 @@
   margin-top: 10px;
   border-top: 1px solid #aaa;
   border-bottom: 1px solid #aaa;
-  padding-bttom: 16px;
+  /* padding-bttom: 16px; */
   height: 50px;
 }
 
@@ -115,7 +115,7 @@
 .signature {
   position: absolute;
   bottom: -10px;
-  rigth: 20px;
+  /* rigth: 20px; */
   z-index: -1;
 
 }
