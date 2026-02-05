@@ -1,19 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SectionContainer from "../../../componenets/SectionContainer";
 import { useAuth } from "../../../hooks/useAuth";
 import { badge, btnStyle, gridStyle } from "../../../styles/componentsStyle";
 import ImageViewer from "../../../componenets/ImageViewer";
 import { Link } from "react-router-dom";
 import { Accessibility, CalendarCheck2, ClipboardList, HandCoins, NotepadTextDashed, Pill, UserCog } from "lucide-react";
-import PaymentBanner from "./PaymentBanner";
 
 
 
 
 
-const DoctorDashboard = ({ payments }) => {
-  const { user } = useAuth()
-  
+const DoctorDashboard = () => {
+  const { user, isOffline } = useAuth()  
   const cardStyle = {
     container: "rounded-md bg-gradient-to-br p-6 shadow  hover:shadow-lg transition transform  duration-200  space-y-4  mb-2",
     content: "flex flex-wrap justify-center sm:justify-start md:gap-5 items-center text-xl"
@@ -29,15 +27,16 @@ const DoctorDashboard = ({ payments }) => {
       <div className="lg:mt-4">
         <SectionContainer title="👋🏻 Welcome Doctor">
               {/* <PaymentBanner payments={payments} /> */}
+              {isOffline && <p className="bg-amber-100 rounded-md p-2">⚠️ Your Are Using Paikar-EPS Offline</p>}
 
               {user && (
                   <div className={`${cardStyle.container} from-sky-500/20 to-sky-500/10`}>
                     <div className="md:flex relative md:space-y-0 justify-between items-center mb-2">
                       <span className="flex gap-5 items-center text-xl text-gray-800">
-                        <ImageViewer 
-                          imagePath={`/uploads/profiles/${user.photo}`}
-                          className="rounded h-20 w-auto"
-                        />
+                          <ImageViewer
+                            imagePath={`/uploads/profiles/${user.photo}`}
+                            className="rounded h-20 w-20 object-cover"
+                          />
                         <div className="uppercase"> 
                           <strong>{user.full_name}</strong>
                           <p className="text-sm">{user.clinic_name}</p>

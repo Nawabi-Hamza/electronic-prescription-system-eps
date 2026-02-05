@@ -17,12 +17,32 @@ import Modal from "../../../componenets/ModalContainer";
 import ProgressContainer from "../../../componenets/ProgressContainer";
 import SimpleTemplate from "./PrescriptionTemplates/SimpleTemplate";
 import SecondaryTemplate from "./PrescriptionTemplates/SecondaryTemplate";
+import { useAuth } from "../../../hooks/useAuth";
+import { offlineDB } from "../../../utils/offlineDB";
 
-function PrescriptionSettings({ payments }) {
+import simpleImg from "/templates/simple.png";
+import secondaryImg from "/templates/secondary.png";
+import modernImg from "/templates/modern.png";
+import classicImg from "/templates/classic.png";
+
+function PrescriptionSettings() {
   const [header, setHeader] = useState();
+  const { isOffline } = useAuth()
 
+  async function offlineMode({ seter }){
+      try{
+          const cachedData = await offlineDB.getItem("prescription_header");
+          if (cachedData) seter(cachedData)
+          else toast.error("Session expired. Please connect to internet and login again.");
+      }catch(err){
+          console.log(err)
+      }
+  } 
   // ▶ Load existing header on mount
-  useEffect(() => { fetchPrescriptionHeader({ seter: setHeader }) }, []);
+  useEffect(() => { 
+    if(!isOffline) fetchPrescriptionHeader({ seter: setHeader })
+    else offlineMode({ seter: setHeader })
+  }, [isOffline]);
 
   return (
     <>
@@ -30,14 +50,12 @@ function PrescriptionSettings({ payments }) {
         <ArrowBigLeftDashIcon /> Back
       </Link>
 
-      {!payments?.status ? (
-        <PaymentBanner payments={payments} />
-      ) : (
+      {(
        header && 
       <>
-        <ClientDoctument header={header} /><br />
-        <TemplateDesign header={header} /><br /><br />
-        <DoctorDetails header={header} /><br /><br />
+        <ClientDoctument header={header} isOffline={isOffline} /><br />
+        <TemplateDesign header={header} isOffline={isOffline} /><br /><br />
+        {!isOffline && <><DoctorDetails header={header} isOffline={isOffline} /><br /><br /></>}
         {/* <PrescriptionForm header={header} /> */}
       </>
       )}
@@ -160,7 +178,7 @@ function DoctorDetails({ header }) {
 }
 
 
-function ClientDoctument({ header }) {
+function ClientDoctument({ header, isOffline }) {
   const [profile, setProfile] = useState(header?.clinic_logo);
   const [signature, setSignature] = useState(header?.signature_logo);
 
@@ -187,13 +205,14 @@ function ClientDoctument({ header }) {
             <h2 className="text-md text-center font-semibold capitalize">Clinic Logo</h2>
           </div>
 
-
-          <div className="absolute top-2 right-2">
-            <SquarePen
-              className={icon.primary}
-              onClick={() => setUploadModal({ open: true, type: "clinic" })}
-            />
-          </div>
+          {!isOffline &&
+            <div className="absolute top-2 right-2">
+              <SquarePen
+                className={icon.primary}
+                onClick={() => setUploadModal({ open: true, type: "clinic" })}
+              />
+            </div>
+          }
         </div>
 
         {/* SIGNATURE */}
@@ -210,13 +229,14 @@ function ClientDoctument({ header }) {
           <div className="mt-4 md:mt-0">
             <h2 className="text-md text-center font-semibold capitalize">Your Signature</h2>
           </div>
-
-          <div className="absolute top-2 right-2">
-            <SquarePen
-              className={icon.primary}
-              onClick={() => setUploadModal({ open: true, type: "signature" })}
-            />
-          </div>
+          {!isOffline && 
+            <div className="absolute top-2 right-2">
+              <SquarePen
+                className={icon.primary}
+                onClick={() => setUploadModal({ open: true, type: "signature" })}
+              />
+            </div>
+          }
         </div>
 
       </div>
@@ -346,11 +366,13 @@ function TemplateDesign() {
     localStorage.getItem("prescriptionTemplate") || "simple"
   );
 
+
+    
   const templates = [
-    { id: "simple", name: "Simple Template", img: "/templates/simple.png" },
-    { id: "secondary", name: "Secondary Template", img: "/templates/secondary.png" },
-    { id: "modern", name: "Modern Template", img: "/templates/modern.png" },
-    { id: "classic", name: "Classic Template", img: "/templates/classic.png" },
+    { id: "simple", name: "Simple Template", img: simpleImg },
+    { id: "secondary", name: "Secondary Template", img: secondaryImg },
+    { id: "modern", name: "Modern Template", img: modernImg },
+    { id: "classic", name: "Classic Template", img: classicImg },
   ];
 
   const handleTemplateSelect = (templateId) => {

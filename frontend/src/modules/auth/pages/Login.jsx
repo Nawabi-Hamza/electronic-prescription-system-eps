@@ -8,7 +8,6 @@ import { btnStyle, inputStyle, labelStyle } from '../../../styles/componentsStyl
 import { Eye, EyeOff } from 'lucide-react'; // 👈 import icons
 import { playSound } from '../../../utils/soundPlayer';
 
-
 const MAX_ATTEMPTS = 5;
 const BLOCK_TIME = 30 * 1000;
 
@@ -19,7 +18,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [remainingTime, setRemainingTime] = useState(0);
   const [attempts, setAttempts] = useState(0);
-
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 

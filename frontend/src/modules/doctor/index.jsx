@@ -29,17 +29,17 @@ const DoctorModule = () => {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<DoctorDashboard payments={payments}/>} />
-        <Route path="dashboard" element={<DoctorDashboard payments={payments} />} />
+        <Route path="/" element={<DoctorDashboard />} />
+        <Route path="dashboard" element={<DoctorDashboard />} />
 
-        <Route path="medicine" element={<Medicine payments={payments} />} />
+        <Route path="medicine" element={<Medicine />} />
         <Route path="payments" element={<Payments payments={payments} />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failed" element={<PaymentFailed />} />
 
 
-        <Route path="prescription" element={<PrescriptionPage payments={payments} />} />
-        <Route path="prescription/settings" element={<PrescriptionSettings payments={payments} />} />
+        <Route path="prescription" element={<PrescriptionPage />} />
+        <Route path="prescription/settings" element={<PrescriptionSettings />} />
         <Route path="appoinment" element={<Appoinment payments={payments} />} />
        
 

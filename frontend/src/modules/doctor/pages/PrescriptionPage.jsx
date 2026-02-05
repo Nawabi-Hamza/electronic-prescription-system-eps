@@ -10,19 +10,42 @@ import SimpleTemplate from './PrescriptionTemplates/SimpleTemplate'
 import SecondaryTemplate from './PrescriptionTemplates/SecondaryTemplate'
 import ModernTemplate from './PrescriptionTemplates/ModernTemplate'
 import ClassicTemplate from './PrescriptionTemplates/ClassicTemplate'
+import { useAuth } from '../../../hooks/useAuth'
+import { offlineDB } from '../../../utils/offlineDB'
+import { toast } from 'react-toastify'
 
-function PrescriptionPage({ payments }) {
+function PrescriptionPage() {
     const [ ph, setPh ] = useState([])
     const [ medicine, setMedicine ] = useState([])
     const [templateType, setTemplateType] = useState('simple'); // default template
+    const { isOffline } = useAuth()
+
+    async function offlineMode({ setPh, setMed }){
+        try{
+            const cachedData = await offlineDB.getItem("medicines");
+            const cachedData2 = await offlineDB.getItem("prescription_header");
+            if (cachedData && cachedData2) {
+              setMed(cachedData)
+              setPh(cachedData2)
+            }
+            else{
+               toast.error("Session expired. Please connect to internet and login again.");
+            }
+        }catch(err){
+            console.log(err)
+        }
+    } 
 
     useEffect(() => { 
+      if(!isOffline){
         fetchPrescriptionHeader({ seter: setPh });
         getAllMedicine({ seter: setMedicine })
-            // Get template type from localStorage
+      }else{
+        offlineMode({ setPh: setPh, setMed: setMedicine })
+      }
         const storedTemplate = localStorage.getItem('prescriptionTemplate');
         if (storedTemplate) setTemplateType(storedTemplate.toLowerCase());
-    }, [])
+    }, [isOffline])
 
     const renderTemplate = () => {
       switch(templateType) {

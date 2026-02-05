@@ -8,7 +8,6 @@ const { logger } = require("./middlewares/logger");
 const routes = require("./routesPath");
 const { limitAPR } = require("./middlewares/rateLimit");
 const { corsConfig } = require("./middlewares/cors");
-const { macGuard } = require("./middlewares/checkMac");
 
 const app = express();
 
@@ -21,9 +20,6 @@ app.use(logger);
 app.use(limitAPR)
 app.use(corsConfig)
 
-if(process.env.PRODUCTION){
-  app.use(macGuard)
-}
 
 
 // ====== Block Requests Without Allowed Origin (Postman, Burp Suit) ======
@@ -45,14 +41,23 @@ app.use("/api", routes);
 // app.use("/api/v1/uploads", express.static( path.join(__dirname, "uploads"), { maxAge: "10d", etag: true, immutable: true,} ));
 const filePath = process.env.FILE_PATH
 // app.use("/api/v1/uploads", express.static( path.join(__dirname, filePath), { maxAge: "10d", etag: true, immutable: true,} ));
+// app.use(
+//   "/api/v1/uploads",
+//   express.static(path.join(process.cwd(), filePath), {
+//     maxAge: "10d",
+//     etag: true,
+//     immutable: true,
+//   })
+// );
 app.use(
   "/api/v1/uploads",
-  express.static(path.join(process.cwd(), filePath), {
-    maxAge: "10d",
+  express.static(path.join(process.cwd(), "uploads"), {
+    maxAge: "7d",
     etag: true,
     immutable: true,
   })
 );
+
 // ====== 404 Handler ======
 app.use((req, res) => res.status(404).json({ error: "Not Found", message: `Route ${req.originalUrl} does not exist` }));
 

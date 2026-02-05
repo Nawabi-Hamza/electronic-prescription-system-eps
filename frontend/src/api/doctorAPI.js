@@ -1,8 +1,11 @@
+import { offlineDB } from '../utils/offlineDB';
 import api from './axios';
 
 export async function getAllMedicine({ seter }){
   try{
       const res = await api.get("/doctor/medicine")
+      // set medicine for offline mode after become online
+      await offlineDB.setItem("medicines", res.data.records)
       seter(res.data.records)
   }catch(err){
       console.error('Doctor Details:',err)
@@ -44,6 +47,8 @@ export  const fetchPrescriptionHeader = async ({ seter }) => {
     try {
       const res = await api.get("/doctor/prescription/header");
       if (res.data.status && res.data.data) {
+        // set prescription header to offline mode
+        await offlineDB.setItem("prescription_header", res.data.data)
         seter(res.data.data);
       }
     } catch (err) {

@@ -11,27 +11,26 @@ import { addNewMedicine, deleteMedicine, getAllMedicine } from '../../../api/doc
 import { toast } from 'react-toastify'
 import { ConfirmToast } from '../../../componenets/Toaster'
 import Modal from '../../../componenets/ModalContainer'
+import { useAuth } from '../../../hooks/useAuth'
+import { offlineDB } from '../../../utils/offlineDB'
 
 
-function Medicine({ payments }) {
+function Medicine() {
     const [medicine, setMedicine] = useState([])
     const [updateMedicine, setUpdateMedicine] = useState({})
-
+    const { isOffline } = useAuth()
   return (
-    !payments?.status ?  <>
-        <Link to="/doctor" className={banner.back}><ArrowBigLeftDashIcon/> Back</Link>
-        <PaymentBanner payments={payments} />
-    </>
-    :
     <div>
       <Link to="/doctor" className={banner.back}><ArrowBigLeftDashIcon/> Back</Link>
         <div className='grid lg:grid-cols-2 space-x-reverse gap-8'>
             <div className='rounded-r lg:max-h-[74vh] overflow-y-auto'>
-                <MedicineTable medicine={medicine} setMedicine={setMedicine} setUpdateMedicine={setUpdateMedicine} />
+                <MedicineTable medicine={medicine} setMedicine={setMedicine} setUpdateMedicine={setUpdateMedicine} isOffline={isOffline} />
             </div>
-            <div className=' rounded-md shadow-md shadow-indigo-50 lg:max-h-[74vh] overflow-y-auto'>
-                <MedicineForm setMedicine={setMedicine} updateMedicine={updateMedicine} setUpdateMedicine={setUpdateMedicine} />
-            </div>
+            {!isOffline && 
+                <div className=' rounded-md shadow-md shadow-indigo-50 lg:max-h-[74vh] overflow-y-auto'>
+                    <MedicineForm setMedicine={setMedicine} updateMedicine={updateMedicine} setUpdateMedicine={setUpdateMedicine} />
+                </div>
+            }
         </div>
     </div>
   )
@@ -97,12 +96,26 @@ function MedicineForm({ setMedicine, updateMedicine, setUpdateMedicine }){
 }
 
 
-function MedicineTable({ medicine, setMedicine, setUpdateMedicine }){
-    useEffect(() => { getAllMedicine({ seter: setMedicine }) }, [])
+function MedicineTable({ medicine, setMedicine, setUpdateMedicine, isOffline }){
     const [searchTerm, setSearchTerm] = useState("")
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [details, setDetails] = useState({})
 
+    async function offlineMode({ seter }){
+        try{
+            const cachedData = await offlineDB.getItem("medicines");
+            if (cachedData) return seter(cachedData);
+            else toast.error("Session expired. Please connect to internet and login again.");
+        }catch(err){
+            console.log(err)
+        }
+    } 
+
+    useEffect(() => { 
+        if(!isOffline) getAllMedicine({ seter: setMedicine })
+        else offlineMode({ seter: setMedicine })
+     }, [isOffline])
+    
     const handleDelete = (id) => {
        ConfirmToast("Are you sure to remove this medicine",async()=>{
         try{
@@ -157,12 +170,12 @@ function MedicineTable({ medicine, setMedicine, setUpdateMedicine }){
                         setIsModalOpen(true)
                     },
                 },
-                {
+                !isOffline && {
                     label: <UserPen size={20} />,
                     className: tableStyles.primaryBtn, 
                     onClick: () =>  setUpdateMedicine(row),
                 },
-                {
+                !isOffline && {
                     label: <Trash size={20} />,
                     className: tableStyles.dangerBtn,
                     onClick: () =>  handleDelete(row.id),

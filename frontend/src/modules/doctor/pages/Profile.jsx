@@ -15,14 +15,28 @@ import { FormatLastLogin, FormatTimeHHMM, FormatToAmPm } from '../../../componen
 import FieldsGroupForm from '../../../componenets/FieldsGroupForm';
 import { addressFields, specializationFields, timingFields } from '../../../utils/FormFields';
 import { ConfirmToast } from '../../../componenets/Toaster';
+import { offlineDB } from '../../../utils/offlineDB';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, isOffline } = useAuth();
   const [data, setData] = useState([])
 
 
+  async function offlineDetailsMode({ seter }){
+    try{
+      const cachedData = await offlineDB.getItem("user_details");
+      if (cachedData) return seter(cachedData);
+      else toast.error("Session expired. Please connect to internet and login again.");
+    }catch(err){
+      console.log(err)
+    }
+  } 
 
-  useEffect(()=>{ getDetails({ seter: setData }) }, [])
+
+  useEffect(()=>{ 
+    if(!isOffline) getDetails({ seter: setData })
+    else offlineDetailsMode({ seter: setData })
+   }, [isOffline])
 
 
   if (!user) {
@@ -32,10 +46,10 @@ const Profile = () => {
     <>
       <Link to="/doctor" className={banner.back}><ArrowBigLeftDashIcon/> Back</Link>
       <div className='space-y-4'>
-        <ClientProfile user={user} />
-        {data?.available_days && <ClientAvailableTime available_days={data.available_days} />}
-        {data?.specializations && <ClientSpecializations specializations={data.specializations} />}
-        {data?.addresses && <ClientAddresses addresses={data.addresses} /> }
+        <ClientProfile user={user} isOffline={isOffline} />
+        {data?.available_days && <ClientAvailableTime available_days={data.available_days} isOffline={isOffline} />}
+        {data?.specializations && <ClientSpecializations specializations={data.specializations} isOffline={isOffline} />}
+        {data?.addresses && <ClientAddresses addresses={data.addresses} isOffline={isOffline} /> }
         
       </div>
 
@@ -214,10 +228,11 @@ function UpdateProfilePicture({ isModalOpen, closeModal, setIsProfileModal, setP
 
 
 
-function ClientProfile({ user }){
+function ClientProfile({ user, isOffline }){
     const [profile, setProfile] = useState(user?.photo)
     const [isPasswordModal,setIsPasswordModal] = useState(false)
     const [isProfileModal,setIsProfileModal] = useState(false)
+
 
     return(
      <SectionContainer title='Doctor Profile' className=' md:p-4 bg-white rounded-md'>
@@ -242,11 +257,12 @@ function ClientProfile({ user }){
             <p className="text-gray-600">{user.role.toUpperCase()}</p>
             <p className="text-gray-600">{user.generated_id}</p>
           </div>
-
-          <div className='absolute top-0 right-0 flex space-x-2'>
-              <SquarePen className={icon.primary} onClick={() => setIsProfileModal(true)} />
-              <KeyRoundIcon className={icon.danger} onClick={() => setIsPasswordModal(true)} />
+          {!isOffline &&
+            <div className='absolute top-0 right-0 flex space-x-2'>
+                <SquarePen className={icon.primary} onClick={() => setIsProfileModal(true)} />
+                <KeyRoundIcon className={icon.danger} onClick={() => setIsPasswordModal(true)} />
             </div>
+          }
         </div>
         <hr className='border-sky-500' />   
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 flex-wrap gap-2 ">
@@ -296,12 +312,12 @@ function ClientProfile({ user }){
 
 }
 
-function ClientSpecializations({ specializations }){
+function ClientSpecializations({ specializations, isOffline }){
     const [isModalOpen,setIsModalOpen] = useState(false)
     const [sp, setSp] = useState(specializations || [])
     return(
     <SectionContainer title='Specialization'>
-        <PenBox className={`${icon.primary} absolute top-4 right-4`} onClick={()=> setIsModalOpen(true)} />
+        {!isOffline && <PenBox className={`${icon.primary} absolute top-4 right-4`} onClick={()=> setIsModalOpen(true)} />}
         {sp.map((sp, i) => (
             <div key={i} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
@@ -403,7 +419,7 @@ function UpdateSpecialization({ isModalOpen, closeModal, sp, setSp }){
     )
 }
 
-function ClientAvailableTime({ available_days }) {
+function ClientAvailableTime({ available_days, isOffline }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [timing, setTiming] = useState(
     available_days.reduce((acc, day) => {
@@ -440,15 +456,18 @@ function ClientAvailableTime({ available_days }) {
               key={key}
               className={`relative p-4 rounded-md shadow-md ${dayData?.status === "open" ? "bg-sky-50  shadow-sky-200":"bg-red-50  shadow-red-200"} `}
             >
-              <PenBox
-                className={`${icon.primary} absolute top-4 right-4 cursor-pointer`}
-                onClick={() => {
-                  setIsModalOpen(true) 
-                  // console.log(key)
-                  setSelectedDay(key);
 
-                }}  
-              />
+              {!isOffline && 
+                <PenBox
+                  className={`${icon.primary} absolute top-4 right-4 cursor-pointer`}
+                  onClick={() => {
+                    setIsModalOpen(true) 
+                    // console.log(key)
+                    setSelectedDay(key);
+
+                  }}  
+                />              
+              }
 
               <span className="text-lg font-semibold">
                 {emoji} {label}
@@ -544,13 +563,14 @@ function UpdateAvailabelTime({ isModalOpen, closeModal, dayKey, dayData, setTimi
     )
 }
 
-function ClientAddresses({ addresses }){
+function ClientAddresses({ addresses, isOffline }){
     const [isModalOpen,setIsModalOpen] = useState(false)
     const [address, setAddress] = useState(addresses || [])
     
     return(
     <SectionContainer title='Addresses'>
-        <PenBox className={`${icon.primary} absolute top-4 right-4`} onClick={()=> setIsModalOpen(true)} />
+        {!isOffline && <PenBox className={`${icon.primary} absolute top-4 right-4`} onClick={()=> setIsModalOpen(true)} />}
+        
 
         {address.map((add, i) => (
             <div

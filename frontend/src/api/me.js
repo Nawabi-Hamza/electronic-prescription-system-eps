@@ -1,4 +1,5 @@
 // src/api/user.js
+import { offlineDB } from '../utils/offlineDB';
 import api from './axios';
 
 export async function getPaymentsDetails({ seter }){
@@ -14,6 +15,8 @@ export async function getPaymentsDetails({ seter }){
 export async function getDetails({ seter }){
   try{
       const res = await api.get("/doctor/profile/details")
+      // Set For Offline Mode Cache System IndexDB
+      await offlineDB.setItem("user_details", res.data.records);
       seter(res.data.records)
   }catch(err){
       console.error('Doctor Details:',err)
