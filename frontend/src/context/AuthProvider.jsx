@@ -114,19 +114,20 @@ export const AuthProvider = ({ children }) => {
       {/* ✅ Offline Banner */}
       {isOffline && user && (
         <div
-          style={{
-            position: "fixed",
-            top: 10,
-            left: 10,
-            borderRadius: 6,
-            fontWeight: 600,
-            backgroundColor: "#facc15",
-            color: "#1f2937",
-            padding: "6px 10px",
-            zIndex: 1000,
-          }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: '50%',
+              transform: 'translateX(-50%)', // Add this line
+              borderRadius: '0 0 6px 6px',   // Optional: changed to bottom corners for a top-bar look
+              fontWeight: 600,
+              backgroundColor: "#facc15",
+              color: "#1f2937",
+              padding: "6px 10px",
+              zIndex: 1000,
+            }}
         >
-          Offline Mode
+          Offline
         </div>
       )}
     </AuthContext.Provider>
