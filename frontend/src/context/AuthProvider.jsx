@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
-  // Track network changes
+  // ✅ Network state tracking
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
@@ -27,17 +27,13 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     try {
       await offlineDB.setItem("auth_user", userData);
-      // console.log(userData)
-      // if (userData?.photo) {
-      //   await cacheProfileImage(userData.photo);
-      // }
     } catch (e) {
       console.error("Failed to cache user", e);
     }
   };
 
   const logout = async () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
     try {
       await offlineDB.removeItem("auth_user");
@@ -46,83 +42,97 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ Bootstrap auth: offline-first strategy
   useEffect(() => {
-    let isMounted = true;
+    let alive = true;
 
     const loadUser = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       if (!token) {
-        if (isMounted) setLoading(false);
+        if (alive) setLoading(false);
         return;
       }
 
-      try {
-        // Try API first
-        const userData = await fetchMyProfile();
-        if (isMounted) setUser(userData);
+      // 🔴 If offline → never call API
+      if (!navigator.onLine) {
+        const cachedUser = await offlineDB.getItem("auth_user");
 
-        // Cache for offline usage
+        if (cachedUser && alive) {
+          setUser(cachedUser);
+          toast.info("Offline mode: using cached profile");
+        } else {
+          toast.error("Offline and no cached session found. Connect to internet.");
+          localStorage.removeItem("token");
+          if (alive) setUser(null);
+        }
+
+        if (alive) setLoading(false);
+        return;
+      }
+
+      // 🟢 Online → try API
+      try {
+        const userData = await fetchMyProfile();
+        if (!alive) return;
+
+        setUser(userData);
         await offlineDB.setItem("auth_user", userData);
-        // if (userData?.photo) {
-        //   await cacheProfileImage(userData.photo);
-        // }
       } catch (err) {
-        // Fallback to cached user if API fails
+        // API failed while online (server down / 500)
         try {
           const cachedUser = await offlineDB.getItem("auth_user");
 
-          if (cachedUser && isMounted) {
+          if (cachedUser && alive) {
             setUser(cachedUser);
-            toast.info("Offline mode: EPS running with cached profile");
+            toast.warn("Server unavailable. Running EPS in offline mode.");
+            setIsOffline(true); // 👈 force offline mode
           } else {
-            toast.error("Session expired. Please connect to internet and login again.");
+            toast.error("Session expired. Please login again.");
             localStorage.removeItem("token");
-            if (isMounted) setUser(null);
+            if (alive) setUser(null);
           }
-        } catch (cacheErr) {
-          console.error("Failed to read cache", cacheErr);
+        } catch (e) {
           localStorage.removeItem("token");
-          if (isMounted) setUser(null);
+          if (alive) setUser(null);
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (alive) setLoading(false);
       }
     };
 
     loadUser();
-
-    return () => { isMounted = false; };
+    return () => { alive = false; };
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isOffline }}>
       {children}
-      {/* Offline Banner */}
+
+      {/* ✅ Offline Banner */}
       {isOffline && user && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          // width: '100%',
-          borderBottomRightRadius: "10px",
-          fontWeight: 600,
-          backgroundColor: '#facc15',
-          color: '#1f2937',
-          padding: '4px',
-          textAlign: 'center',
-          zIndex: 1000,
-        }}>
-          Offline
+        <div
+          style={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            borderRadius: 6,
+            fontWeight: 600,
+            backgroundColor: "#facc15",
+            color: "#1f2937",
+            padding: "6px 10px",
+            zIndex: 1000,
+          }}
+        >
+          Offline Mode
         </div>
       )}
     </AuthContext.Provider>
   );
 };
+
 
 // import React, { useEffect, useState } from 'react';
 // import { AuthContext } from './AuthContext';
