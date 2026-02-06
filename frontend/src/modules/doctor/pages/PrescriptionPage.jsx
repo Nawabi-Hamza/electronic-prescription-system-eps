@@ -13,6 +13,9 @@ import ClassicTemplate from './PrescriptionTemplates/ClassicTemplate'
 import { useAuth } from '../../../hooks/useAuth'
 import { offlineDB } from '../../../utils/offlineDB'
 import { toast } from 'react-toastify'
+import "./PrescriptionTemplates/SimplePrescriptionA4.css"
+import "./PrescriptionTemplates/SecondaryPrescriptionA4.css"
+
 
 function PrescriptionPage() {
     const [ ph, setPh ] = useState([])

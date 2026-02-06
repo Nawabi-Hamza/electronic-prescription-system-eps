@@ -51,7 +51,7 @@ const DoctorDashboard = () => {
         </SectionContainer>
         <div className={gridStyle.item2atRow + " hidden lg:grid"}>
           <SectionContainer title="Total Prescriptions">
-            <Link to="/doctor/prescription">
+            <Link to="./">
               <div className={`${cardStyle.container} block from-red-500/10 to-red-500/5`}>
                 <div className={cardStyle.content}>
                   <ClipboardList className="h-10 w-10 sm:h-20 sm:w-20 text-red-500" />
@@ -70,7 +70,7 @@ const DoctorDashboard = () => {
           </SectionContainer>
 
           <SectionContainer title="Total Appointments">
-            <Link to="/doctor/appoinment">
+            <Link to="./">
               <div className={`${cardStyle.container} from-orange-500/10 to-orange-500/5`}>
                 <div className={cardStyle.content}>
                   <CalendarCheck2 className="h-10 w-12 sm:h-20 sm:w-20 text-orange-500" />
@@ -129,7 +129,7 @@ const DoctorDashboard = () => {
                 </div>
               </Link>
           </SectionContainer>
-          <SectionContainer title="Payments">
+          {/* <SectionContainer title="Payments">
               <Link to={"/doctor/payments"}>
                 <div className={`${cardStyle.container} from-pink-500/10 to-pink-500/5`}>
                   <div className={cardStyle.content}>
@@ -140,7 +140,7 @@ const DoctorDashboard = () => {
                   </div>
                 </div>
               </Link>
-          </SectionContainer>
+          </SectionContainer> */}
         </div>
       )}
     </div>
