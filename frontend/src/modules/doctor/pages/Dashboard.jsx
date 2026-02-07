@@ -16,7 +16,7 @@ const DoctorDashboard = () => {
   const { user, isOffline } = useAuth()  
   const [tp, setTp] = useState(0)
   const cardStyle = {
-    container: "rounded-md bg-gradient-to-br p-6 shadow  hover:shadow-lg transition transform  duration-200  space-y-4  mb-2",
+    container: "rounded-md bg-gradient-to-br p-4 md:p-6 shadow  hover:shadow-lg transition transform  duration-200  space-y-4  mb-2",
     content: "flex flex-wrap justify-center sm:justify-start md:gap-5 items-center text-xl"
   };
   useEffect(()=>{
@@ -55,7 +55,7 @@ const DoctorDashboard = () => {
                   </div>
               )}
         </SectionContainer>
-        <div className={"grid gap-2 mt-5 grid-cols-2 mb-0"}>
+        <div className={"grid gap-2 mt-2 grid-cols-2 -mb-4"}>
               <div className={`${cardStyle.container} hover:shadow-none block from-cyan-500/10 to-cyan-500/5`}>
                 <div className={'flex gap-2 items-center'}>
                   <ClipboardList className="h-10 w-10 sm:h-20 sm:w-20 text-cyan-500" />
