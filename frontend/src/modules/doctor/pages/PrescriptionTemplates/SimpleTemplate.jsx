@@ -14,6 +14,7 @@ import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SimplePrescriptionA4";
 import { toast } from "react-toastify";
+import { getPrescriptionNumber, nextBillNumber, offlineDB } from "../../../../utils/offlineDB";
 // import "./PDF.css"
 
 
@@ -52,12 +53,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
 
   const [download, setDownload] = useState(false)
 
-  const [billNumber, setBillNumber] = useState(() => {
-    const stored = localStorage.getItem("billNumber");
-    if (stored) return Number(stored);
-    localStorage.setItem("billNumber", 1);
-    return 1;
-  });
+  const [billNumber, setBillNumber] = useState();
 
   useEffect(() => {
     if (!medicineSearch || medicineSearch.length < 2) {
@@ -76,15 +72,17 @@ export default function SimpleTemplate({ doctor, medicines }) {
     );
   }, [medicineSearch, medicines]);
 
+  useEffect(() => {
+      getPrescriptionNumber({ seter: setBillNumber })
+   },[])
+
   /* ---------- DESKTOP PRINT ---------- */
   const printRef = useRef(null);
   const printTemplate = usePrintTemplate(printRef);
 
-  const handleUpdateAndPrint = () => {
-    const next = billNumber + 1;
-    localStorage.setItem("billNumber", next);
-    setBillNumber(next);
+  const handleUpdateAndPrint = async() => {
     printTemplate();
+    await nextBillNumber({ seter: setBillNumber })
   };
 
   /* ---------- PDF EXPORT ---------- */
@@ -106,7 +104,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
           onClick={async() => {
             setDownload(true)
             await exportPrescriptionPDF(pdfRef)
-            toast.success("Prescription Downloaded.")
+            nextBillNumber({ seter: setBillNumber })
             setDownload(false)
           }}
           className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}

@@ -1,10 +1,12 @@
+
 import React, { useEffect, useState } from "react";
 import SectionContainer from "../../../componenets/SectionContainer";
 import { useAuth } from "../../../hooks/useAuth";
 import { badge, btnStyle, gridStyle } from "../../../styles/componentsStyle";
 import ImageViewer from "../../../componenets/ImageViewer";
 import { Link } from "react-router-dom";
-import { Accessibility, CalendarCheck2, ClipboardList, HandCoins, NotepadTextDashed, Pill, UserCog } from "lucide-react";
+import { Accessibility, CalendarCheck2, ClipboardList, HandCoins, NotepadTextDashed, Pill, Settings, UserCog } from "lucide-react";
+import { getCurrentBillNumber, offlineDB } from "../../../utils/offlineDB";
 
 
 
@@ -12,13 +14,17 @@ import { Accessibility, CalendarCheck2, ClipboardList, HandCoins, NotepadTextDas
 
 const DoctorDashboard = () => {
   const { user, isOffline } = useAuth()  
+  const [tp, setTp] = useState(0)
   const cardStyle = {
     container: "rounded-md bg-gradient-to-br p-6 shadow  hover:shadow-lg transition transform  duration-200  space-y-4  mb-2",
     content: "flex flex-wrap justify-center sm:justify-start md:gap-5 items-center text-xl"
   };
+  useEffect(()=>{
+    getCurrentBillNumber({ seter: setTp })
+  }, [])
 
   const demoStats = {
-    totalPrescriptions: 28,   // demo number
+    totalPrescriptions: tp,   // demo number
     totalAppointments: 42,     // demo number
   };
   return (
@@ -49,47 +55,36 @@ const DoctorDashboard = () => {
                   </div>
               )}
         </SectionContainer>
-        <div className={gridStyle.item2atRow + " hidden lg:grid"}>
-          <SectionContainer title="Total Prescriptions">
-            <Link to="./">
-              <div className={`${cardStyle.container} block from-red-500/10 to-red-500/5`}>
-                <div className={cardStyle.content}>
-                  <ClipboardList className="h-10 w-10 sm:h-20 sm:w-20 text-red-500" />
+        <div className={"grid gap-2 mt-5 grid-cols-2 mb-0"}>
+              <div className={`${cardStyle.container} hover:shadow-none block from-cyan-500/10 to-cyan-500/5`}>
+                <div className={'flex gap-2 items-center'}>
+                  <ClipboardList className="h-10 w-10 sm:h-20 sm:w-20 text-cyan-500" />
 
                   <div>
-                    <p className="text-xl sm:text-3xl font-bold text-red-900">
+                    <p className="text-xl sm:text-3xl font-bold text-cyan-900">
                       {demoStats.totalPrescriptions}
                     </p>
-                    <p className="mt-1 hidden sm:block text-sm font-medium text-red-700">
+                    <p className="md:mt-1 text-sm font-medium text-cyan-700">
                       Prescriptions
                     </p>
                   </div>
                 </div>
               </div>
-            </Link>
-          </SectionContainer>
-
-          <SectionContainer title="Total Appointments">
-            <Link to="./">
-              <div className={`${cardStyle.container} from-orange-500/10 to-orange-500/5`}>
-                <div className={cardStyle.content}>
-                  <CalendarCheck2 className="h-10 w-12 sm:h-20 sm:w-20 text-orange-500" />
+              <div className={`${cardStyle.container} hover:shadow-none from-teal-500/10 to-teal-500/5`}>
+                <div className={'flex gap-2 items-center'}>
+                  <CalendarCheck2 className="h-10 w-12 sm:h-20 sm:w-20 text-teal-500" />
 
                   <div>
-                    <p className="text-xl sm:text-3xl font-bold text-orange-900">
+                    <p className="text-xl sm:text-3xl font-bold text-teal-900">
                       {demoStats.totalAppointments}
                     </p>
-                    <p className="mt-1 hidden sm:block text-sm font-medium text-orange-700">
+                    <p className="md:mt-1 text-sm font-medium text-teal-700">
                       Appointments
                     </p>
                   </div>
                 </div>
               </div>
-            </Link>
-          </SectionContainer>
         </div>
-
-
       </div>
       {user && (
         <div className={gridStyle.item2atRow}>
@@ -123,24 +118,24 @@ const DoctorDashboard = () => {
                   <span className={cardStyle.content}>
                     <Pill className="h-10 w-10 sm:h-20 sm:w-20 text-amber-500" />
                     <div>
-                      <p className="mt-2 hidden sm:block text-2xl font-bold text-amber-900">Medicinces</p>
+                      <p className="mt-2 hidden sm:block text-2xl font-bold text-amber-900">Medicine</p>
                     </div>
                   </span>
                 </div>
               </Link>
           </SectionContainer>
-          {/* <SectionContainer title="Payments">
-              <Link to={"/doctor/payments"}>
+          <SectionContainer title="Setting">
+              <Link to={"/doctor/prescription/settings"}>
                 <div className={`${cardStyle.container} from-pink-500/10 to-pink-500/5`}>
                   <div className={cardStyle.content}>
-                    <HandCoins className={`h-10 w-10 sm:h-20 sm:w-20 text-pink-500`}/>
+                    <Settings className={`h-10 w-10 sm:h-20 sm:w-20 text-pink-500`}/>
                     <div>
-                      <p className="mt-2 hidden sm:block text-2xl font-bold text-pink-900">Payments</p>
+                      <p className="mt-2 hidden sm:block text-2xl font-bold text-pink-900">Setting</p>
                     </div>
                   </div>
                 </div>
               </Link>
-          </SectionContainer> */}
+          </SectionContainer>
         </div>
       )}
     </div>

@@ -13,6 +13,7 @@ import { CustomeFooter } from "./Footers";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SecondaryPrescriptionA4";
 import { toast } from "react-toastify";
+import { getPrescriptionNumber, nextBillNumber } from "../../../../utils/offlineDB";
 
 /* ---------- Quill config ---------- */
 const modules = {
@@ -59,14 +60,11 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   const [download, setDownload] = useState(false)
   
   // Get bill number from localStorage or default
-  const [billNumber, setBillNumber] = React.useState(() => {
-    const stored = localStorage.getItem("billNumber");
-    if (stored) return stored;
-    const defaultBill = 1;
-    localStorage.setItem("billNumber", defaultBill);
-    return defaultBill;
-  });
+  const [billNumber, setBillNumber] = useState();
   
+  useEffect(() => {
+      getPrescriptionNumber({ seter: setBillNumber })
+   },[])
 
   useEffect(() => {
     if (!medicineSearch || medicineSearch.length < 2) return setSuggestions([]);
@@ -86,12 +84,10 @@ export default function SecondaryTemplate({ doctor, medicines }) {
   const printRef = useRef(null);
   const printTemplate = usePrintTemplate(printRef);
 
-  const handleUpdateAndPrint = function(){
-      const stored = localStorage.getItem("billNumber");
-      const defaultBill = Number(stored) + 1;
-      localStorage.setItem("billNumber", defaultBill);
-      setBillNumber(defaultBill)
+  const handleUpdateAndPrint = async function(){
       printTemplate()
+      await nextBillNumber({ seter: setBillNumber })
+      
   }
 
   /* ---------- PDF EXPORT ---------- */
@@ -112,7 +108,8 @@ export default function SecondaryTemplate({ doctor, medicines }) {
           onClick={async() => {
             setDownload(true)
             await exportPrescriptionPDF(pdfRef)
-            toast.success("Prescription Downloaded.")
+            await nextBillNumber({ seter: setBillNumber })
+            // toast.success("Prescription Downloaded.")
             setDownload(false)
           }}
           className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}

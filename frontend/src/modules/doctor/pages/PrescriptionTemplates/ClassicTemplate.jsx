@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ImageViewer from "../../../../componenets/ImageViewer";
 import "react-quill/dist/quill.snow.css";
-import "./Style.css"; 
+// import "./Style.css"; 
 import { btnStyle,  } from "../../../../styles/componentsStyle";
 import SectionContainer from "../../../../componenets/SectionContainer";
 import CreatableSelect from "react-select/creatable";
@@ -11,6 +11,9 @@ import { SimpleBody } from "./Bodys";
 import { PatientDetailsFields } from "./PatientDetailsFields";
 import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
 import { INVESTIGATION_OPTIONS, SIGN_OPTIONS, SYMPTOM_OPTIONS } from "./data";
+import { getPrescriptionNumber, nextBillNumber } from "../../../../utils/offlineDB";
+import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
+import PrescriptionPrintA4 from "./ClassicPrescriptionA4";
 
 
 /* ---------- Helpers ---------- */
@@ -31,6 +34,8 @@ export default function ClassicTemplate({ doctor, medicines }) {
   const [patientAge, setPatientAge] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [nextVisit, setNextVisit] = useState(isoToday());
+    const [download, setDownload] = useState(false)
+  
 
     const [symptoms, setSymptoms] = useState([]);
     const [signs, setSigns] = useState([]);
@@ -38,14 +43,13 @@ export default function ClassicTemplate({ doctor, medicines }) {
 
     const [prescriptionItems, setPrescriptionItems] = useState([]);
 
-    // Get bill number from localStorage or default
-    const [billNumber, setBillNumber] = React.useState(() => {
-        const stored = localStorage.getItem("billNumber");
-        if (stored) return stored;
-        const defaultBill = 1;
-        localStorage.setItem("billNumber", defaultBill);
-        return defaultBill;
-    });
+      // Get bill number from localStorage or default
+    const [billNumber, setBillNumber] = useState();
+    
+    useEffect(() => {
+        getPrescriptionNumber({ seter: setBillNumber })
+    },[])
+  
 
 
     useEffect(() => {
@@ -60,21 +64,36 @@ export default function ClassicTemplate({ doctor, medicines }) {
 
     /* ---------- PRINT ---------- */
     const printRef = useRef(null);
+    const pdfRef = useRef(null);
     const printTemplate = usePrintTemplate(printRef);
-    const handleUpdateAndPrint = function(){
-            const stored = localStorage.getItem("billNumber");
-            const defaultBill = Number(stored) + 1;
-            localStorage.setItem("billNumber", defaultBill);
-            setBillNumber(defaultBill)
-            printTemplate()
+    const handleUpdateAndPrint = async function(){
+          printTemplate()
+          await nextBillNumber({ seter: setBillNumber })
     }
 
   return (
     <div className="text-black">
-      <div className="flex justify-end mb-4 print:hidden">
-        <button onClick={handleUpdateAndPrint} className={`${btnStyle.filled} fixed bottom-20 right-4 xl:right-56 flex gap-1 items-center z-10`}>
+      <div className="">
+        <button onClick={handleUpdateAndPrint} className={`${btnStyle.filled} hidden md:fixed bottom-20 right-4 xl:right-56 md:flex gap-1 items-center z-10 print:hidden`}>
           <Printer size={18} /> Print
         </button>
+
+          {/* MOBILE SAVE PDF */}
+          {!download ?
+            <button
+              onClick={async() => {
+                setDownload(true)
+                await exportPrescriptionPDF(pdfRef)
+                await nextBillNumber({ seter: setBillNumber })
+                // toast.success("Prescription Downloaded.")
+                setDownload(false)
+              }}
+              className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
+            >
+              <Printer size={18} /> Save PDF
+            </button>
+            : <button className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}>Downloading...</button>
+          }
       </div>
 
         <div ref={printRef} className="prescription-area print-area bg-white p-2 rounded ">
@@ -98,14 +117,14 @@ export default function ClassicTemplate({ doctor, medicines }) {
 
             {/* PATIENT DETAILS */}
             <PatientDetailsFields
-            patientName={patientName}
-            setPatientName={setPatientName}
-            patientAge={patientAge}
-            setPatientAge={setPatientAge}
-            patientGender={patientGender}
-            setPatientGender={setPatientGender}
-            nextVisit={nextVisit}
-            setNextVisit={setNextVisit}
+              patientName={patientName}
+              setPatientName={setPatientName}
+              patientAge={patientAge}
+              setPatientAge={setPatientAge}
+              patientGender={patientGender}
+              setPatientGender={setPatientGender}
+              nextVisit={nextVisit}
+              setNextVisit={setNextVisit}
             />
 
             <div className="flex flex-col md:flex-row print:flex-row gap-2 mt-2">
@@ -116,17 +135,17 @@ export default function ClassicTemplate({ doctor, medicines }) {
                     <div>
                         <label className="text-md font-semibold">Symptoms</label>
                         <CreatableSelect
-                        isMulti
-                        options={SYMPTOM_OPTIONS}
-                        value={symptoms}
-                        onChange={setSymptoms}
-                        className="print:hidden"
-                        placeholder="Add symptoms..."
-                        />
-                        <ul className="hidden print:block list-disc ml-5 text-sm">
-                        {symptoms.map((s) => (
-                            <li key={s.value}>{s.label}</li>
-                        ))}
+                          isMulti
+                          options={SYMPTOM_OPTIONS}
+                          value={symptoms}
+                          onChange={setSymptoms}
+                          className="print:hidden"
+                          placeholder="Add symptoms..."
+                          />
+                          <ul className="hidden print:block list-disc ml-5 text-sm">
+                          {symptoms.map((s) => (
+                              <li key={s.value}>{s.label}</li>
+                          ))}
                         </ul>
                     </div>
 
@@ -190,6 +209,68 @@ export default function ClassicTemplate({ doctor, medicines }) {
         <div className="h-0 print:h-full">
           <CustomeFooter signatureUrl={signatureUrl} doctor_name={doctor_name} lastname={lastname} addresses={addresses} />
         </div>
+      </div>
+
+
+      {/* OFF-SCREEN PDF TEMPLATE */}
+      <div style={{ position: "fixed", left: "-9999px", top: '-9999px', }}>
+        <PrescriptionPrintA4
+          ref={pdfRef}
+          billNumber={billNumber}
+          date={new Date().toLocaleDateString()}
+          doctor={{
+            prefix: name_prefex,
+            name: doctor_name,
+            lastname,
+            clinic: clinic_name,
+            description,
+            phone,
+          }}
+          patient={{
+            name: patientName,
+            age: patientAge,
+            gender: patientGender,
+            nextVisit,
+          }}
+          sideContent={
+               <div className="w-full p-2 space-y-4">
+                  {/* Symptoms */}
+                  <h2>Symptoms</h2>
+                  <ul className=" ml-1 text-[10px]">
+                    {symptoms.map((s) => (
+                      <li key={s.value}>-{s.label}</li>
+                    ))}
+                  </ul>
+
+                  {/* Signs */}
+                  <h2>Signs</h2>
+                  <ul className=" ml-1 text-[10px]">
+                    {signs.map((s) => (
+                      <li key={s.value}>-{s.label}</li>
+                    ))}
+                  </ul>
+
+                  {/* Investigations */}
+                  <h2>Investigations</h2>
+                  <ul className=" ml-1 text-[10px]">
+                    {investigations.map((i) => (
+                      <li key={i.value}>-{i.label}</li>
+                    ))}
+                  </ul>
+                </div>
+          }
+          medicines={prescriptionItems}
+          logoUrl={logoUrl}
+          signatureUrl={signatureUrl}
+          footer={{
+            address: addresses?.[0]?.address,
+            province: addresses?.[0]?.province,
+            country: addresses?.[0]?.country,
+            district: addresses?.[0]?.district,
+            room: addresses?.[0]?.room_number,
+            floor: addresses?.[0]?.floor_number,
+          }}
+        />
       </div>
     </div>
   );
