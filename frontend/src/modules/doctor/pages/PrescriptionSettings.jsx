@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { ArrowBigLeftDashIcon, CheckCircle, Section, SquarePen } from "lucide-react";
 import { Link } from "react-router-dom";
-import { badge, banner, btnStyle, dropdownStyle, gridStyle, icon, inputStyle, labelStyle } from "../../../styles/componentsStyle";
-import PaymentBanner from "./PaymentBanner";
+import { banner, btnStyle, gridStyle, icon, labelStyle } from "../../../styles/componentsStyle";
 import api from "../../../api/axios";
-import { fetchPrescriptionHeader, getAllMedicine } from "../../../api/doctorAPI";
+import { fetchPrescriptionHeader } from "../../../api/doctorAPI";
 import SectionContainer from "../../../componenets/SectionContainer";
 import ImageUpload from "../../../componenets/ImageUpload";
 import { useForm } from "react-hook-form";
-import ReactQuill from "react-quill";
 import { toast } from "react-toastify";
 import FieldsGroupForm from "../../../componenets/FieldsGroupForm";
 import { ConfirmToast } from "../../../componenets/Toaster";
 import ImageViewer from "../../../componenets/ImageViewer";
 import Modal from "../../../componenets/ModalContainer";
 import ProgressContainer from "../../../componenets/ProgressContainer";
-import SimpleTemplate from "./PrescriptionTemplates/SimpleTemplate";
-import SecondaryTemplate from "./PrescriptionTemplates/SecondaryTemplate";
 import { useAuth } from "../../../hooks/useAuth";
 import { offlineDB } from "../../../utils/offlineDB";
 

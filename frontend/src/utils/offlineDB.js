@@ -1,6 +1,5 @@
 // src/lib/offlineDB.js
 import localforage from "localforage";
-import api from "../api/axios";
 
 export const offlineDB = localforage.createInstance({
   name: "eps",

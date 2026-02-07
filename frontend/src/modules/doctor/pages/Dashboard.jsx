@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import SectionContainer from "../../../componenets/SectionContainer";
 import { useAuth } from "../../../hooks/useAuth";
-import { badge, btnStyle, gridStyle } from "../../../styles/componentsStyle";
+import { btnStyle, gridStyle } from "../../../styles/componentsStyle";
 import ImageViewer from "../../../componenets/ImageViewer";
 import { Link } from "react-router-dom";
 import { Accessibility, CalendarCheck2, ClipboardList, HandCoins, NotepadTextDashed, Pill, Settings, UserCog } from "lucide-react";
-import { getCurrentBillNumber, offlineDB } from "../../../utils/offlineDB";
+import { getCurrentBillNumber } from "../../../utils/offlineDB";
 
 
 

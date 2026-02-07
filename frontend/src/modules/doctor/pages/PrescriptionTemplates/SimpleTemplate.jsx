@@ -13,8 +13,7 @@ import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
 // import PrescriptionPrintA4 from "./PrescriptionPrintA4";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SimplePrescriptionA4";
-import { toast } from "react-toastify";
-import { getPrescriptionNumber, nextBillNumber, offlineDB } from "../../../../utils/offlineDB";
+import { getPrescriptionNumber, nextBillNumber } from "../../../../utils/offlineDB";
 // import "./PDF.css"
 
 

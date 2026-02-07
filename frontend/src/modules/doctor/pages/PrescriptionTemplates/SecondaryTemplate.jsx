@@ -12,7 +12,6 @@ import ImageViewer from "../../../../componenets/ImageViewer";
 import { CustomeFooter } from "./Footers";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SecondaryPrescriptionA4";
-import { toast } from "react-toastify";
 import { getPrescriptionNumber, nextBillNumber } from "../../../../utils/offlineDB";
 
 /* ---------- Quill config ---------- */

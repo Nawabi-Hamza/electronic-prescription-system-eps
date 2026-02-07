@@ -11,6 +11,7 @@ export function PrintTemplate({ printAreaId = "", width="900", height="1200"}){
             .map((rule) => rule.cssText)
             .join("\n");
         } catch (e) {
+          console.log(e)
           return "";
         }
       })
