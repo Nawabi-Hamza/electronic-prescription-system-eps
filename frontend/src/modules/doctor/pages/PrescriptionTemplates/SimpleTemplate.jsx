@@ -14,6 +14,8 @@ import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./SimplePrescriptionA4";
 import { getPrescriptionNumber, nextBillNumber } from "../../../../utils/offlineDB";
+import { isDesktop } from "react-device-detect";
+
 // import "./PDF.css"
 
 
@@ -33,6 +35,7 @@ export default function SimpleTemplate({ doctor, medicines }) {
     phone,
   } = doctor || {};
 
+  // console.log(isDesktop)
   const logoUrl = clinic_logo ? `/uploads/clinic_logo/${clinic_logo}` : null;
   const signatureUrl = signature_logo
     ? `/uploads/doctor_signatures/${signature_logo}`
@@ -90,27 +93,32 @@ export default function SimpleTemplate({ doctor, medicines }) {
   return (
     <div className="text-black ">
       {/* DESKTOP PRINT */}
-      <button
-        onClick={handleUpdateAndPrint}
-        className={`${btnStyle.filled} hidden md:fixed right-[10%] bottom-20 md:flex gap-1 items-center z-10 print:hidden`}
-      >
-        <Printer size={18} /> Print
-      </button>
+      {isDesktop &&
+        <button
+          onClick={handleUpdateAndPrint}
+          className={`${btnStyle.filled} fixed right-[10%] bottom-20 md:flex gap-1 items-center z-10 print:hidden`}
+        >
+          <Printer size={18} /> Print
+        </button>
+      }
 
       {/* MOBILE SAVE PDF */}
-      {!download ?
-        <button
-          onClick={async() => {
-            setDownload(true)
-            await exportPrescriptionPDF(pdfRef)
-            nextBillNumber({ seter: setBillNumber })
-            setDownload(false)
-          }}
-          className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
-        >
-          <Printer size={18} /> Save PDF
-        </button>
-        : <button className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}>Downloading...</button>
+      {!isDesktop &&
+        <>
+            {!download ?
+              <button
+                onClick={async() => {
+                  setDownload(true)
+                  await exportPrescriptionPDF(pdfRef)
+                  nextBillNumber({ seter: setBillNumber })
+                  setDownload(false)
+                }}
+                className={`${btnStyle.filled} flex items-center gap-2 fixed right-4 bottom-20 z-10`}
+              >
+                <Printer size={18} /> Save PDF
+              </button>
+              : <button className={`${btnStyle.filled} flex items-center gap-2 fixed right-4 bottom-20 z-10`}>Downloading...</button>}
+        </>
       }
 
       {/* SCREEN + DESKTOP PRINT AREA */}

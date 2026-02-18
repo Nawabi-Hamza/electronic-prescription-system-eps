@@ -12,6 +12,8 @@ import { usePrintTemplate } from "../../../../hooks/usePrintTemplate";
 import { getPrescriptionNumber, nextBillNumber } from "../../../../utils/offlineDB";
 import { exportPrescriptionPDF } from "./exportPrescriptionPDF";
 import PrescriptionPrintA4 from "./ModernPrescriptionA4";
+import { isDesktop } from "react-device-detect";
+
 
 /* ---------- Quill config ---------- */
 const modules = {
@@ -81,26 +83,33 @@ export default function ModernTemplate({ doctor, medicines }) {
   return (
     <div className="text-black">
       <div className="">
-        <button onClick={handleUpdateAndPrint} className={`${btnStyle.filled} hidden md:fixed bottom-20 right-4 xl:right-56 md:flex gap-1 items-center z-10 print:hidden`}>
+      {isDesktop &&
+        <button
+          onClick={handleUpdateAndPrint}
+          className={`${btnStyle.filled} fixed right-[10%] bottom-20 md:flex gap-1 items-center z-10 print:hidden`}
+        >
           <Printer size={18} /> Print
         </button>
+      }
 
-          {/* MOBILE SAVE PDF */}
-          {!download ?
-            <button
-              onClick={async() => {
-                setDownload(true)
-                await exportPrescriptionPDF(pdfRef)
-                await nextBillNumber({ seter: setBillNumber })
-                // toast.success("Prescription Downloaded.")
-                setDownload(false)
-              }}
-              className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}
-            >
-              <Printer size={18} /> Save PDF
-            </button>
-            : <button className={`${btnStyle.filled} flex items-center gap-2 md:hidden fixed right-4 bottom-20 z-10`}>Downloading...</button>
-          }
+      {/* MOBILE SAVE PDF */}
+      {!isDesktop &&
+        <>
+            {!download ?
+              <button
+                onClick={async() => {
+                  setDownload(true)
+                  await exportPrescriptionPDF(pdfRef)
+                  nextBillNumber({ seter: setBillNumber })
+                  setDownload(false)
+                }}
+                className={`${btnStyle.filled} flex items-center gap-2 fixed right-4 bottom-20 z-10`}
+              >
+                <Printer size={18} /> Save PDF
+              </button>
+              : <button className={`${btnStyle.filled} flex items-center gap-2 fixed right-4 bottom-20 z-10`}>Downloading...</button>}
+        </>
+      }
       </div>
 
       <div ref={printRef} className="prescription-area print-area bg-white p-2 rounded ">
